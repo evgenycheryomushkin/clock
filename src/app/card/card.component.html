@@ -1,8 +1,11 @@
-<mat-card class="card" cdkDrag>
-    <mat-card-title>New Card</mat-card-title>
-    <mat-card-subtitle>Description</mat-card-subtitle>
+<mat-card class="card" cdkDrag [style.top.px]="card.x" [style.left.px]="card.y" (mouseup)="onMouseUp($event)">
+    <mat-card-title>{{ card.name }}</mat-card-title>
+    <mat-card-subtitle>{{ card.description }}</mat-card-subtitle>
     <mat-card-actions align="end">
       <button mat-button>EDIT</button>
       <button mat-button>SHARE</button>
     </mat-card-actions>
+    <!-- <mat-card-footer>
+      <mat-progress-bar></mat-progress-bar>
+    </mat-card-footer> -->
 </mat-card>

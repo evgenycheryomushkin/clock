@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Card } from './card/card.component';
 
 @Component({
   selector: 'app-root',
@@ -6,8 +7,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'WorkTask';
-  subTitle = 'WorkTask';
-  longText = 'lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem'
+  cards = [
+    new Card("Test1", "Description1", 0, 0),
+    new Card("Test2", "Description2", 150, 0),
+    new Card("Test3", "Description3", 300, 0)
+  ]
 }
 
