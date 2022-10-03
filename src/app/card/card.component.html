@@ -1,8 +1,40 @@
-<mat-card class="card" cdkDrag>
-    <mat-card-title>New Card</mat-card-title>
-    <mat-card-subtitle>Description</mat-card-subtitle>
+<mat-card #cardElement class="card" 
+cdkDrag 
+[cdkDragFreeDragPosition]="card.position"
+(cdkDragStarted)="dragStarted($event)"
+(cdkDragEnded)="dragEnded($event)"
+(mousedown)="dragEnabled = true"
+(mouseup)="dragEnabled = false"
+[ngClass]="{'mat-elevation-z4' : dragEnabled}"
+[cdkDragDisabled]="card.edit"
+>
+    <mat-card-title>
+      <mat-form-field *ngIf="card.edit">
+        <mat-label>Header</mat-label>
+        <input matInput 
+        [(ngModel)]="card.name"
+        >
+      </mat-form-field>
+      {{ card.edit ? "" : card.name }}
+    </mat-card-title>
+    <mat-card-subtitle>
+      <mat-form-field *ngIf="card.edit">
+        <mat-label>Description</mat-label>
+        <textarea matInput
+        cdkTextareaAutosize
+        [(ngModel)]="card.description"
+        ></textarea>
+      </mat-form-field>
+      {{ card.edit ? "" : card.description }}
+    </mat-card-subtitle>
     <mat-card-actions align="end">
-      <button mat-button>EDIT</button>
-      <button mat-button>SHARE</button>
+      <!-- mat-icon-button -->
+      <!-- mat-fab -->
+      <button mat-button *ngIf="!card.edit" (click)="onEditClick()">EDIT</button> 
+      <button mat-button *ngIf="card.edit"  (click)="onSaveClick()">SAVE</button> 
+      <button mat-button (click)="onDoneClick()">DONE</button>
     </mat-card-actions>
+    <!-- <mat-card-footer>
+      <mat-progress-bar></mat-progress-bar>
+    </mat-card-footer> -->
 </mat-card>
