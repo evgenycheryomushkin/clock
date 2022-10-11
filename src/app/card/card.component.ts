@@ -1,15 +1,17 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
+import { CdkDragEnd, CdkDragStart, CdkDragMove, Point } from '@angular/cdk/drag-drop';
+
 
 export class Card {
   name: String
   description: String
-  x: number
-  y: number
-  constructor(name: String, description: String, x: number, y: number) {
+  time: String
+  position: Point
+  constructor(name: String, description: String, time:String, x: number, y: number) {
     this.name = name;
     this.description = description;
-    this.x = x
-    this.y = y
+    this.time = time;
+    this.position = {x:x, y:y};
   }
 }
 
@@ -20,7 +22,8 @@ export class Card {
 })
 export class CardComponent implements OnInit {
 
-  @Input() card: Card = new Card("Test", "description", 0, 0)
+  @Input() card: Card = new Card("Test", "description", "", 0, 0)
+  editEnabled: Boolean = false
 
   constructor() {
   }
@@ -28,8 +31,23 @@ export class CardComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onMouseUp(e:any): void {
-    console.log("mouse up")
+
+  dragStarted(event: CdkDragStart) {
+    console.log('dragStarted');
   }
 
+
+  dragEnded(event: CdkDragEnd) {
+    this.card.position = event.source.getFreeDragPosition();
+    console.log('dragEnded ' + this.card.position.x + " " + this.card.position.y);
+  }
+
+  onEditClick() {
+    this.editEnabled = true
+    console.log("edit")
+  }
+  onSaveClick() {
+    this.editEnabled = false
+    console.log("edit")
+  }
 }

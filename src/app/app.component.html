@@ -1,1 +1,5 @@
-<app-card *ngFor="let card of cards" [card]="card"></app-card>
+<mat-tab-group>
+  <mat-tab *ngFor="let tab of tabs" label="{{tab.name}}">
+  </mat-tab>
+</mat-tab-group>
+<app-card *ngFor="let card of tabs[0].cards" [card]="card"></app-card>
