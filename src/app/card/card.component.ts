@@ -24,6 +24,7 @@ export class CardComponent implements OnInit {
 
   @Input() card: Card = new Card("Test", "description", "", 0, 0)
   editEnabled: Boolean = false
+  dragEnabled = false
 
   constructor() {
   }

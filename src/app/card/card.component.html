@@ -1,6 +1,9 @@
 <mat-card class="card" cdkDrag [cdkDragFreeDragPosition]="card.position"
 (cdkDragStarted)="dragStarted($event)"
 (cdkDragEnded)="dragEnded($event)"
+(mousedown)="dragEnabled = true"
+(mouseup)="dragEnabled = false"
+[ngClass]="{'mat-elevation-z4' : dragEnabled}"
 >
     <mat-card-title>
       <mat-form-field *ngIf="editEnabled">
