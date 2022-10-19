@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
-import { CdkDragEnd, CdkDragStart, CdkDragMove, Point } from '@angular/cdk/drag-drop';
+import { CdkDragEnd, CdkDragStart, CdkDragMove, Point, CdkDragDrop } from '@angular/cdk/drag-drop';
 
 
 export class Card {
@@ -23,8 +23,8 @@ export class Card {
 export class CardComponent implements OnInit {
 
   @Input() card: Card = new Card("Test", "description", "", 0, 0)
-  editEnabled: Boolean = false
-  dragEnabled = false
+  editEnabled: boolean = false
+  dragEnabled: boolean = false
 
   constructor() {
   }
