@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Card } from './card/card.component';
+import { Component, HostListener } from '@angular/core';
+import { Card, CardEvent } from './card/card.component';
 
 export class Tab {
   name: String
@@ -17,15 +17,32 @@ export class Tab {
 })
 export class AppComponent {
   tabs = [
-    new Tab("Встречи", [
-      new Card("Собрание СД", "Собрание совета директоров", "21.10.2022 10:00", 20, 20),
-      new Card("Планирование задач", "Планирование задач с командой", "21.10.2022 12:00", 258, 20)
-    ]),
-    new Tab("Задачи", [
-      new Card("Маркетинг план", "Составить маркетинг план для Робота уборщика", "", 0, 0),
-      new Card("Ответить на предложение", "Ответить на предложение фирмы \"Бытовые приборы\"", "", 0, 150)
-    ]),
-    new Tab("Разное", [])
+    new Tab("FOCUS", []),
+    new Tab("DONE", [])
   ]
+  isEditing: boolean = false
+  newCardPosY = 0
+
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event:KeyboardEvent) {
+    if (event.code == 'KeyN') {
+      this.newEvent(new Event("KeyN"));
+    }
+  }
+  
+  createCard() {
+    this.tabs[0].cards.push(new Card("", "", "", 750, 20+50*this.newCardPosY++, true));
+    this.newEvent(new Event("EDIT"));
+  }
+
+  newEvent(event:Event) {
+    console.log("Event:", event);
+    if (event.type == 'KeyN' && !this.isEditing) {
+      this.newEvent(new Event("NEW"));
+    }
+    if (event.type == "EDIT") this.isEditing = true;
+    if (event.type == "SAVE") this.isEditing = false;
+    if (event.type == "NEW") this.createCard();
+  }
 }
 

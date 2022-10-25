@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { CdkDragEnd, CdkDragStart, CdkDragMove, Point, CdkDragDrop } from '@angular/cdk/drag-drop';
 
 
@@ -7,12 +7,17 @@ export class Card {
   description: String
   time: String
   position: Point
-  constructor(name: String, description: String, time:String, x: number, y: number) {
+  edit: boolean
+  constructor(name: String, description: String, time:String, x: number, y: number, edit:boolean = false) {
     this.name = name;
     this.description = description;
     this.time = time;
     this.position = {x:x, y:y};
+    this.edit = edit;
   }
+}
+
+export class CardEvent extends Event {
 }
 
 @Component({
@@ -23,8 +28,8 @@ export class Card {
 export class CardComponent implements OnInit {
 
   @Input() card: Card = new Card("Test", "description", "", 0, 0)
-  editEnabled: boolean = false
-  dragEnabled: boolean = false
+  @Output() cardEvent = new EventEmitter<CardEvent>();
+    dragEnabled: boolean = true
 
   constructor() {
   }
@@ -44,11 +49,16 @@ export class CardComponent implements OnInit {
   }
 
   onEditClick() {
-    this.editEnabled = true
+    this.card.edit = true
+    this.cardEvent.emit(new CardEvent("EDIT"));
     console.log("edit")
   }
   onSaveClick() {
-    this.editEnabled = false
-    console.log("edit")
+    this.card.edit = false
+    this.cardEvent.emit(new CardEvent("SAVE"));
+    console.log("save")
+  }
+  onDoneClick() {
+    this.cardEvent.emit(new CardEvent("DONE"));
   }
 }
