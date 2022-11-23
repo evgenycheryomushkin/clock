@@ -1,23 +1,23 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { CdkDragEnd, CdkDragStart, CdkDragMove, Point, CdkDragDrop } from '@angular/cdk/drag-drop';
+import { WorkEvent } from './event/work-event';
+import { CardEvent } from './event/card-event';
 
 
 export class Card {
+  id: number
   name: String
   description: String
   time: String
   position: Point
-  edit: boolean
-  constructor(name: String, description: String, time:String, x: number, y: number, edit:boolean = false) {
+  edit: boolean = false
+  constructor(id: number, name: String, description: String, time:String, x: number, y: number) {
+    this.id = id;
     this.name = name;
     this.description = description;
     this.time = time;
     this.position = {x:x, y:y};
-    this.edit = edit;
   }
-}
-
-export class CardEvent extends Event {
 }
 
 @Component({
@@ -26,39 +26,36 @@ export class CardEvent extends Event {
   styleUrls: ['./card.component.scss']
 })
 export class CardComponent implements OnInit {
-
-  @Input() card: Card = new Card("Test", "description", "", 0, 0)
-  @Output() cardEvent = new EventEmitter<CardEvent>();
-    dragEnabled: boolean = true
+  @ViewChild('cardElement') cardElement: any; 
+  @Input() card: Card = new Card(0, "Test", "description", "", 0, 0)
+  @Output() cardEvent = new EventEmitter<CardEvent>()
+  dragEnabled: boolean = true
 
   constructor() {
   }
 
   ngOnInit(): void {
+    this.cardElement.changes.subscribe((changes: any) => 
+    console.log(changes));
   }
 
 
   dragStarted(event: CdkDragStart) {
-    console.log('dragStarted');
+    this.cardEvent.emit(new CardEvent(CardEvent.DRAG_START, this.card.id))
   }
 
 
   dragEnded(event: CdkDragEnd) {
     this.card.position = event.source.getFreeDragPosition();
-    console.log('dragEnded ' + this.card.position.x + " " + this.card.position.y);
   }
 
   onEditClick() {
-    this.card.edit = true
-    this.cardEvent.emit(new CardEvent("EDIT"));
-    console.log("edit")
+    this.cardEvent.emit(new CardEvent(CardEvent.EDIT, this.card.id));
   }
   onSaveClick() {
-    this.card.edit = false
-    this.cardEvent.emit(new CardEvent("SAVE"));
-    console.log("save")
+    this.cardEvent.emit(new CardEvent(CardEvent.SAVE, this.card.id));
   }
   onDoneClick() {
-    this.cardEvent.emit(new CardEvent("DONE"));
+    this.cardEvent.emit(new CardEvent(CardEvent.DONE, this.card.id));
   }
 }

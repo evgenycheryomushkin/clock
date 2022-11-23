@@ -1,5 +1,9 @@
-import { Component, HostListener } from '@angular/core';
-import { Card, CardEvent } from './card/card.component';
+import { Component, HostListener, ViewChild } from '@angular/core';
+import { filter, fromEvent, map } from 'rxjs';
+import { Card } from './card/card.component';
+import { AppEvent } from './card/event/app-event';
+import { WorkEvent } from './card/event/work-event';
+import { EventHubService } from './event-hub.service';
 
 export class Tab {
   name: String
@@ -16,33 +20,39 @@ export class Tab {
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  @ViewChild('appElement') appElement: any; 
+  
   tabs = [
     new Tab("FOCUS", []),
     new Tab("DONE", [])
   ]
   isEditing: boolean = false
   newCardPosY = 0
+  keyDown: any
+
+  constructor(private eventHubService: EventHubService) {}
+
+  ngOnInit(): void {
+    const keyboardEventObserver = fromEvent<KeyboardEvent>(document, 'keydown')
+                    .pipe(filter(e => e.code == 'KeyN'),
+                          map((event: KeyboardEvent) => new AppEvent(AppEvent.NEW_CARD)));
+    this.eventHubService.register(keyboardEventObserver)
+  }
+  
+
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event:KeyboardEvent) {
     if (event.code == 'KeyN') {
-      this.newEvent(new Event("KeyN"));
     }
   }
   
   createCard() {
-    this.tabs[0].cards.push(new Card("", "", "", 750, 20+50*this.newCardPosY++, true));
+    this.tabs[0].cards.push(new Card(0, "", "", "", 750, 20+50*this.newCardPosY++));
     this.newEvent(new Event("EDIT"));
   }
 
-  newEvent(event:Event) {
-    console.log("Event:", event);
-    if (event.type == 'KeyN' && !this.isEditing) {
-      this.newEvent(new Event("NEW"));
-    }
-    if (event.type == "EDIT") this.isEditing = true;
-    if (event.type == "SAVE") this.isEditing = false;
-    if (event.type == "NEW") this.createCard();
+  newEvent(event:WorkEvent) {
   }
 }
 
