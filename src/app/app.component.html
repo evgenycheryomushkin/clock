@@ -1,7 +1,15 @@
-<div #appElement>
-  <mat-tab-group>
-    <mat-tab *ngFor="let tab of tabs" label="{{tab.name}}">
-    </mat-tab>
-  </mat-tab-group>
-  <app-card *ngFor="let card of tabs[0].cards" [card]="card" (cardEvent)="process($event)"></app-card>
+<div class="main__div" #appElement>
+  <div class="clock__div">
+    <app-clock></app-clock>
+  </div>
+  <div class="backlog-background__div">
+  </div>
+  <app-card *ngFor="let card of tabs[0].cards" 
+    [card]="card" (cardEvent)="process($event)"></app-card>
+  <div class="add__div">
+    <button mat-fab color="primary" 
+      aria-label="New card" (click)="newCardClick()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
 </div>

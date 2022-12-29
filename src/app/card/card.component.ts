@@ -1,7 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { CdkDragEnd, CdkDragStart, Point } from '@angular/cdk/drag-drop';
 import { CardEvent } from './event/card-event';
-import { MatCard } from '@angular/material/card';
 
 export class Card {
   id: number

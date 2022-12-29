@@ -1,0 +1,22 @@
+.main__div {
+    width: 100%; 
+    height: 100%;    
+}
+.add__div {
+    position: absolute;    
+    right: 1em;
+    bottom: 1em;
+}
+.clock__div {
+    height: 100%;
+    top:0px;
+    position: absolute;
+}
+.backlog-background__div {
+    right: 0px;
+    height: 100%;
+    width: 40%;
+    top:0px;
+    background-color: rgba($color: aquamarine, $alpha: 0.3);
+    position: absolute;
+}

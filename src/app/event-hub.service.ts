@@ -3,20 +3,24 @@ import { WorkEvent } from './card/event/work-event';
 import { Observable, Observer } from 'rxjs';
 type Callback = (workEvent: WorkEvent) => void;
 
-export abstract class EventSubscriber implements Observer<WorkEvent> {
-  eventStream: EventStream | undefined
+export class EventSubscriber implements Observer<WorkEvent> {
 
-  next: (value: WorkEvent) => void = (value: WorkEvent) => {};
-  
+  constructor(
+    private nextValue: (value: WorkEvent, 
+      eventSubscriber: EventSubscriber) => void,
+    public error: (err: any) => void,
+    public complete: () => void,
+    private eventStream: EventStream
+     ) {
+  }
+
+  next: (value: WorkEvent) => void = (value: WorkEvent) => {
+    this.nextValue(value, this)
+  }
+
   emit(workEvent: WorkEvent) {
-    this.eventStream?.emit(workEvent)
-  }
-  error: (err: any) => void = (err: any) => {}
-  complete: () => void = () => {}
-
-  register(eventStream: EventStream) {
-    this.eventStream = eventStream
-  }
+    this.eventStream.emit(workEvent)
+  }  
 }
 
 export class EventStream {
@@ -26,40 +30,46 @@ export class EventStream {
     this.subscribers.forEach(subscriber => subscriber.next(workEvent))
   }
 
-  register(eventSubscriber:EventSubscriber) {
-    eventSubscriber.register(this);
+  buildEventSubscriber(
+      next: (value: WorkEvent, eventSubscriber: EventSubscriber) => void,
+      error: (err: any) => void = (err: any) => {},
+      complete: () => void  = () => {}
+  ): EventSubscriber {
+    const eventSubscriber = new EventSubscriber(next, error,
+      complete, this);
     this.subscribers.push(eventSubscriber);
+    return eventSubscriber
   }
-
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventHubService {
-  sourceSream: EventStream;
+  public sourceSream: EventStream = new EventStream()
 
   init() {
     console.log("Event Hub Service initialized")
   }
 
   constructor() { 
-    this.sourceSream = new EventStream()
-  }
-
-  consoleLogSubscriber = new class extends EventSubscriber {
-    constructor() {
-      super();
-      this.next = (value: WorkEvent) => 
-        console.log(value)
+    this.sourceSream.buildEventSubscriber(
+      (value: WorkEvent, eventSubscriber: EventSubscriber) => 
+          console.log(value)
+      )
     }
-
-  }
-
 
   registerSource(observable: Observable<WorkEvent>) {
     observable.subscribe(
-      next => this.sourceSream?.emit(next)
+      next => this.sourceSream.emit(next)
     )
+  }
+
+  buildEventSubscriber(
+    next: (value: WorkEvent, eventSubscriber: EventSubscriber) => void,
+    error: (err: any) => void = (err: any) => {},
+    complete: () => void  = () => {}
+  ): EventSubscriber {
+    return this.sourceSream.buildEventSubscriber(next, error, complete)
   }
 }
