@@ -1,9 +1,12 @@
-import { Component, HostListener, ViewChild } from '@angular/core';
-import { filter, fromEvent, map } from 'rxjs';
+import { Component, ViewChild } from '@angular/core';
+import { filter, fromEvent, map, Observable } from 'rxjs';
+import { CardService } from './card.service';
 import { Card } from './card/card.component';
 import { AppEvent } from './card/event/app-event';
+import { CardEvent } from './card/event/card-event';
+import { CardServiceEvent } from './card/event/card-service-event';
 import { WorkEvent } from './card/event/work-event';
-import { EventHubService } from './event-hub.service';
+import { EventHubService, EventSubscriber } from './event-hub.service';
 
 export class Tab {
   name: String
@@ -22,37 +25,71 @@ export class Tab {
 export class AppComponent {
   @ViewChild('appElement') appElement: any; 
   
+  focusTab = new Tab("FOCUS", []);
   tabs = [
-    new Tab("FOCUS", []),
+    this.focusTab,    
     new Tab("DONE", [])
   ]
   isEditing: boolean = false
   newCardPosY = 0
   keyDown: any
+  newCardSubscriber: EventSubscriber | undefined
+  editCardSubscriber: EventSubscriber | undefined
+  keyboardEventObserver: Observable<WorkEvent> | undefined;
+  private editAnyCard = false;
 
-  constructor(private eventHubService: EventHubService) {}
+  constructor(private eventHubService:EventHubService,
+    private cardService:CardService) {
+      eventHubService.init();
+      cardService.init();
+    }
 
   ngOnInit(): void {
-    const keyboardEventObserver = fromEvent<KeyboardEvent>(document, 'keydown')
-                    .pipe(filter(e => e.code == 'KeyN'),
-                          map((event: KeyboardEvent) => new AppEvent(AppEvent.NEW_CARD)));
-    this.eventHubService.register(keyboardEventObserver)
+    const appComponent = this;
+    this.keyboardEventObserver = fromEvent<KeyboardEvent>(document, 'keydown')
+                    .pipe(filter(e => !appComponent.editAnyCard && e.code == 'KeyN'),
+                          map((event: KeyboardEvent) => new AppEvent(AppEvent.NEW_CARD, 0)));
+    this.eventHubService.registerSource(this.keyboardEventObserver)
+
+    this.newCardSubscriber = new class extends EventSubscriber {
+        constructor() {
+          super();
+          this.next = (workEvent:WorkEvent) => {
+            if (workEvent.type == CardServiceEvent.NEW_ID) {
+              const id = (workEvent as CardServiceEvent).id;
+              const newCard = new Card(id, "", "", "", 750, 20+50*appComponent.getNewCardPosY());
+              appComponent.tabs[0].cards.push(newCard);
+              this.emit(new AppEvent(AppEvent.EDIT_CARD, id));
+              appComponent.process(new CardEvent(CardEvent.EDIT, id));
+            }
+          }
+        }
+     };
+     this.eventHubService.sourceSream.register(this.newCardSubscriber)
   }
   
-
-
-  @HostListener('window:keydown', ['$event'])
-  onKeyDown(event:KeyboardEvent) {
-    if (event.code == 'KeyN') {
+  process(cardEvent:CardEvent) {
+    const appComponent = this;
+    if (cardEvent.type == CardEvent.EDIT && !this.editAnyCard) {
+      appComponent.tabs[0].cards.forEach((card:Card) => {
+        if (card.id == cardEvent.cardId) {
+          appComponent.editAnyCard = true;
+          card.edit = true;
+        }
+      });
     }
-  }
-  
-  createCard() {
-    this.tabs[0].cards.push(new Card(0, "", "", "", 750, 20+50*this.newCardPosY++));
-    this.newEvent(new Event("EDIT"));
+    if (cardEvent.type == CardEvent.SAVE) {
+      appComponent.tabs[0].cards.forEach((card:Card) => {
+        if (card.id == cardEvent.cardId) {
+          appComponent.editAnyCard = false;
+          card.edit = false;
+        }
+      });
+    }
+    this.editCardSubscriber?.emit(cardEvent);
   }
 
-  newEvent(event:WorkEvent) {
+  getNewCardPosY():number {
+    return this.newCardPosY++;
   }
 }
-

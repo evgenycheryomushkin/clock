@@ -1,8 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { CdkDragEnd, CdkDragStart, CdkDragMove, Point, CdkDragDrop } from '@angular/cdk/drag-drop';
-import { WorkEvent } from './event/work-event';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
+import { CdkDragEnd, CdkDragStart, Point } from '@angular/cdk/drag-drop';
 import { CardEvent } from './event/card-event';
-
+import { MatCard } from '@angular/material/card';
 
 export class Card {
   id: number
@@ -25,8 +24,7 @@ export class Card {
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss']
 })
-export class CardComponent implements OnInit {
-  @ViewChild('cardElement') cardElement: any; 
+export class CardComponent implements AfterViewInit {
   @Input() card: Card = new Card(0, "Test", "description", "", 0, 0)
   @Output() cardEvent = new EventEmitter<CardEvent>()
   dragEnabled: boolean = true
@@ -34,9 +32,8 @@ export class CardComponent implements OnInit {
   constructor() {
   }
 
-  ngOnInit(): void {
-    this.cardElement.changes.subscribe((changes: any) => 
-    console.log(changes));
+  ngAfterViewInit() {
+    
   }
 
 

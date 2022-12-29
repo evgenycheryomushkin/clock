@@ -1,38 +1,65 @@
 import { Injectable } from '@angular/core';
 import { WorkEvent } from './card/event/work-event';
 import { Observable, Observer } from 'rxjs';
+type Callback = (workEvent: WorkEvent) => void;
 
+export abstract class EventSubscriber implements Observer<WorkEvent> {
+  eventStream: EventStream | undefined
 
-export class EventStream extends Observable<WorkEvent> {
-  observer: Observer<WorkEvent> | undefined
-  constructor() {
-    super((observer: Observer<WorkEvent>) => {
-      this.observer = observer;
-    })
-  }
-
+  next: (value: WorkEvent) => void = (value: WorkEvent) => {};
+  
   emit(workEvent: WorkEvent) {
-    this.observer?.next(workEvent);
+    this.eventStream?.emit(workEvent)
   }
+  error: (err: any) => void = (err: any) => {}
+  complete: () => void = () => {}
+
+  register(eventStream: EventStream) {
+    this.eventStream = eventStream
+  }
+}
+
+export class EventStream {
+  subscribers: Array<EventSubscriber> = new Array()
+    
+  emit(workEvent: WorkEvent) {
+    this.subscribers.forEach(subscriber => subscriber.next(workEvent))
+  }
+
+  register(eventSubscriber:EventSubscriber) {
+    eventSubscriber.register(this);
+    this.subscribers.push(eventSubscriber);
+  }
+
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventHubService {
-  eventStream: EventStream | undefined;
+  sourceSream: EventStream;
 
-
-  constructor() { 
-    this.eventStream = new EventStream()
-    this.eventStream.subscribe(next => {
-      console.log(next)
-    })
+  init() {
+    console.log("Event Hub Service initialized")
   }
 
-  register(observable: Observable<WorkEvent>) {
+  constructor() { 
+    this.sourceSream = new EventStream()
+  }
+
+  consoleLogSubscriber = new class extends EventSubscriber {
+    constructor() {
+      super();
+      this.next = (value: WorkEvent) => 
+        console.log(value)
+    }
+
+  }
+
+
+  registerSource(observable: Observable<WorkEvent>) {
     observable.subscribe(
-      next => this.eventStream?.emit(next)
+      next => this.sourceSream?.emit(next)
     )
   }
 }
