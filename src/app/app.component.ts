@@ -58,9 +58,9 @@ export class AppComponent {
             if (workEvent.type == CardServiceEvent.NEW_ID) {
               const id = (workEvent as CardServiceEvent).id;
               const newCard = new Card(id, "", "", "", 750, 20+50*appComponent.getNewCardPosY());
+              newCard.edit = true;
+              appComponent.editAnyCard = true;
               appComponent.tabs[0].cards.push(newCard);
-              this.emit(new AppEvent(AppEvent.EDIT_CARD, id));
-              appComponent.process(new CardEvent(CardEvent.EDIT, id));
             }
           }
         }
