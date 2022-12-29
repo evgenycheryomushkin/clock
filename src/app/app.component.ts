@@ -35,7 +35,6 @@ export class AppComponent {
   newCardPosY = 0
   keyDown: any
   newCardSubscriber: EventSubscriber | undefined
-  editCardSubscriber: EventSubscriber | undefined
   keyboardEventObserver: Observable<WorkEvent> | undefined;
   private editAnyCard = false;
 
@@ -89,7 +88,12 @@ export class AppComponent {
         }
       });
     }
-    this.editCardSubscriber?.emit(cardEvent);
+    this.newCardSubscriber?.emit(cardEvent);
+  }
+
+  newCardClick() {
+    if (!this.editAnyCard) 
+      this.newCardSubscriber?.emit(new AppEvent(AppEvent.NEW_CARD, 0));
   }
 
   getNewCardPosY():number {
