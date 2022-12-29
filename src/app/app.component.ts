@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { filter, fromEvent, map, Observable } from 'rxjs';
+import { filter, fromEvent, ignoreElements, map, Observable, tap } from 'rxjs';
 import { CardService } from './card.service';
 import { Card } from './card/card.component';
 import { AppEvent } from './card/event/app-event';
@@ -49,7 +49,9 @@ export class AppComponent {
     const appComponent = this;
     this.keyboardEventObserver = fromEvent<KeyboardEvent>(document, 'keydown')
                     .pipe(filter(e => !appComponent.editAnyCard && e.code == 'KeyN'),
-                          map((event: KeyboardEvent) => new AppEvent(AppEvent.NEW_CARD, 0)));
+                          tap(e => e.preventDefault()),
+                          map((event: KeyboardEvent) => new AppEvent(AppEvent.NEW_CARD, 0))
+                          );
     this.eventHubService.registerSource(this.keyboardEventObserver)
 
     this.newCardSubscriber = new class extends EventSubscriber {
