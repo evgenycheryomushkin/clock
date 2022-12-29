@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { CdkDragEnd, CdkDragStart, Point } from '@angular/cdk/drag-drop';
 import { CardEvent } from './event/card-event';
 import { MatCard } from '@angular/material/card';
@@ -29,11 +29,13 @@ export class CardComponent implements AfterViewInit {
   @Output() cardEvent = new EventEmitter<CardEvent>()
   dragEnabled: boolean = true
 
+  @ViewChild("cardNameEdit", {static: false}) private cardNameEditRef: ElementRef<HTMLElement> | undefined;
+
   constructor() {
   }
 
   ngAfterViewInit() {
-    
+    this.cardNameEditRef?.nativeElement.focus();
   }
 
 
@@ -45,6 +47,7 @@ export class CardComponent implements AfterViewInit {
   dragEnded(event: CdkDragEnd) {
     this.card.position = event.source.getFreeDragPosition();
   }
+
 
   onEditClick() {
     this.cardEvent.emit(new CardEvent(CardEvent.EDIT, this.card.id));
