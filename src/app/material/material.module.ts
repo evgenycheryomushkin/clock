@@ -6,6 +6,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar'
 import {MatFormFieldModule} from '@angular/material/form-field'
 import {MatInputModule} from '@angular/material/input'
 import {MatTabsModule} from '@angular/material/tabs'
+import { MatIconModule } from '@angular/material/icon'
+
 
 const MaterialComponents = [
   MatCardModule,
@@ -14,7 +16,8 @@ const MaterialComponents = [
   MatProgressBarModule,
   MatFormFieldModule,
   MatInputModule,
-  MatTabsModule
+  MatTabsModule,
+  MatIconModule
 ]
 
 @NgModule({

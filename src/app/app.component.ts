@@ -8,6 +8,7 @@ import { CardServiceEvent } from './card/event/card-service-event';
 import { WorkEvent } from './card/event/work-event';
 import { EventHubService, EventSubscriber } from './event-hub.service';
 
+
 export class Tab {
   name: String
   cards: Array<Card>
