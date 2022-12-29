@@ -7,3 +7,11 @@
     right: 1em;
     bottom: 1em;
 }
+.backlog-background__div {
+    right: 0px;
+    height: 100%;
+    width: 40%;
+    top:0px;
+    background-color: rgba($color: aquamarine, $alpha: 0.3);
+    position: absolute;
+}
