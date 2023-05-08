@@ -7,12 +7,14 @@ import { MaterialModule } from './material/material.module';
 import { FormsModule } from '@angular/forms';
 import { CardComponent } from './card/card.component';
 import { ClockComponent } from './clock/clock/clock.component';
+import { ArrowComponent } from './clock/arrow/arrow.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CardComponent,
-    ClockComponent
+    ClockComponent,
+    ArrowComponent
   ],
   imports: [
     BrowserModule,

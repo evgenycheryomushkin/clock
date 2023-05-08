@@ -34,12 +34,12 @@ export class AppComponent {
   isEditing: boolean = false
   newCardPosY = 0
   keyDown: any
-  newCardSubscriber: EventSubscriber | undefined
-  keyboardEventObserver: Observable<WorkEvent> | undefined;
+  newCardSubscriber: EventSubscriber
+  keyboardEventObserver: Observable<WorkEvent>
   private editAnyCard = false;
 
   constructor(private eventHubService:EventHubService,
-    private cardService:CardService) {
+    cardService:CardService) {
       eventHubService.init();
       cardService.init();
     }
@@ -49,25 +49,21 @@ export class AppComponent {
     this.keyboardEventObserver = fromEvent<KeyboardEvent>(document, 'keydown')
                     .pipe(filter(e => !appComponent.editAnyCard && e.code == 'KeyN'),
                           tap(e => e.preventDefault()),
-                          map((event: KeyboardEvent) => new AppEvent(AppEvent.NEW_CARD, 0))
+                          map(() => new AppEvent(AppEvent.NEW_CARD, 0))
                           );
     this.eventHubService.registerSource(this.keyboardEventObserver)
 
-    this.newCardSubscriber = new class extends EventSubscriber {
-        constructor() {
-          super();
-          this.next = (workEvent:WorkEvent) => {
-            if (workEvent.type == CardServiceEvent.NEW_ID) {
-              const id = (workEvent as CardServiceEvent).id;
-              const newCard = new Card(id, "", "", "", 750, 20+50*appComponent.getNewCardPosY());
-              newCard.edit = true;
-              appComponent.editAnyCard = true;
-              appComponent.tabs[0].cards.push(newCard);
-            }
-          }
+    this.newCardSubscriber = this.eventHubService.buildEventSubscriber(
+      (workEvent:WorkEvent) => {
+        if (workEvent.type == CardServiceEvent.NEW_ID) {
+          const id = (workEvent as CardServiceEvent).id;
+          const newCard = new Card(id, "", "", "", 750, 20+50*appComponent.getNewCardPosY());
+          newCard.edit = true;
+          appComponent.editAnyCard = true;
+          appComponent.tabs[0].cards.push(newCard);
         }
-     };
-     this.eventHubService.sourceSream.register(this.newCardSubscriber)
+      }
+    )
   }
   
   process(cardEvent:CardEvent) {
@@ -88,12 +84,12 @@ export class AppComponent {
         }
       });
     }
-    this.newCardSubscriber?.emit(cardEvent);
+    this.newCardSubscriber.emit(cardEvent);
   }
 
   newCardClick() {
     if (!this.editAnyCard) 
-      this.newCardSubscriber?.emit(new AppEvent(AppEvent.NEW_CARD, 0));
+      this.newCardSubscriber.emit(new AppEvent(AppEvent.NEW_CARD, 0));
   }
 
   getNewCardPosY():number {

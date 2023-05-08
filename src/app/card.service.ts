@@ -15,18 +15,14 @@ export class CardService {
 
   newCardSubscriber: EventSubscriber | undefined
 
-  constructor(private eventHubService: EventHubService) { 
+  constructor(eventHubService: EventHubService) { 
     const cardService = this;
-    this.newCardSubscriber = new class extends EventSubscriber {
-      constructor() {
-        super();
-        this.next = (workEvent: WorkEvent) => {
-            if (workEvent.type == AppEvent.NEW_CARD) 
-              this.emit(cardService.newCard())
-        }
-    }
-    }    
-    eventHubService.sourceSream.register(this.newCardSubscriber)
+    eventHubService.sourceSream.buildEventSubscriber(
+      (workEvent: WorkEvent, eventSubscriber: EventSubscriber) => {
+        if (workEvent.type == AppEvent.NEW_CARD) 
+          eventSubscriber.emit(cardService.newCard())
+      }
+    )
   }
   
   newCard(): CardServiceEvent {
