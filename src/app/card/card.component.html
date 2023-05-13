@@ -1,6 +1,6 @@
 <mat-card #cardElement class="card" 
 cdkDrag 
-(cdkDragStarted)="dragStarted($event)"
+(cdkDragStarted)="dragStarted()"
 (cdkDragEnded)="dragEnded($event)"
 [ngClass]="{'mat-elevation-z8' : dragging}"
 [cdkDragDisabled]="!dragEnabled"
@@ -8,11 +8,11 @@ cdkDrag
     <mat-card-title>
       <mat-form-field *ngIf="editing">
         <mat-label>Header</mat-label>
-        <input matInput #cardNameEdit
-        [(ngModel)]="card.name"
+        <input matInput #cardHeaderEdit
+        [(ngModel)]="card.header"
         >
       </mat-form-field>
-      {{ card.editing ? "" : card.name }}
+      {{ editing ? "" : card.header }}
     </mat-card-title>
     <mat-card-subtitle>
       <mat-form-field *ngIf="editing">
@@ -22,7 +22,7 @@ cdkDrag
         [(ngModel)]="card.description"
         ></textarea>
       </mat-form-field>
-      {{ card.editing ? "" : card.description }}
+      {{ editing ? "" : card.description }}
     </mat-card-subtitle>
     <mat-card-actions align="end">
       <!-- mat-icon-button -->

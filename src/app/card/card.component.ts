@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
-import { CdkDragEnd, Point } from '@angular/cdk/drag-drop';
+import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { EventHubService } from '../event-hub.service';
 import { WorkEvent } from '../work-event';
 import { Card } from '../card';
@@ -17,20 +17,20 @@ export class CardComponent implements AfterViewInit {
   // true when card is dragged
   dragging = false
 
-  // flag about that card can be edited
+  // flag that card can be edited
   editEnabled = true
 
   // flag that switch interface into edit mode
   editing = false
 
-  @ViewChild("cardNameEdit", {static: false}) private cardNameEditRef: ElementRef<HTMLElement> | undefined;
+  @ViewChild("cardHeaderEdit", {static: false}) private cardHeaderEditRef: ElementRef<HTMLElement> | undefined;
 
   constructor(private eventHub: EventHubService) {
   }
 
   ngAfterViewInit() {
     const cardComponent = this
-    this.cardNameEditRef?.nativeElement.focus();
+    this.cardHeaderEditRef?.nativeElement.focus();
     this.buildEditProcessor(cardComponent)
     this.buildSaveProcessor(cardComponent)
   }

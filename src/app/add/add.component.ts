@@ -1,8 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { EventHubService, EventProcessor } from '../event-hub.service';
+import { Component } from '@angular/core';
+import { EventHubService } from '../event-hub.service';
 import { WorkEvent } from '../work-event';
-import { CardServiceEvent } from '../card/event/card-service-event';
-import { Card } from '../card/card.component';
 
 @Component({
   selector: 'app-add',

@@ -42,9 +42,9 @@ export class EventHubService {
   }
 
   constructor() { 
-    this.buildProcessor(RegExp("*"),
-      (value: WorkEvent) => 
-          console.log(value)
+    this.buildProcessor(RegExp(".*"),
+      (event: WorkEvent) => 
+          console.log(event.type, event)
       )
     }
 
