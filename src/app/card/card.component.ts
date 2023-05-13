@@ -1,22 +1,8 @@
-import { Component, Input, Output, EventEmitter, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
-import { CdkDragEnd, CdkDragStart, Point } from '@angular/cdk/drag-drop';
-import { CardEvent } from './event/card-event';
-
-export class Card {
-  id: number
-  name: String
-  description: String
-  time: String
-  position: Point
-  edit: boolean = false
-  constructor(id: number, name: String, description: String, time:String, x: number, y: number) {
-    this.id = id;
-    this.name = name;
-    this.description = description;
-    this.time = time;
-    this.position = {x:x, y:y};
-  }
-}
+import { Component, Input, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { CdkDragEnd } from '@angular/cdk/drag-drop';
+import { EventHubService } from '../event-hub.service';
+import { WorkEvent } from '../work-event';
+import { Card } from '../card';
 
 @Component({
   selector: 'app-card',
@@ -24,37 +10,90 @@ export class Card {
   styleUrls: ['./card.component.scss']
 })
 export class CardComponent implements AfterViewInit {
-  @Input() card: Card = new Card(0, "Test", "description", "", 0, 0)
-  @Output() cardEvent = new EventEmitter<CardEvent>()
-  dragEnabled: boolean = true
+  @Input() card: Card
+  
+  dragEnabled = true
 
-  @ViewChild("cardNameEdit", {static: false}) private cardNameEditRef: ElementRef<HTMLElement> | undefined;
+  // true when card is dragged
+  dragging = false
 
-  constructor() {
+  // flag that card can be edited
+  editEnabled = true
+
+  // flag that switch interface into edit mode
+  editing = false
+
+  @ViewChild("cardHeaderEdit", {static: false}) private cardHeaderEditRef: ElementRef<HTMLElement> | undefined;
+
+  constructor(private eventHub: EventHubService) {
   }
 
   ngAfterViewInit() {
-    this.cardNameEditRef?.nativeElement.focus();
+    const cardComponent = this
+    this.cardHeaderEditRef?.nativeElement.focus();
+    this.buildEditProcessor(cardComponent)
+    this.buildSaveProcessor(cardComponent)
   }
 
-
-  dragStarted(event: CdkDragStart) {
-    this.cardEvent.emit(new CardEvent(CardEvent.DRAG_START, this.card.id))
+  buildSaveProcessor(cardComponent: CardComponent) {
+    this.eventHub.buildProcessor(
+      WorkEvent.EDIT,
+      (event: WorkEvent) => {
+        if (event.data.get(WorkEvent.ID) == cardComponent.card.id) {
+          cardComponent.editing = true
+          cardComponent.dragEnabled = false
+        } 
+        cardComponent.editEnabled = false
+      }
+    )
   }
 
+  buildEditProcessor(cardComponent: CardComponent) {
+    this.eventHub.buildProcessor(
+      WorkEvent.SAVE,
+      (event: WorkEvent) => {
+        if (event.data.get(WorkEvent.ID) == cardComponent.card.id) {
+          cardComponent.editing = false
+          cardComponent.dragEnabled = true
+        } 
+        cardComponent.editEnabled = true
+      }
+    )
+  }
+
+  dragStarted() {
+    this.dragging = true
+    const workEvent = new WorkEvent(WorkEvent.DRAG_START, WorkEvent.ID, this.card.id)
+    this.eventHub.emit(workEvent)
+  }
 
   dragEnded(event: CdkDragEnd) {
+    this.dragging = false
+    // todo check that this position is working
     this.card.position = event.source.getFreeDragPosition();
+    this.eventHub.emit(
+      new WorkEvent(
+          WorkEvent.DRAG_END, 
+          WorkEvent.ID, this.card.id, 
+          WorkEvent.POS, this.card.position))
   }
-
 
   onEditClick() {
-    this.cardEvent.emit(new CardEvent(CardEvent.EDIT, this.card.id));
+    if (this.editEnabled)
+      this.eventHub.emit(
+        new WorkEvent(WorkEvent.EDIT, 
+          WorkEvent.ID, this.card.id))
   }
   onSaveClick() {
-    this.cardEvent.emit(new CardEvent(CardEvent.SAVE, this.card.id));
+    this.eventHub.emit(new WorkEvent(
+      WorkEvent.SAVE, 
+      WorkEvent.ID, this.card.id, 
+      WorkEvent.HEADER, this.card.header, 
+      WorkEvent.DESCRIPTION, this.card.description))
   }
   onDoneClick() {
-    this.cardEvent.emit(new CardEvent(CardEvent.DONE, this.card.id));
+    this.eventHub.emit(
+      new WorkEvent(WorkEvent.DONE, 
+        WorkEvent.ID, this.card.id))
   }
 }

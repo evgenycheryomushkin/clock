@@ -1,22 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
-import { filter, fromEvent, ignoreElements, map, Observable, tap } from 'rxjs';
+import { filter, fromEvent, map, Observable, tap } from 'rxjs';
 import { CardService } from './card.service';
-import { Card } from './card/card.component';
-import { AppEvent } from './card/event/app-event';
-import { CardEvent } from './card/event/card-event';
-import { CardServiceEvent } from './card/event/card-service-event';
-import { WorkEvent } from './card/event/work-event';
-import { EventHubService, EventSubscriber } from './event-hub.service';
+import { WorkEvent } from './work-event';
+import { EventHubService } from './event-hub.service';
+import { EventProcessor } from './event-processor';
+import { Card } from './card';
 
-
-export class Tab {
-  name: String
-  cards: Array<Card>
-  constructor(name: String, cards: Array<Card>) {
-    this.name = name;
-    this.cards = cards;
-  }
-}
 
 @Component({
   selector: 'app-root',
@@ -24,75 +13,39 @@ export class Tab {
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  @ViewChild('appElement') appElement: any; 
-  
-  focusTab = new Tab("FOCUS", []);
-  tabs = [
-    this.focusTab,    
-    new Tab("DONE", [])
-  ]
-  isEditing: boolean = false
-  newCardPosY = 0
-  keyDown: any
-  newCardSubscriber: EventSubscriber
-  keyboardEventObserver: Observable<WorkEvent>
-  private editAnyCard = false;
+  @ViewChild('appElement') appElement: any;
 
-  constructor(private eventHubService:EventHubService,
-    cardService:CardService) {
-      eventHubService.init();
-      cardService.init();
-    }
+  cards = new Array<Card>()
+
+  keyboardEventObserver: Observable<WorkEvent>
+
+  constructor(private eventHubService: EventHubService,
+    cardService: CardService) {
+    eventHubService.init();
+    cardService.init();
+  }
+
+  y = 20
+  getNewY() {
+    return this.y += 20
+  }
 
   ngOnInit(): void {
     const appComponent = this;
     this.keyboardEventObserver = fromEvent<KeyboardEvent>(document, 'keydown')
-                    .pipe(filter(e => !appComponent.editAnyCard && e.code == 'KeyN'),
-                          tap(e => e.preventDefault()),
-                          map(() => new AppEvent(AppEvent.NEW_CARD, 0))
-                          );
+      .pipe(filter(e => e.code == 'KeyN'),
+        tap(e => e.preventDefault()),
+        map(() => new WorkEvent(WorkEvent.NEW_CARD))
+      );
     this.eventHubService.registerSource(this.keyboardEventObserver)
 
-    this.newCardSubscriber = this.eventHubService.buildEventSubscriber(
-      (workEvent:WorkEvent) => {
-        if (workEvent.type == CardServiceEvent.NEW_ID) {
-          const id = (workEvent as CardServiceEvent).id;
-          const newCard = new Card(id, "", "", "", 750, 20+50*appComponent.getNewCardPosY());
-          newCard.edit = true;
-          appComponent.editAnyCard = true;
-          appComponent.tabs[0].cards.push(newCard);
-        }
-      }
-    )
-  }
-  
-  process(cardEvent:CardEvent) {
-    const appComponent = this;
-    if (cardEvent.type == CardEvent.EDIT && !this.editAnyCard) {
-      appComponent.tabs[0].cards.forEach((card:Card) => {
-        if (card.id == cardEvent.cardId) {
-          appComponent.editAnyCard = true;
-          card.edit = true;
-        }
-      });
-    }
-    if (cardEvent.type == CardEvent.SAVE) {
-      appComponent.tabs[0].cards.forEach((card:Card) => {
-        if (card.id == cardEvent.cardId) {
-          appComponent.editAnyCard = false;
-          card.edit = false;
-        }
-      });
-    }
-    this.newCardSubscriber.emit(cardEvent);
-  }
-
-  newCardClick() {
-    if (!this.editAnyCard) 
-      this.newCardSubscriber.emit(new AppEvent(AppEvent.NEW_CARD, 0));
-  }
-
-  getNewCardPosY():number {
-    return this.newCardPosY++;
+    this.eventHubService.buildProcessor(WorkEvent.NEW_WITH_ID,
+      (event: WorkEvent, eventProcessor: EventProcessor) => {
+        const id = event.data.get(WorkEvent.ID)
+        appComponent.cards.push(new Card(
+          id, "", "", (new Date()).toString(), { x: 600, y: appComponent.getNewY() }
+        ))
+        eventProcessor.emit(new WorkEvent(WorkEvent.EDIT, WorkEvent.ID, id))
+      })
   }
 }
