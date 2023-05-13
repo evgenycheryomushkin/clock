@@ -1,44 +1,33 @@
 import { Injectable } from '@angular/core';
-import { WorkEvent } from './card/event/work-event';
-import { Observable, Observer } from 'rxjs';
-type Callback = (workEvent: WorkEvent) => void;
-
-export class EventSubscriber implements Observer<WorkEvent> {
-
-  constructor(
-    private nextValue: (value: WorkEvent, 
-      eventSubscriber: EventSubscriber) => void,
-    public error: (err: any) => void,
-    public complete: () => void,
-    private eventStream: EventStream
-     ) {
-  }
-
-  next: (value: WorkEvent) => void = (value: WorkEvent) => {
-    this.nextValue(value, this)
-  }
-
-  emit(workEvent: WorkEvent) {
-    this.eventStream.emit(workEvent)
-  }  
-}
+import { WorkEvent } from './work-event';
+import { Observable } from 'rxjs';
+import { EventProcessor } from './event-processor';
 
 export class EventStream {
-  subscribers: Array<EventSubscriber> = new Array()
+  private processors: Map<RegExp,Array<EventProcessor>> = new Map()
     
   emit(workEvent: WorkEvent) {
-    this.subscribers.forEach(subscriber => subscriber.next(workEvent))
+    this.processors.forEach((processorList: EventProcessor[], key: RegExp) => {
+      if (key.test(workEvent.type)) 
+        processorList.forEach(processor => processor.next(workEvent))
+    })
   }
 
-  buildEventSubscriber(
-      next: (value: WorkEvent, eventSubscriber: EventSubscriber) => void,
-      error: (err: any) => void = (err: any) => {},
+  buildEventProcessor(
+      eventType: string|RegExp,
+      next: (value: WorkEvent, eventProcessor: EventProcessor) => void,
+      error: (err: any) => void = () => {},
       complete: () => void  = () => {}
-  ): EventSubscriber {
-    const eventSubscriber = new EventSubscriber(next, error,
-      complete, this);
-    this.subscribers.push(eventSubscriber);
-    return eventSubscriber
+  ): EventProcessor {
+    if (eventType instanceof RegExp) {
+      const eventProcessor = new EventProcessor(next, error,
+        complete, this);
+      if (this.processors.get(eventType) == null) this.processors.set(eventType, new Array<EventProcessor>())
+      this.processors.get(eventType)?.push(eventProcessor);
+      return eventProcessor    
+    } else
+    return this.buildEventProcessor(
+      new RegExp("^"+eventType+"$"), next, error, complete)
   }
 }
 
@@ -53,8 +42,8 @@ export class EventHubService {
   }
 
   constructor() { 
-    this.sourceSream.buildEventSubscriber(
-      (value: WorkEvent, eventSubscriber: EventSubscriber) => 
+    this.buildProcessor(RegExp("*"),
+      (value: WorkEvent) => 
           console.log(value)
       )
     }
@@ -65,11 +54,16 @@ export class EventHubService {
     )
   }
 
-  buildEventSubscriber(
-    next: (value: WorkEvent, eventSubscriber: EventSubscriber) => void,
-    error: (err: any) => void = (err: any) => {},
+  emit(workEvent: WorkEvent) {
+    this.sourceSream.emit(workEvent)
+  }
+
+  buildProcessor(
+    eventType: string|RegExp,
+    next: (event: WorkEvent, eventProcessor: EventProcessor) => void,
+    error: (err: any) => void = () => {},
     complete: () => void  = () => {}
-  ): EventSubscriber {
-    return this.sourceSream.buildEventSubscriber(next, error, complete)
+  ): EventProcessor {
+    return this.sourceSream.buildEventProcessor(eventType, next, error, complete)
   }
 }

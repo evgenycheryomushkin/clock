@@ -8,13 +8,15 @@ import { FormsModule } from '@angular/forms';
 import { CardComponent } from './card/card.component';
 import { ClockComponent } from './clock/clock/clock.component';
 import { ArrowComponent } from './clock/arrow/arrow.component';
+import { AddComponent } from './add/add.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CardComponent,
     ClockComponent,
-    ArrowComponent
+    ArrowComponent,
+    AddComponent
   ],
   imports: [
     BrowserModule,
