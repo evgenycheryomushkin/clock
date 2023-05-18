@@ -23,16 +23,16 @@ export class CardComponent implements AfterViewInit {
   // flag that switch interface into edit mode
   editing = false
 
-  @ViewChild("cardHeaderEdit", {static: false}) private cardHeaderEditRef: ElementRef<HTMLElement> | undefined;
+  @ViewChild("cardHeaderEdit", {static: false}) private cardHeaderEditRef: ElementRef<HTMLElement>
 
   constructor(private eventHub: EventHubService) {
   }
 
   ngAfterViewInit() {
     const cardComponent = this
-    this.cardHeaderEditRef?.nativeElement.focus();
     this.buildEditProcessor(cardComponent)
     this.buildSaveProcessor(cardComponent)
+    this.eventHub.emit(new WorkEvent(WorkEvent.EDIT, WorkEvent.ID, this.card.id))
   }
 
   buildSaveProcessor(cardComponent: CardComponent) {
@@ -42,6 +42,7 @@ export class CardComponent implements AfterViewInit {
         if (event.data.get(WorkEvent.ID) == cardComponent.card.id) {
           cardComponent.editing = true
           cardComponent.dragEnabled = false
+          cardComponent.cardHeaderEditRef?.nativeElement.focus();
         } 
         cardComponent.editEnabled = false
       }

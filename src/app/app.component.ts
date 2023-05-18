@@ -30,22 +30,37 @@ export class AppComponent {
     return this.y += 20
   }
 
+
+  newCardEnabled = true
   ngOnInit(): void {
     const appComponent = this;
     this.keyboardEventObserver = fromEvent<KeyboardEvent>(document, 'keydown')
-      .pipe(filter(e => e.code == 'KeyN'),
+      .pipe(filter(e => e.code == 'KeyN' && appComponent.newCardEnabled),
         tap(e => e.preventDefault()),
         map(() => new WorkEvent(WorkEvent.NEW_CARD))
       );
     this.eventHubService.registerSource(this.keyboardEventObserver)
 
-    this.eventHubService.buildProcessor(WorkEvent.NEW_WITH_ID,
-      (event: WorkEvent, eventProcessor: EventProcessor) => {
+    this.buildNewIdProcessor(appComponent)
+    this.buildEditSaveProcessors(appComponent)
+  }
+  buildEditSaveProcessors(appComponent: AppComponent) {
+    appComponent.eventHubService.buildProcessor(WorkEvent.EDIT,
+      () => {
+        appComponent.newCardEnabled = false
+      })
+    appComponent.eventHubService.buildProcessor(WorkEvent.SAVE,
+        () => {
+          appComponent.newCardEnabled = true
+        })
+  }
+  buildNewIdProcessor(appComponent: AppComponent) {
+    appComponent.eventHubService.buildProcessor(WorkEvent.NEW_WITH_ID,
+      (event: WorkEvent) => {
         const id = event.data.get(WorkEvent.ID)
         appComponent.cards.push(new Card(
           id, "", "", (new Date()).toString(), { x: 600, y: appComponent.getNewY() }
         ))
-        eventProcessor.emit(new WorkEvent(WorkEvent.EDIT, WorkEvent.ID, id))
       })
   }
 }

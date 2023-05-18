@@ -13,10 +13,11 @@ export class ArrowComponent implements AfterViewInit {
   @Input() y:number;
   @Input() d:number;
   @Input() imageName:string;
-  @Input() interval: number;
+  @Input() multiplier: number;
+  @Input() divider: number;
   private context: CanvasRenderingContext2D;
   private arrowImage: HTMLImageElement;
-  private time: Date;
+  private time: number;
   h: number;
   w: number;
   top: string;
@@ -44,11 +45,11 @@ export class ArrowComponent implements AfterViewInit {
     app.timer(app)
   }
 
-  async drawArrow(app:ArrowComponent, time: Date) {
+  async drawArrow(app:ArrowComponent, angle: number) {
         app.context.save()
         app.context.clearRect(0, 0, app.context.canvas.width, app.context.canvas.height)
         app.context.translate(app.h + app.d ,app.h + app.d)    
-        app.context.rotate(Math.PI / 180 * time.getSeconds() * app.interval)
+        app.context.rotate(Math.PI / 180 * angle)
         app.context.drawImage(app.arrowImage, -app.w / 2, 
           -app.h-app.d)
         app.context.restore()
@@ -56,9 +57,9 @@ export class ArrowComponent implements AfterViewInit {
 
   async timer(app:ArrowComponent) {
     setInterval(() => {
-      const now = new Date();
-      if (app.time == null || app.time.getSeconds() != now.getSeconds())
-        app.drawArrow(app, now)
+      const now = Math.floor(Date.now() / 1000.0);
+      if (app.time == null || app.time != now)
+        app.drawArrow(app, Math.floor(now/this.divider)*this.multiplier % 360)
       app.time = now
     }, 50)
   }
