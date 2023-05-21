@@ -2,9 +2,8 @@
   <div class="clock__div">
     <app-clock></app-clock>
   </div>
-  <div class="backlog-background__div">
-  </div>
   <app-card *ngFor="let card of cards" 
-    [card]="card"></app-card>
-  <app-add></app-add>
-  </div>
+    [card]="card">
+  </app-card>
+</div>
+<app-add></app-add>
