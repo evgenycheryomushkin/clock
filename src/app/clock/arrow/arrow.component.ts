@@ -13,15 +13,14 @@ export class ArrowComponent implements AfterViewInit {
   @Input() y:number;
   @Input() d:number;
   @Input() imageName:string;
-  @Input() multiplier: number;
-  @Input() divider: number;
+  @Input() arrowType: string;
   private context: CanvasRenderingContext2D;
   private arrowImage: HTMLImageElement;
-  private time: number;
   h: number;
   w: number;
   top: string;
   left: string;
+  angle: number;
 
   ngAfterViewInit(): void {
     this.context = this.arrowCanvas.nativeElement.getContext('2d');
@@ -57,10 +56,20 @@ export class ArrowComponent implements AfterViewInit {
 
   async timer(app:ArrowComponent) {
     setInterval(() => {
-      const now = Math.floor(Date.now() / 1000.0);
-      if (app.time == null || app.time != now)
-        app.drawArrow(app, Math.floor(now/this.divider)*this.multiplier % 360)
-      app.time = now
+      const nowAngle = this.calcAngle(new Date())
+      if (app.angle == null || app.angle != nowAngle)
+        app.drawArrow(app, nowAngle)
+      app.angle = nowAngle
     }, 50)
+  }
+  
+  calcAngle(date: Date) {
+    if (this.arrowType == "hour") {
+      return Math.floor((date.getHours()%12)*30+date.getMinutes()/2);
+    } else if (this.arrowType == "minute") {
+      return date.getMinutes()*6;
+    } else {
+      return date.getSeconds()*6;
+    }
   }
 }

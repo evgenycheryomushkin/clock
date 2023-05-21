@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, Input, ViewChild, AfterViewInit, ElementRef, AfterViewChecked } from '@angular/core';
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { EventHubService } from '../event-hub.service';
 import { WorkEvent } from '../work-event';
@@ -28,6 +28,14 @@ export class CardComponent implements AfterViewInit {
   constructor(private eventHub: EventHubService) {
   }
 
+  firstTimeAfterEditClick = false
+  ngAfterViewChecked(): void {
+    if (this.firstTimeAfterEditClick) {
+      this.cardHeaderEditRef.nativeElement.focus();
+      this.firstTimeAfterEditClick = false
+    }
+  }
+
   ngAfterViewInit() {
     const cardComponent = this
     this.buildEditProcessor(cardComponent)
@@ -42,7 +50,7 @@ export class CardComponent implements AfterViewInit {
         if (event.data.get(WorkEvent.ID) == cardComponent.card.id) {
           cardComponent.editing = true
           cardComponent.dragEnabled = false
-          cardComponent.cardHeaderEditRef?.nativeElement.focus();
+          cardComponent.firstTimeAfterEditClick = true
         } 
         cardComponent.editEnabled = false
       }
