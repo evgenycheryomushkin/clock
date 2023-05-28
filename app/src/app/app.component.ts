@@ -57,7 +57,7 @@ export class AppComponent {
   buildNewIdProcessor(appComponent: AppComponent) {
     appComponent.eventHubService.buildProcessor(WorkEvent.NEW_WITH_ID,
       (event: WorkEvent) => {
-        const id = event.data.get(WorkEvent.ID)
+        const id = +event.data.get(WorkEvent.ID)
         appComponent.cards.push(new Card(
           id, "", "", (new Date()).toString(), { x: 600, y: appComponent.getNewY() }
         ))

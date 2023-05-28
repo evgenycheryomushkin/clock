@@ -28,29 +28,23 @@ export class CardComponent implements AfterViewInit {
   constructor(private eventHub: EventHubService) {
   }
 
-  firstTimeAfterEditClick = false
-  ngAfterViewChecked(): void {
-    if (this.firstTimeAfterEditClick) {
-      this.cardHeaderEditRef.nativeElement.focus();
-      this.firstTimeAfterEditClick = false
-    }
-  }
-
   ngAfterViewInit() {
     const cardComponent = this
     this.buildEditProcessor(cardComponent)
     this.buildSaveProcessor(cardComponent)
-    this.eventHub.emit(new WorkEvent(WorkEvent.EDIT, WorkEvent.ID, this.card.id))
+    this.eventHub.emit(new WorkEvent(WorkEvent.EDIT, WorkEvent.ID, ""+this.card.id))
   }
 
   buildSaveProcessor(cardComponent: CardComponent) {
     this.eventHub.buildProcessor(
       WorkEvent.EDIT,
       (event: WorkEvent) => {
-        if (event.data.get(WorkEvent.ID) == cardComponent.card.id) {
+        if (+event.data.get(WorkEvent.ID) == cardComponent.card.id) {
           cardComponent.editing = true
           cardComponent.dragEnabled = false
-          cardComponent.firstTimeAfterEditClick = true
+          setTimeout(() => {
+            cardComponent.cardHeaderEditRef.nativeElement.focus();
+          }, 100);
         } 
         cardComponent.editEnabled = false
       }
@@ -61,7 +55,7 @@ export class CardComponent implements AfterViewInit {
     this.eventHub.buildProcessor(
       WorkEvent.SAVE,
       (event: WorkEvent) => {
-        if (event.data.get(WorkEvent.ID) == cardComponent.card.id) {
+        if (+event.data.get(WorkEvent.ID) == cardComponent.card.id) {
           cardComponent.editing = false
           cardComponent.dragEnabled = true
         } 
@@ -72,7 +66,7 @@ export class CardComponent implements AfterViewInit {
 
   dragStarted() {
     this.dragging = true
-    const workEvent = new WorkEvent(WorkEvent.DRAG_START, WorkEvent.ID, this.card.id)
+    const workEvent = new WorkEvent(WorkEvent.DRAG_START, WorkEvent.ID, ""+this.card.id)
     this.eventHub.emit(workEvent)
   }
 
@@ -83,26 +77,26 @@ export class CardComponent implements AfterViewInit {
     this.eventHub.emit(
       new WorkEvent(
           WorkEvent.DRAG_END, 
-          WorkEvent.ID, this.card.id, 
-          WorkEvent.POS, this.card.position))
+          WorkEvent.ID, ""+this.card.id, 
+          WorkEvent.POS, ""+this.card.position))
   }
 
   onEditClick() {
     if (this.editEnabled)
       this.eventHub.emit(
         new WorkEvent(WorkEvent.EDIT, 
-          WorkEvent.ID, this.card.id))
+          WorkEvent.ID, ""+this.card.id))
   }
   onSaveClick() {
     this.eventHub.emit(new WorkEvent(
       WorkEvent.SAVE, 
-      WorkEvent.ID, this.card.id, 
-      WorkEvent.HEADER, this.card.header, 
-      WorkEvent.DESCRIPTION, this.card.description))
+      WorkEvent.ID, ""+this.card.id, 
+      WorkEvent.HEADER, ""+this.card.header, 
+      WorkEvent.DESCRIPTION, ""+this.card.description))
   }
   onDoneClick() {
     this.eventHub.emit(
       new WorkEvent(WorkEvent.DONE, 
-        WorkEvent.ID, this.card.id))
+        WorkEvent.ID, ""+this.card.id))
   }
 }

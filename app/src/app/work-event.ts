@@ -1,6 +1,10 @@
+import { TSMap } from "typescript-map";
+
 export class WorkEvent {
 
-  public data: Map<string, any>;
+  public type: string;
+  public dateTime: Date;
+  public data: TSMap<string, string>;
 
   static EDIT        = "EDIT_EVENT";
   static SAVE        = "SAVE_EVENT";
@@ -14,12 +18,15 @@ export class WorkEvent {
   static POS         = "POS_FIELD";
   static HEADER      = "HEADER_FIELD";
   static DESCRIPTION = "DESCRIPTION_FIELD";
+  static KEY         = "KEY_FIELD";
   
   constructor(
-    public type: string,
-    ...args: any[]
+    type: string,
+    ...args: string[]
     ) {
-        this.data = new Map<string, any>()
+        this.type = type
+        this.dateTime = new Date()
+        this.data = new TSMap<string, any>()
         for(var i = 0; i < args.length; i +=2) {
             this.data.set(args[i], args[i+1])
         }
