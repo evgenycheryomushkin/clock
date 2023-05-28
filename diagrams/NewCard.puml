@@ -1,0 +1,39 @@
+@startditaa NewCard
+ /---\             +------------------+
+ |+  |add.component| allow.service    |
+ |   |-------------+   new_allowed    |
+ \---/             |    {c}           |
+                   +---------+--------+
+                             |
+                  +----------+
+                  |
+                  | ALLOW_ADD_EVENT
+                  v
+         +------------------+
+         |card.service      | 
+         +------------------+
+                 |
+                 |  CARD_GET_ID_EVENT 
+                 v
+         +------------------+
+         |backend.service   | enrich with key from routing service
+         +------------------+        
+                 |
+                 | BACKEND_NEW_ID_EVENT(ID)
+                 v
+         +------------------+
+         |card.service      | 
+         |new Card(id)      |
+         +------------------+        
+                 |
+                 | 
+                 v
+        +-------------------+
+        |card.component     | constructor
+        +-------------------+
+                |
+                | NEW_EDIT_EVENT
+                v
+
+@endditaa
+

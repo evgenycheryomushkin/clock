@@ -1,0 +1,25 @@
+@startditaa Backend
+                                              
+    +--------+                        +--------+                        +--------+
+    |frontend|                        |frontend|                        |frontend|
+    +--------+                        +--------+                        +--------+
+        |
+        |UI_START_EVENT                   |UI_START_EVENT                   |UI_START_EVENT
+        |no key                           |right existing key               |not existing key
+        v                                 v                                 v
+ +-------------+                   +-------------+                   +-------------+
+ |key validator| (RichMap)         |key validator| (RichMap)         |key validator| (RichMap)
+ +-------------+                   +-------------+                   +-------------+
+        |NEW_KEY(key)                     |EXISTING_KEY(key)                |
+        v                                 v                                 |
++----------------+                +----------------+                        |
+| flat map       |register key    | flat map       |login                   |
+|                |                |                |                        |
++----------------+                +----------------+                        |
+        |FLINK_LOGIN_EVENT(key)           |FLINK_LOGIN_EVENT(key)           |FLINK_ERROR_EVENT(key)
+        v                                 v                                 v
+    +--------+                        +--------+                        +--------+
+    |frontend|                        |frontend|                        |frontend|
+    +--------+                        +--------+                        +--------+
+
+@endditaa

@@ -1,0 +1,18 @@
+@startditaa SaveCard
+ +---------------+ 
+ |card.component | 
+ +---------------+
+         | 
+         | SAVE_EVENT(card info)
+         v
+ +---------------+
+ |backend.service|
+ +---------------+
+         |
+         | BACKEND_CARD_SAVED_EVENT
+         v
+ +---------------+ 
+ |card.component | 
+ |editing=false  |
+ +---------------+
+@endditaa

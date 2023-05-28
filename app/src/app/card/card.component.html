@@ -1,0 +1,38 @@
+<mat-card #cardElem class="card" 
+cdkDrag 
+[cdkDragFreeDragPosition]="card.position"
+(cdkDragStarted)="dragStarted()"
+(cdkDragEnded)="dragEnded($event)"
+[ngClass]="{'mat-elevation-z8' : dragging}"
+[cdkDragDisabled]="!allowService.dragEnabled" 
+>
+    <mat-card-title>
+      <mat-form-field *ngIf="editing">
+        <mat-label>Header</mat-label>
+        <input matInput #cardHeaderEdit
+        [(ngModel)]="card.header"
+        >
+      </mat-form-field>
+      {{ editing ? "" : card.header }}
+    </mat-card-title>
+    <mat-card-subtitle>
+      <mat-form-field *ngIf="editing">
+        <mat-label>Description</mat-label>
+        <textarea matInput #cardDescriptionEdit
+        cdkTextareaAutosize
+        [(ngModel)]="card.description"
+        ></textarea>
+      </mat-form-field>
+      {{ editing ? "" : card.description }}
+    </mat-card-subtitle>
+    <mat-card-actions align="end">
+      <!-- mat-icon-button -->
+      <!-- mat-fab -->
+      <button mat-button *ngIf="!editing" (click)="onEditClick()">EDIT</button> 
+      <button mat-button *ngIf="editing"  (click)="onSaveClick()">SAVE</button> 
+      <button mat-button (click)="onDoneClick()">DONE</button>
+    </mat-card-actions>
+    <!-- <mat-card-footer>
+      <mat-progress-bar></mat-progress-bar>
+    </mat-card-footer> -->
+</mat-card>

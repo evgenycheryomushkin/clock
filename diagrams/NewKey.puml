@@ -1,0 +1,35 @@
+@startditaa NewKey
+    +--------+                  +--------+
+    | User   |                  | User   |
+    +--------+                  +--------+
+        |                           |
+        | Enter UI with not empty   | Enter UI with empty
+        | session key               | session key
+        v                           v
+ +-------------+              +-------------+
+ |app.component|              |app.component|
+ +-------------+              +-------------+
+        |                           |
+        |APP_NAVIGATION_END_EVENT   |APP_NAVIGATION_END_EVENT
+        |existing key               |
+        v                           v
++---------------+              +---------------+
+|routing.service|              |routing.service|
++---------------+              +---------------+
+        |                           |
+        |UI_START_EVENT             |UI_START_EVENT
+        |existing key               |
+        v                           v
+    +-------+                   +-------+
+    |backend|                   |backend|
+    +-------+                   +-------+
+        |BACKEND_CONFIRM_KEY_EVENT   |BACKEND_NEW_KEY_EVENT
+        |                            |
+        +      +---------------------+---+
+        |      |                         |
+        v      v                         v
++---------------+                 +---------------+
+|routing.service| register key    |routing.service| register key, redirect
++---------------+                 +---------------+
+
+@endditaa
