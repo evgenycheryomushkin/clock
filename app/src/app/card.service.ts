@@ -17,7 +17,7 @@ export class CardService {
 
   constructor(eventHubService: EventHubService) { 
     const cardService = this;
-    eventHubService.buildProcessor(WorkEvent.NEW_CARD,
+    eventHubService.buildProcessor(WorkEvent.NEW_CARD_ALLOWED,
       (event: WorkEvent, eventProcessor: EventProcessor) => {
         eventProcessor.emit(new WorkEvent(WorkEvent.NEW_WITH_ID, 
           WorkEvent.ID, ""+(cardService.nextId++)))

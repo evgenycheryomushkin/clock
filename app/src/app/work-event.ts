@@ -12,6 +12,8 @@ export class WorkEvent {
   static DRAG_START  = "DRAG_START_EVENT";
   static DRAG_END    = "DRAG_END_EVENT";
   static NEW_CARD    = "NEW_CARD_EVENT";
+  static NEW_CARD_ALLOWED    = "NEW_CARD_ALLOWED_EVENT";
+  static NEW_CARD_WITH_BOUNDING_RECT   = "NEW_CARD_BR_EVENT";
   static NEW_WITH_ID = "NEW_CARD_WITH_ID_EVENT";
   
   static ID          = "ID_FIELD";
@@ -19,6 +21,7 @@ export class WorkEvent {
   static HEADER      = "HEADER_FIELD";
   static DESCRIPTION = "DESCRIPTION_FIELD";
   static KEY         = "KEY_FIELD";
+  static VIEWPORT    = "VIEWPORT_FIELD";
   
   constructor(
     type: string,

@@ -1,4 +1,6 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { EventHubService } from 'src/app/event-hub.service';
+import { WorkEvent } from 'src/app/work-event';
 
 @Component({
   selector: 'app-clock',
@@ -11,6 +13,11 @@ export class ClockComponent implements AfterViewInit {
   private context: CanvasRenderingContext2D;
   private backgroundImage: HTMLImageElement;
     
+  constructor(
+    private eventHubService: EventHubService
+  ) {
+  }
+
   ngAfterViewInit(): void {
     this.context = this.backgroundCanvas.nativeElement.getContext('2d');
     this.loadBackground(this);
@@ -25,9 +32,7 @@ export class ClockComponent implements AfterViewInit {
     app.context.canvas.height = app.backgroundImage.height
     app.context.canvas.width = app.backgroundImage.width
 
-    app.context.drawImage(
-      app.backgroundImage, 0,0)//, app.backgroundImage.width,
-      //app.backgroundImage.height)
+    app.context.drawImage(app.backgroundImage, 0,0)
   }
 }
 
