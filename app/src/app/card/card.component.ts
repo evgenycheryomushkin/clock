@@ -1,8 +1,8 @@
 import { Component, Input, ViewChild, AfterViewInit, ElementRef, AfterViewChecked, AfterContentChecked, OnChanges } from '@angular/core';
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { EventHubService } from '../event-hub.service';
-import { WorkEvent } from '../work-event';
-import { Card } from '../card';
+import { WorkEvent } from '../data/work-event';
+import { Card } from '../data/card';
 
 @Component({
   selector: 'app-card',

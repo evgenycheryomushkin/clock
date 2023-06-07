@@ -1,5 +1,5 @@
 import { Observer } from "rxjs"
-import { WorkEvent } from "./work-event"
+import { WorkEvent } from "./data/work-event"
 import { EventStream } from "./event-hub.service"
 
 export class EventProcessor implements Observer<WorkEvent> {

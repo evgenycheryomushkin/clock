@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
-import { WorkEvent } from './work-event';
+import { WorkEvent } from './data/work-event';
 import { EventHubService } from './event-hub.service';
 import { EventProcessor } from './event-processor';
 import { io } from 'socket.io-client';
+import { Card } from './data/card';
+import { Rectangle } from './data/rectangle';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CardService {
-  init() {
-    console.log("Card Service initialized")
-  }
   private nextId: number = 1
 
-  socket = io('http://localhost:3000');
+  public cards = new Array<Card>()
+
+  y = 20
 
   constructor(eventHubService: EventHubService) { 
     const cardService = this;
@@ -22,5 +23,22 @@ export class CardService {
         eventProcessor.emit(new WorkEvent(WorkEvent.NEW_WITH_ID, 
           WorkEvent.ID, ""+(cardService.nextId++)))
       })
+
+      eventHubService.buildProcessor(WorkEvent.NEW_WITH_BOUNDING_RECT,
+        (event: WorkEvent, eventProcessor: EventProcessor) => {
+          const id = +event.data.get(WorkEvent.ID)
+          const rect: Rectangle = JSON.parse(event.data.get(WorkEvent.BOUNDING_RECT))
+          cardService.cards.push(new Card(
+            id, "", "", (new Date()).toString(), { x: Math.min(600, rect.x + rect.w - 200), y: cardService.getNewY() + rect.y }
+          ))
+        })
     }
-}
+
+    init() {
+      console.log("Card Service initialized")
+    }  
+
+    getNewY() {
+      return this.y += 20
+    }
+  }

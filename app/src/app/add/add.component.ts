@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EventHubService } from '../event-hub.service';
-import { WorkEvent } from '../work-event';
+import { WorkEvent } from '../data/work-event';
 import { filter, fromEvent, map, tap } from 'rxjs';
 
 @Component({

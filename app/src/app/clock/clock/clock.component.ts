@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { EventHubService } from 'src/app/event-hub.service';
-import { WorkEvent } from 'src/app/work-event';
+import { WorkEvent } from 'src/app/data/work-event';
 
 @Component({
   selector: 'app-clock',

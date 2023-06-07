@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { WorkEvent } from './work-event';
+import { WorkEvent } from './data/work-event';
 import { Observable } from 'rxjs';
 import { EventProcessor } from './event-processor';
 

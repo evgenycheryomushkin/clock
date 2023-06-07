@@ -1,10 +1,12 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { filter, fromEvent, map, tap } from 'rxjs';
 import { CardService } from './card.service';
-import { WorkEvent } from './work-event';
+import { WorkEvent } from './data/work-event';
 import { EventHubService } from './event-hub.service';
-import { Card } from './card';
+import { Card } from './data/card';
 import { NavigationEnd, Router } from '@angular/router';
+import { BackendService } from './backend.service';
+import { Rectangle } from './data/rectangle';
 
 
 @Component({
@@ -15,21 +17,15 @@ import { NavigationEnd, Router } from '@angular/router';
 export class AppComponent implements OnInit {
   @ViewChild('appElement') appElement: ElementRef;
 
-  cards = new Array<Card>()
-
-  y = 20
-
   constructor(
     private eventHubService: EventHubService,
-    private cardService: CardService,
+    public cardService: CardService,
+    private backendService: BackendService,
     private router: Router
   ) {
     eventHubService.init();
     cardService.init();
-  }
-
-  getNewY() {
-    return this.y += 20
+    backendService.init();
   }
 
   ngOnInit(): void {
@@ -42,13 +38,19 @@ export class AppComponent implements OnInit {
     appComponent.eventHubService.buildProcessor(WorkEvent.NEW_WITH_ID,
       (event: WorkEvent) => {
         const id = +event.data.get(WorkEvent.ID)
-        const x = window.scrollX
-        const y = window.scrollY
-        const w = window.innerWidth
-        const h = window.innerHeight
-        console.log(x, y, w, h)
-        appComponent.cards.push(new Card(
-          id, "", "", (new Date()).toString(), { x: Math.min(600, x + w - 200), y: appComponent.getNewY() + y }
+
+        const r = new Rectangle(
+          window.scrollX,
+          window.scrollY,
+          window.innerWidth,
+          window.innerHeight
+        )
+
+        appComponent.eventHubService.emit(new WorkEvent(
+          WorkEvent.NEW_WITH_BOUNDING_RECT,
+          WorkEvent.ID, ""+id,
+          WorkEvent.BOUNDING_RECT,
+          JSON.stringify(r)
         ))
       })
   }
