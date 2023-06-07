@@ -1,11 +1,10 @@
-import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
-import { filter, fromEvent, map, Observable, tap } from 'rxjs';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { filter, fromEvent, map, tap } from 'rxjs';
 import { CardService } from './card.service';
 import { WorkEvent } from './work-event';
 import { EventHubService } from './event-hub.service';
-import { EventProcessor } from './event-processor';
 import { Card } from './card';
-import { DOCUMENT } from '@angular/common';
+import { NavigationEnd, Router } from '@angular/router';
 
 
 @Component({
@@ -13,62 +12,30 @@ import { DOCUMENT } from '@angular/common';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   @ViewChild('appElement') appElement: ElementRef;
 
   cards = new Array<Card>()
 
-  keyboardEventObserver: Observable<WorkEvent>
+  y = 20
 
   constructor(
     private eventHubService: EventHubService,
-    cardService: CardService) 
-  {
+    private cardService: CardService,
+    private router: Router
+  ) {
     eventHubService.init();
     cardService.init();
   }
 
-  y = 20
   getNewY() {
     return this.y += 20
   }
 
-
-  newCardEnabled = true
   ngOnInit(): void {
     const appComponent = this;
-    this.keyboardEventObserver = fromEvent<KeyboardEvent>(document, 'keydown')
-      .pipe(filter(e => e.code == 'KeyN'),
-        tap(e => e.preventDefault()),
-        map(() => new WorkEvent(WorkEvent.NEW_CARD))
-      );
-    this.eventHubService.registerSource(this.keyboardEventObserver)
-
-    this.buildNewProcessor(appComponent)
     this.buildNewIdProcessor(appComponent)
-    this.buildEditSaveProcessors(appComponent)
-
-  }
-
-  buildNewProcessor(appComponent: AppComponent) {
-    appComponent.eventHubService.buildProcessor(WorkEvent.NEW_CARD,
-      () => {
-        if (appComponent.newCardEnabled) appComponent.eventHubService.emit(
-          new WorkEvent(WorkEvent.NEW_CARD_ALLOWED)
-        )
-      })
-    }
-
-  buildEditSaveProcessors(appComponent: AppComponent) {
-    appComponent.eventHubService.buildProcessor(WorkEvent.EDIT,
-      () => {
-        appComponent.newCardEnabled = false
-      })
-    appComponent.eventHubService.buildProcessor(WorkEvent.SAVE,
-        () => {
-          appComponent.newCardEnabled = true
-          console.log("offsetTop", this.appElement.nativeElement.offsetTop)
-        })
+    this.buildSessionKeySource(appComponent)
   }
 
   buildNewIdProcessor(appComponent: AppComponent) {
@@ -79,10 +46,22 @@ export class AppComponent {
         const y = window.scrollY
         const w = window.innerWidth
         const h = window.innerHeight
-        console.log(x,y,w,h)
+        console.log(x, y, w, h)
         appComponent.cards.push(new Card(
-          id, "", "", (new Date()).toString(), { x: Math.min(600, x+w-200), y: appComponent.getNewY() + y }
+          id, "", "", (new Date()).toString(), { x: Math.min(600, x + w - 200), y: appComponent.getNewY() + y }
         ))
       })
+  }
+
+  buildSessionKeySource(appComponent: AppComponent) {
+    const navigationEnd = this.router.events
+      .pipe(
+        filter(e => e instanceof NavigationEnd),
+        map((e) => e as NavigationEnd),
+        map((ne: NavigationEnd) => {
+          return new WorkEvent(WorkEvent.KEY_EVENT, WorkEvent.KEY, ne.url.slice(1))
+        }
+        ))
+    this.eventHubService.registerSource(navigationEnd)
   }
 }

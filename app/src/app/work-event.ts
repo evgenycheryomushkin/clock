@@ -13,8 +13,8 @@ export class WorkEvent {
   static DRAG_END    = "DRAG_END_EVENT";
   static NEW_CARD    = "NEW_CARD_EVENT";
   static NEW_CARD_ALLOWED    = "NEW_CARD_ALLOWED_EVENT";
-  static NEW_CARD_WITH_BOUNDING_RECT   = "NEW_CARD_BR_EVENT";
   static NEW_WITH_ID = "NEW_CARD_WITH_ID_EVENT";
+  static KEY_EVENT   = "KEY_EVENT";
   
   static ID          = "ID_FIELD";
   static POS         = "POS_FIELD";

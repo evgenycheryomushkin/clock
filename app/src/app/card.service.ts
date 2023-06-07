@@ -22,10 +22,5 @@ export class CardService {
         eventProcessor.emit(new WorkEvent(WorkEvent.NEW_WITH_ID, 
           WorkEvent.ID, ""+(cardService.nextId++)))
       })
-      eventHubService.buildProcessor(".*",
-        (event: WorkEvent, eventProcessor: EventProcessor) => {
-          event.data.set(WorkEvent.KEY, "test");
-          this.socket.emit('message', JSON.stringify(event));
-        })
     }
 }

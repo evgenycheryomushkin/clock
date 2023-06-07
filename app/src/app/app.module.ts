@@ -9,20 +9,23 @@ import { CardComponent } from './card/card.component';
 import { ClockComponent } from './clock/clock/clock.component';
 import { ArrowComponent } from './clock/arrow/arrow.component';
 import { AddComponent } from './add/add.component';
+import { RouterModule } from '@angular/router';
+import { routes } from 'src/routes';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AddComponent,
     CardComponent,
-    ClockComponent,
     ArrowComponent,
-    AddComponent
+    ClockComponent,
+    AppComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     MaterialModule,
-    FormsModule
+    FormsModule,
+    RouterModule.forRoot(routes)
   ],
   providers: [],
   bootstrap: [AppComponent]

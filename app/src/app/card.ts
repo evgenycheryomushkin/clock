@@ -1,4 +1,5 @@
 import { Point } from "@angular/cdk/drag-drop";
+import { ElementRef } from "@angular/core";
 
 export class Card{
     constructor(
@@ -6,6 +7,8 @@ export class Card{
       public header: String,
       public description: String,
       public time:String, 
-      public position: Point) {}
-  }
+      public position: Point) {
+      }
+      public element:ElementRef
+    }
   

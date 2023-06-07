@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, AfterViewInit, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, Input, ViewChild, AfterViewInit, ElementRef, AfterViewChecked, AfterContentChecked, OnChanges } from '@angular/core';
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { EventHubService } from '../event-hub.service';
 import { WorkEvent } from '../work-event';
@@ -9,7 +9,7 @@ import { Card } from '../card';
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss']
 })
-export class CardComponent implements AfterViewInit {
+export class CardComponent implements AfterViewInit{
   @Input() card: Card
   
   dragEnabled = true
@@ -25,7 +25,8 @@ export class CardComponent implements AfterViewInit {
 
   @ViewChild("cardHeaderEdit", {static: false}) private cardHeaderEditRef: ElementRef<HTMLElement>
 
-  constructor(private eventHub: EventHubService) {
+  constructor(private eventHub: EventHubService,
+    private element:ElementRef) {
   }
 
   ngAfterViewInit() {
@@ -33,6 +34,7 @@ export class CardComponent implements AfterViewInit {
     this.buildEditProcessor(cardComponent)
     this.buildSaveProcessor(cardComponent)
     this.eventHub.emit(new WorkEvent(WorkEvent.EDIT, WorkEvent.ID, ""+this.card.id))
+    this.card.element = this.element
   }
 
   buildSaveProcessor(cardComponent: CardComponent) {
@@ -99,4 +101,5 @@ export class CardComponent implements AfterViewInit {
       new WorkEvent(WorkEvent.DONE, 
         WorkEvent.ID, ""+this.card.id))
   }
+
 }
