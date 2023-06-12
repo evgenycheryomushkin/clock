@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Renderer2 } from '@angular/core';
 import { WorkEvent } from './data/work-event';
 import { EventHubService } from './event-hub.service';
 import { EventProcessor } from './event-processor';
@@ -28,6 +28,7 @@ export class CardService {
         (event: WorkEvent, eventProcessor: EventProcessor) => {
           const id = +event.data.get(WorkEvent.ID)
           const rect: Rectangle = JSON.parse(event.data.get(WorkEvent.BOUNDING_RECT))
+
           cardService.cards.push(new Card(
             id, "", "", (new Date()).toString(), { x: Math.min(600, rect.x + rect.w - 200), y: cardService.getNewY() + rect.y }
           ))

@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, AfterViewInit, ElementRef, AfterViewChecked, AfterContentChecked, OnChanges } from '@angular/core';
+import { Component, Input, ViewChild, AfterViewInit, ElementRef, AfterViewChecked, AfterContentChecked, OnChanges, Renderer2 } from '@angular/core';
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { EventHubService } from '../event-hub.service';
 import { WorkEvent } from '../data/work-event';
@@ -9,7 +9,7 @@ import { Card } from '../data/card';
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss']
 })
-export class CardComponent implements AfterViewInit{
+export class CardComponent implements AfterViewInit {
   @Input() card: Card
   
   dragEnabled = true
@@ -23,18 +23,32 @@ export class CardComponent implements AfterViewInit{
   // flag that switch interface into edit mode
   editing = false
 
-  @ViewChild("cardHeaderEdit", {static: false}) private cardHeaderEditRef: ElementRef<HTMLElement>
+  @ViewChild("cardElem", {read: ElementRef}) private cardElem: ElementRef
+  @ViewChild("cardHeaderEdit", {read: ElementRef}) private cardHeaderEditRef: ElementRef
 
-  constructor(private eventHub: EventHubService,
-    private element:ElementRef) {
+  constructor(
+    private eventHub: EventHubService,
+    private renderer: Renderer2) {
   }
+
+  lastRect: DOMRect | undefined = undefined
 
   ngAfterViewInit() {
     const cardComponent = this
     this.buildEditProcessor(cardComponent)
     this.buildSaveProcessor(cardComponent)
     this.eventHub.emit(new WorkEvent(WorkEvent.EDIT, WorkEvent.ID, ""+this.card.id))
-    this.card.element = this.element
+    setInterval(
+      () => {
+        const rect:DOMRect = cardComponent.cardElem.nativeElement.getBoundingClientRect()        
+        if (JSON.stringify(cardComponent.lastRect) !== JSON.stringify(rect)) {
+          cardComponent.card.rect = rect
+          cardComponent.lastRect  = rect
+          console.log(rect)
+        }
+      },
+      100
+    )
   }
 
   buildSaveProcessor(cardComponent: CardComponent) {
@@ -101,5 +115,4 @@ export class CardComponent implements AfterViewInit{
       new WorkEvent(WorkEvent.DONE, 
         WorkEvent.ID, ""+this.card.id))
   }
-
 }

@@ -1,12 +1,12 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { filter, fromEvent, map, tap } from 'rxjs';
+import { Component, ElementRef, OnInit, QueryList, Renderer2, ViewChild, ViewChildren } from '@angular/core';
+import { filter, map } from 'rxjs';
 import { CardService } from './card.service';
 import { WorkEvent } from './data/work-event';
 import { EventHubService } from './event-hub.service';
-import { Card } from './data/card';
 import { NavigationEnd, Router } from '@angular/router';
 import { BackendService } from './backend.service';
 import { Rectangle } from './data/rectangle';
+import { CardComponent } from './card/card.component';
 
 
 @Component({
@@ -21,7 +21,8 @@ export class AppComponent implements OnInit {
     private eventHubService: EventHubService,
     public cardService: CardService,
     private backendService: BackendService,
-    private router: Router
+    private router: Router,
+    private renderer: Renderer2
   ) {
     eventHubService.init();
     cardService.init();

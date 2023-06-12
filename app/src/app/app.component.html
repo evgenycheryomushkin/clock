@@ -2,7 +2,7 @@
   <div class="clock__div">
     <app-clock></app-clock>
   </div>
-  <app-card *ngFor="let card of cardService.cards" 
+  <app-card #cardElement *ngFor="let card of cardService.cards" 
     [card]="card">
   </app-card>
 </div>
