@@ -15,7 +15,7 @@ export class EventStream {
 
   buildEventProcessor(
       eventType: string|RegExp,
-      next: (value: WorkEvent, eventProcessor: EventProcessor) => void,
+      next: (value: WorkEvent, eventProcessor: EventProcessor) => WorkEvent | void,
       error: (err: any) => void = () => {},
       complete: () => void  = () => {}
   ): EventProcessor {
@@ -43,8 +43,9 @@ export class EventHubService {
 
   constructor() { 
     this.buildProcessor(RegExp(".*"),
-      (event: WorkEvent) => 
+      (event: WorkEvent) => {
           console.log(event.type, event)
+      }
       )
     }
 
@@ -60,7 +61,7 @@ export class EventHubService {
 
   buildProcessor(
     eventType: string|RegExp,
-    next: (event: WorkEvent, eventProcessor: EventProcessor) => void,
+    next: (event: WorkEvent, eventProcessor: EventProcessor) => WorkEvent | void,
     error: (err: any) => void = () => {},
     complete: () => void  = () => {}
   ): EventProcessor {

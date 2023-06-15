@@ -14,18 +14,17 @@ export class CardService {
 
   public cards = new Array<Card>()
 
-  y = 20
+  private y = 20
 
   constructor(eventHubService: EventHubService) { 
     const cardService = this;
     eventHubService.buildProcessor(WorkEvent.NEW_CARD_ALLOWED,
-      (event: WorkEvent, eventProcessor: EventProcessor) => {
-        eventProcessor.emit(new WorkEvent(WorkEvent.NEW_WITH_ID, 
-          WorkEvent.ID, ""+(cardService.nextId++)))
+      () => {
+        return new WorkEvent(WorkEvent.NEW_WITH_ID, WorkEvent.ID, ""+(cardService.nextId++))
       })
 
       eventHubService.buildProcessor(WorkEvent.NEW_WITH_BOUNDING_RECT,
-        (event: WorkEvent, eventProcessor: EventProcessor) => {
+        (event: WorkEvent) => {
           const id = +event.data.get(WorkEvent.ID)
           const rect: Rectangle = JSON.parse(event.data.get(WorkEvent.BOUNDING_RECT))
 

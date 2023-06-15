@@ -9,8 +9,7 @@ import { filter, fromEvent, map, tap } from 'rxjs';
   styleUrls: ['./add.component.scss']
 })
 export class AddComponent implements OnInit {
-
-  newCardEnabled = true
+  private newCardEnabled = true
 
   constructor(private eventHubService:EventHubService) { }
 
@@ -39,9 +38,10 @@ export class AddComponent implements OnInit {
   buildNewProcessor(addComponent: AddComponent) {
     addComponent.eventHubService.buildProcessor(WorkEvent.NEW_CARD,
       () => {
-        if (addComponent.newCardEnabled) addComponent.eventHubService.emit(
-          new WorkEvent(WorkEvent.NEW_CARD_ALLOWED)
-        )
+        if (addComponent.newCardEnabled) 
+          return new WorkEvent(WorkEvent.NEW_CARD_ALLOWED)
+        else 
+          return undefined
       })
   }
 

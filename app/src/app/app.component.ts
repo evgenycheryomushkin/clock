@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, QueryList, Renderer2, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { filter, map } from 'rxjs';
 import { CardService } from './card.service';
 import { WorkEvent } from './data/work-event';
@@ -6,7 +6,6 @@ import { EventHubService } from './event-hub.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { BackendService } from './backend.service';
 import { Rectangle } from './data/rectangle';
-import { CardComponent } from './card/card.component';
 
 
 @Component({
@@ -20,7 +19,7 @@ export class AppComponent implements OnInit {
   constructor(
     private eventHubService: EventHubService,
     public cardService: CardService,
-    private backendService: BackendService,
+    backendService: BackendService,
     private router: Router,
     private renderer: Renderer2
   ) {
@@ -47,12 +46,12 @@ export class AppComponent implements OnInit {
           window.innerHeight
         )
 
-        appComponent.eventHubService.emit(new WorkEvent(
+        return new WorkEvent(
           WorkEvent.NEW_WITH_BOUNDING_RECT,
           WorkEvent.ID, ""+id,
           WorkEvent.BOUNDING_RECT,
           JSON.stringify(r)
-        ))
+        )
       })
   }
 
