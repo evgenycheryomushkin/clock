@@ -17,6 +17,12 @@ Edit c:\kafka_2.13-3.4.0\conf\zookeper.properties
 dataDir=c:/kafka_2.13-3.4.0/data/zookeeper
 ```
 
+#### Troubleshoot kafka
+If kafka did not load then delete
+```
+rm c:/kafka_2.13-3.4.0/data -rf
+rm c:/kafka_2.13-3.4.0/logs -rf
+```
 
 2. Install and run GUI
 ```

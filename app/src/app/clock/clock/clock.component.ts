@@ -7,24 +7,19 @@ import { WorkEvent } from 'src/app/data/work-event';
   templateUrl: './clock.component.html',
   styleUrls: ['./clock.component.scss']
 })
-export class ClockComponent implements AfterViewInit {
+export class ClockComponent {
   @ViewChild('backgroundCanvas', {static: false}) 
-  private backgroundCanvas: ElementRef;
-  private context: CanvasRenderingContext2D;
-  private backgroundImage: HTMLImageElement;
+  protected backgroundCanvas: ElementRef;
+  protected context: CanvasRenderingContext2D;
+  protected backgroundImage: HTMLImageElement;
     
   constructor(
-    private eventHubService: EventHubService
   ) {
   }
 
-  ngAfterViewInit(): void {
-    this.context = this.backgroundCanvas.nativeElement.getContext('2d');
-    this.loadBackground(this);
-  }
 
-  async loadBackground(app:ClockComponent) {
-    app.backgroundImage = await loadImage('/assets/images/pensil/pensil_clock_background.png')
+  async loadBackground(app:ClockComponent, imgSrs: string) {
+    app.backgroundImage = await loadImage(imgSrs);
 
     app.backgroundCanvas.nativeElement.height = app.backgroundImage.height
     app.backgroundCanvas.nativeElement.width = app.backgroundImage.width

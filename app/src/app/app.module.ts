@@ -11,6 +11,8 @@ import { ArrowComponent } from './clock/arrow/arrow.component';
 import { AddComponent } from './add/add.component';
 import { RouterModule } from '@angular/router';
 import { routes } from 'src/routes';
+import { VrungelComponent } from './clock/vrungel/vrungel.component';
+import { PensilComponent } from './clock/pensil/pensil.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +20,8 @@ import { routes } from 'src/routes';
     CardComponent,
     ArrowComponent,
     ClockComponent,
+    VrungelComponent,
+    PensilComponent,
     AppComponent
   ],
   imports: [
