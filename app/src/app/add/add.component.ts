@@ -36,7 +36,7 @@ export class AddComponent implements OnInit {
   }
 
   buildNewProcessor(addComponent: AddComponent) {
-    addComponent.eventHubService.buildProcessor(WorkEvent.NEW_CARD,
+    addComponent.eventHubService.subscribe(WorkEvent.NEW_CARD,
       () => {
         if (addComponent.newCardEnabled) 
           return new WorkEvent(WorkEvent.NEW_CARD_ALLOWED)
@@ -46,11 +46,11 @@ export class AddComponent implements OnInit {
   }
 
   buildEditSaveProcessors(appComponent: AddComponent) {
-    appComponent.eventHubService.buildProcessor(WorkEvent.EDIT,
+    appComponent.eventHubService.subscribe(WorkEvent.EDIT,
       () => {
         appComponent.newCardEnabled = false
       })
-    appComponent.eventHubService.buildProcessor(WorkEvent.SAVE,
+    appComponent.eventHubService.subscribe(WorkEvent.SAVE,
       () => {
         appComponent.newCardEnabled = true
       })

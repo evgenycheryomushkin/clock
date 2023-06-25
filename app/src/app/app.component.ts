@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
   }
 
   buildNewIdProcessor(appComponent: AppComponent) {
-    appComponent.eventHubService.buildProcessor(WorkEvent.NEW_WITH_ID,
+    appComponent.eventHubService.subscribe(WorkEvent.NEW_WITH_ID,
       (event: WorkEvent) => {
         const id = +event.data.get(WorkEvent.ID)
 

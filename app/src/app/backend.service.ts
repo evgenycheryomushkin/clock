@@ -1,24 +1,30 @@
 import { Injectable } from '@angular/core';
 import { io } from 'socket.io-client';
 import { EventHubService } from './event-hub.service';
-import { EventProcessor } from './event-processor';
 import { WorkEvent } from './data/work-event';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackendService {
-  socket = io('http://localhost:3000');
+  SOCKET_IO_URI = 'http://localhost:3000'
+  BACKEND_SOCKET_NAME = 'backend'
+
+  private socket = io(this.SOCKET_IO_URI);
 
   init() {
-    console.log("Backend Service initialized")
+    console.log("Backend Service was initialized")
   }
 
   constructor(eventHubService: EventHubService) { 
-    eventHubService.buildProcessor(".*",
-    (event: WorkEvent, eventProcessor: EventProcessor) => {
-      event.data.set(WorkEvent.KEY, "test");
-      this.socket.emit('message', JSON.stringify(event));
-    })
+    const backend = this
+    eventHubService.subscribe(
+      "KEY_EVENT",
+      (event: WorkEvent) => {
+          const res = new WorkEvent(WorkEvent.BACKEND_INIT,
+            WorkEvent.KEY, event.data.get(WorkEvent.KEY))
+          
+          this.socket.emit(backend.BACKEND_SOCKET_NAME, JSON.stringify(res))
+      })
   }
 }

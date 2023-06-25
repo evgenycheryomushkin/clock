@@ -1,8 +1,6 @@
-import { Injectable, Renderer2 } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { WorkEvent } from './data/work-event';
 import { EventHubService } from './event-hub.service';
-import { EventProcessor } from './event-processor';
-import { io } from 'socket.io-client';
 import { Card } from './data/card';
 import { Rectangle } from './data/rectangle';
 
@@ -18,12 +16,12 @@ export class CardService {
 
   constructor(eventHubService: EventHubService) { 
     const cardService = this;
-    eventHubService.buildProcessor(WorkEvent.NEW_CARD_ALLOWED,
+    eventHubService.subscribe(WorkEvent.NEW_CARD_ALLOWED,
       () => {
         return new WorkEvent(WorkEvent.NEW_WITH_ID, WorkEvent.ID, ""+(cardService.nextId++))
       })
 
-      eventHubService.buildProcessor(WorkEvent.NEW_WITH_BOUNDING_RECT,
+      eventHubService.subscribe(WorkEvent.NEW_WITH_BOUNDING_RECT,
         (event: WorkEvent) => {
           const id = +event.data.get(WorkEvent.ID)
           const rect: Rectangle = JSON.parse(event.data.get(WorkEvent.BOUNDING_RECT))

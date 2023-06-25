@@ -52,7 +52,7 @@ export class CardComponent implements AfterViewInit {
   }
 
   buildSaveProcessor(cardComponent: CardComponent) {
-    this.eventHub.buildProcessor(
+    this.eventHub.subscribe(
       WorkEvent.EDIT,
       (event: WorkEvent) => {
         if (+event.data.get(WorkEvent.ID) == cardComponent.card.id) {
@@ -68,7 +68,7 @@ export class CardComponent implements AfterViewInit {
   }
 
   buildEditProcessor(cardComponent: CardComponent) {
-    this.eventHub.buildProcessor(
+    this.eventHub.subscribe(
       WorkEvent.SAVE,
       (event: WorkEvent) => {
         if (+event.data.get(WorkEvent.ID) == cardComponent.card.id) {

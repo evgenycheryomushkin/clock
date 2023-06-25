@@ -16,6 +16,8 @@ export class WorkEvent {
   static NEW_WITH_ID = "NEW_CARD_WITH_ID_EVENT";
   static NEW_WITH_BOUNDING_RECT = "NEW_WITH_BOUNDING_RECT_EVENT";
   static KEY_EVENT   = "KEY_EVENT";
+
+  static BACKEND_INIT = "BACKEND_INIT";
   
   static ID          = "ID_FIELD";
   static POS         = "POS_FIELD";
