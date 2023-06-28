@@ -13,15 +13,12 @@ import { RouterModule } from '@angular/router';
 import { routes } from 'src/app/routes';
 import { VrungelComponent } from './clock/vrungel/vrungel.component';
 import { PensilComponent } from './clock/pensil/pensil.component';
+import { ClockModule } from './clock/clock.module';
 
 @NgModule({
   declarations: [
     AddComponent,
     CardComponent,
-    ArrowComponent,
-    ClockComponent,
-    VrungelComponent,
-    PensilComponent,
     AppComponent
   ],
   imports: [
@@ -29,6 +26,7 @@ import { PensilComponent } from './clock/pensil/pensil.component';
     BrowserAnimationsModule,
     MaterialModule,
     FormsModule,
+    ClockModule,
     RouterModule.forRoot(routes)
   ],
   providers: [],

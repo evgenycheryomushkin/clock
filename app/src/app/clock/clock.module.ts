@@ -4,6 +4,7 @@ import { ClockComponent } from './clock/clock.component';
 import { ArrowComponent } from './arrow/arrow.component';
 import { PensilComponent } from './pensil/pensil.component';
 import { VrungelComponent } from './vrungel/vrungel.component';
+import { ForegroundComponent } from './foreground/foreground.component';
 
 
 
@@ -11,11 +12,18 @@ import { VrungelComponent } from './vrungel/vrungel.component';
   declarations: [
     ClockComponent,
     ArrowComponent,
+    ForegroundComponent,
     PensilComponent,
     VrungelComponent
   ],
+  providers: [
+  ],
   imports: [
     CommonModule
+  ],
+  exports: [
+    PensilComponent,
+    VrungelComponent
   ]
 })
 export class ClockModule { }
