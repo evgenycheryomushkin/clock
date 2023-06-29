@@ -14,6 +14,7 @@ export class ArrowComponent implements AfterViewInit {
   @Input() d:number;
   @Input() imageName:string;
   @Input() arrowType: string;
+  @Input() debug?: number;
   private context: CanvasRenderingContext2D;
   private arrowImage: HTMLImageElement;
   h: number;
@@ -41,7 +42,11 @@ export class ArrowComponent implements AfterViewInit {
     app.arrowCanvas.nativeElement.height = 2 * app.h + 2 * app.d
     app.arrowCanvas.nativeElement.width = 2 * app.h + 2 * app.d
 
-    app.timer(app)
+    if (app.debug != undefined) {
+      app.drawArrow(app, app.debug)
+    } else {
+      app.timer(app)
+    }
   }
 
   async drawArrow(app:ArrowComponent, angle: number) {
