@@ -1,0 +1,41 @@
+@startditaa NewCard
+ /--\UI_ADD_EVENT  KEY_EVENT(n)+-------------+
+ |+ |-------------+------------|app.component|
+ \--/             |            +-------------+
+                  |   
+                  v   
+         +------------------+
+         | allow.service    |
+         |   new_allowed {c}|
+         +------------------+
+                 |
+                 | ALLOW_ADD_EVENT
+                 v
+         +------------------+
+         |card.service      | 
+         +------------------+        
+                 |
+                 |  CARD_GET_ID_EVENT
+                 v
+         +------------------+
+         |backend.service   | 
+         +------------------+        
+                 |
+                 | BACKEND_NEW_ID_EVENT(id)
+                 v
+         +------------------+
+         |card.service      | 
+         |new Card(id)      |
+         +------------------+        
+                 |
+                 | CARD_PLACE_EVENT
+                 v
+        +-------------------+
+        |card.component     |
+        +-------------------+
+                |
+                | NEW_EDIT_EVENT 
+                v
+
+@endditaa
+

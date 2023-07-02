@@ -1,0 +1,21 @@
+@startditaa EditCard
+
+ +---------------+ 
+ |card.component | 
+ +---------------+
+         | NEW_EDIT_EVENT
+         | EDIT_EVENT
+         v
++------------------+
+| allow.service    |
+|  edit_allowed {c}|
++------------------+
+         |
+         | ALLOW_EDIT_EVENT
+         v
+ +---------------+
+ |card.component | 
+ |editing=true   |
+ +---------------+
+
+@endditaa
