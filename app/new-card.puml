@@ -1,9 +1,0 @@
-@startuml NEW_CARD
-
-object NEW_CARD 
-
-object NEW_CARD_ALLOWED 
-
-NEW_CARD --> NEW_CARD_ALLOWED : test that no card is edited
-
-@enduml

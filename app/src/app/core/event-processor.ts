@@ -1,6 +1,6 @@
 import { Observer } from "rxjs"
-import { WorkEvent } from "./data/work-event"
-import { EventStream } from "./event-hub.service"
+import { WorkEvent } from "../data/work-event"
+import { EventStream } from "../service/event-hub.service"
 
 /**
  * Processor that can process event and output another event(s), 

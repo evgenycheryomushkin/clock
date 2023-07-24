@@ -4,10 +4,10 @@ import { ElementRef } from "@angular/core";
 export class Card{
     rect: any;
     constructor(
-      public id: number,
-      public header: String,
-      public description: String,
-      public time:String, 
+      public id: string,
+      public header: string,
+      public description: string,
+      public created: Date, 
       public position: Point) {
       }
     }

@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { EventHubService } from 'src/app/event-hub.service';
+import { EventHubService } from 'src/app/service/event-hub.service';
 import { WorkEvent } from 'src/app/data/work-event';
 
 @Component({
