@@ -1,5 +1,10 @@
 import { TSMap } from "typescript-map";
 
+/**
+ * Represents work event. Work event is event
+ * with type and optional data to exchange
+ * events inside fronend and on backend.
+ */
 export class WorkEvent {
 
   /**
@@ -13,7 +18,7 @@ export class WorkEvent {
    * Sender: add.component
    * Receiver: card.service
    */
-  static ALLOW_ADD_EVENT = "ALLOW_ADD_EVENT";
+  static ALLOW_ADD_EVENT = "ALLOW_ADD_EVENT"
   
   /**
    * Event: Get new card Id from backend
@@ -102,38 +107,51 @@ export class WorkEvent {
    * Receiver: card.service
    * Parameters: ID - new card id
    */
-  static BACKEND_NEW_ID_EVENT = "BACKEND_NEW_ID_EVENT";
+  static BACKEND_NEW_ID_EVENT = "BACKEND_NEW_ID_EVENT"
 
-  static EDIT        = "EDIT_EVENT";
-  static SAVE        = "SAVE_EVENT";
-  static DONE        = "DONE_EVENT";
-  static DRAG_START  = "DRAG_START_EVENT";
-  static DRAG_END    = "DRAG_END_EVENT";
-  static NEW_CARD    = "NEW_CARD_EVENT";
-  static NEW_CARD_ALLOWED    = "NEW_CARD_ALLOWED_EVENT";
-  static NEW_WITH_ID = "NEW_CARD_WITH_ID_EVENT";
-  static NEW_WITH_BOUNDING_RECT = "NEW_WITH_BOUNDING_RECT_EVENT";
+  /**
+   * Generated when card is done. Done means that card disappears from 
+   * frontend.
+   * Sender: card.component
+   * Receiver: backend.service
+   * Parameters: ID - card id
+   */
+  static DONE_CARD_EVENT = "DONE_CARD_EVENT"
+  static ID = "ID"
 
-  static BACKEND_INIT = "BACKEND_INIT";
-  
-  static ID          = "ID_FIELD";
-  static POS         = "POS_FIELD";
-  static HEADER      = "HEADER_FIELD";
-  static DESCRIPTION = "DESCRIPTION_FIELD";
-  static KEY         = "KEY_FIELD";
-  static VIEWPORT    = "VIEWPORT_FIELD";
-  static BOUNDING_RECT = "BOUNDING_RECT";
- 
+  /**
+   * WorkEvent type
+   */
   public type: string;
-  public dateTime: Date;
+  /**
+   * Creation date time
+   */
+  public createDate: Date;
+  /**
+   * Data in for of string key-value pairs
+   */
   public data: TSMap<string, string>;
 
+  /**
+   * Constructs a WorkEvent. WorkEvent contains
+   * event id and properties as string map.
+   * Each property has name and value.
+   * 
+   * @param type event type. See static types of 
+   * events in this class.
+   * @param args each argument is either key or value.
+   * First argument is a key, second is value,
+   * the again key, value, etc. There should be
+   * event number of arguments. See static types of keys
+   * in this class
+   * @returns new WorkEvent
+   */
   constructor(
     type: string,
     ...args: string[] | WorkEvent[]
     ) {
         this.type = type
-        this.dateTime = new Date()
+        this.createDate = new Date()
         this.data = new TSMap<string, any>()
         if (args.length == 0) return
         if (args[0] instanceof WorkEvent) {

@@ -1,6 +1,10 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ClockComponent, loadImage } from '../clock/clock.component';
 
+/**
+ * Pensol drawn clock. Credits
+ * https://www.sberbank.com/promo/kandinsky/
+ */
 @Component({
   selector: 'app-pensil',
   templateUrl: './pensil.component.html',

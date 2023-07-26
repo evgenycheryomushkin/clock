@@ -6,6 +6,11 @@ import { Card } from '../data/card';
 import { AllowService } from '../service/allow.service';
 import { Subscription, fromEvent } from 'rxjs';
 
+/**
+ * Card component. Manages a card. Allow editing card,
+ * dragging card. Send UPDATE_CARD_EVENT when card is updated.
+ * 
+ */
 @Component({
   selector: 'app-card',
   templateUrl: './card.component.html',
@@ -114,7 +119,7 @@ export class CardComponent implements AfterViewInit {
 
   onDoneClick() {
     this.eventHub.emit(
-      new WorkEvent(WorkEvent.DONE, 
-        WorkEvent.ID, ""+this.card.id))
+      new WorkEvent(WorkEvent.DONE_CARD_EVENT, 
+        WorkEvent.ID, this.card.id))
   }
 }

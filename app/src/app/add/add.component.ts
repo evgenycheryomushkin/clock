@@ -4,14 +4,24 @@ import { WorkEvent } from '../data/work-event';
 import { filter, fromEvent, map, tap } from 'rxjs';
 import { AllowService } from '../service/allow.service';
 
+/**
+ * Add component. Add new card button. Material
+ * FAB button with plus sign.
+ */
 @Component({
   selector: 'app-add',
   templateUrl: './add.component.html',
   styleUrls: ['./add.component.scss']
 })
 export class AddComponent implements OnInit {
-  private newCardEnabled = true
 
+  /**
+   * Creates add button component
+   * @param eventHubService event hub service. Allows sending new message
+   * and subscribe to messages
+   * @param allowService allow service checks that new card can be added,
+   * edit card is allowed and draging card is allowed
+   */
   constructor(
     private eventHubService:EventHubService,
     private allowService: AllowService
@@ -23,7 +33,8 @@ export class AddComponent implements OnInit {
   }
 
   /**
-   * Click on new card button
+   * Click on new card button. If start new
+   * card is allowed then send ALLOW_ADD_EVENT
    */
   newCardClick() {
     if (this.allowService.startNewIdIfAllowed()) {
@@ -33,7 +44,8 @@ export class AddComponent implements OnInit {
   }
 
   /**
-   * Press N key
+   * Press N key. If new card is allowed - sends
+   * ALLOW_ADD_EVENT event
    */
   private buildNKeySource() {
     const addComponent = this

@@ -9,7 +9,12 @@ import { Rectangle } from './data/rectangle';
 import { AllowService } from './service/allow.service';
 import { RoutingService } from './service/routing.service';
 
-
+/**
+ * Application component. It contains clock and list of cards.
+ * Each card is placed on its separate place. You first drag card
+ * by mouse to the place where you want to put it. Then
+ * card is edited and placed.
+ */
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -18,6 +23,9 @@ import { RoutingService } from './service/routing.service';
 export class AppComponent implements OnInit {
   @ViewChild('appElement') appElement: ElementRef;
 
+  /**
+   * Initialize services. Should be done once.
+   */
   constructor(
     private eventHubService: EventHubService,
     public cardService: CardService,
@@ -28,38 +36,16 @@ export class AppComponent implements OnInit {
     private router: Router,
     private renderer: Renderer2
   ) {
-    eventHubService.init();
-    cardService.init();
-    backendService.init();
-    routingService.init();0
-    allowService.init();
+    eventHubService.init()
+    cardService.init()
+    backendService.init()
+    routingService.init()
+    allowService.init()
   }
 
   ngOnInit(): void {
-    const appComponent = this;
-    this.buildNewIdProcessor(appComponent)
+    const appComponent = this
     this.buildSessionKeySource(appComponent)
-  }
-
-  buildNewIdProcessor(appComponent: AppComponent) {
-    appComponent.eventHubService.subscribe(WorkEvent.NEW_WITH_ID,
-      (event: WorkEvent) => {
-        const id = +event.data.get(WorkEvent.ID)
-
-        const r = new Rectangle(
-          window.scrollX,
-          window.scrollY,
-          window.innerWidth,
-          window.innerHeight
-        )
-
-        return new WorkEvent(
-          WorkEvent.NEW_WITH_BOUNDING_RECT,
-          WorkEvent.ID, ""+id,
-          WorkEvent.BOUNDING_RECT,
-          JSON.stringify(r)
-        )
-      })
   }
 
   buildSessionKeySource(appComponent: AppComponent) {
