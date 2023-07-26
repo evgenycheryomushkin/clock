@@ -5,9 +5,9 @@ import { WorkEvent } from "../data/work-event";
 
 /**
  * Allow service should be asked:
- * is new card allowed,
- * is edit card allowed,
- * is drag allowed.
+ * if new card allowed,
+ * if edit card allowed,
+ * if drag allowed.
  * 
  * And it should be notified:
  * if new card is being creating,

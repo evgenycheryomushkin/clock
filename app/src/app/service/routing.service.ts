@@ -5,6 +5,10 @@ import { WorkEvent } from '../data/work-event';
 import { EventProcessor } from '../core/event-processor';
 import {Location} from '@angular/common';
 
+/**
+ * Takes care of session key (key parameter). Store key and 
+ * give it to events if necessary by getKey
+ */
 @Injectable({
   providedIn: 'root'
 })

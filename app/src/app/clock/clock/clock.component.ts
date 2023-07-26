@@ -3,7 +3,7 @@ import { EventHubService } from 'src/app/service/event-hub.service';
 import { WorkEvent } from 'src/app/data/work-event';
 
 /**
- * Click component
+ * Clock component
  */
 @Component({
   selector: 'app-clock',

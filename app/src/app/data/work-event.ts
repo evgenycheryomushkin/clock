@@ -13,6 +13,7 @@ export class WorkEvent {
 
   /**
    * Add new card event. New card is allowed to be added.
+   * See diagrams at diagrams/ folder for details.
    * New card button is pressed. After that allow service is 
    * checked. If allow service allow adding new card, this event occurs.
    * Sender: add.component

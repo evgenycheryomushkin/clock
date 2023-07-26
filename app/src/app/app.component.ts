@@ -11,7 +11,7 @@ import { RoutingService } from './service/routing.service';
 
 /**
  * Application component. It contains clock and list of cards.
- * Each card is placed on its separate place. You first drag card
+ * Each card is placed on its separate place. You first move card
  * by mouse to the place where you want to put it. Then
  * card is edited and placed.
  */
