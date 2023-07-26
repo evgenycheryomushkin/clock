@@ -1,6 +1,10 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { loadImage } from '../clock/clock.component';
 
+/**
+ * Foreground element of clock. Some elements are in foreground. So
+ * arrows are behind them. @see ArrowComponent
+ */
 @Component({
   selector: 'app-foreground',
   templateUrl: './foreground.component.html',
@@ -8,7 +12,8 @@ import { loadImage } from '../clock/clock.component';
 })
 export class ForegroundComponent implements AfterViewInit {
 
-  @ViewChild('foregroundCanvas', {static: false}) private foregroundCanvas: ElementRef;
+  @ViewChild('foregroundCanvas', {static: false}) 
+  private foregroundCanvas: ElementRef;
   @Input() x:number;
   @Input() y:number;
   @Input() imageName:string;

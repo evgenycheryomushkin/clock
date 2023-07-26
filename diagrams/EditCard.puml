@@ -3,19 +3,29 @@
  +---------------+ 
  |card.component | 
  +---------------+
-         | NEW_EDIT_EVENT
-         | EDIT_EVENT
+         | 
          v
 +------------------+
 | allow.service    |
 |  edit_allowed {c}|
 +------------------+
-         |
-         | ALLOW_EDIT_EVENT
+         | 
          v
  +---------------+
  |card.component | 
  |editing=true   |
  +---------------+
+         | 
+         v
+ +---------------+
+ |card.component | finish editing
+ |editing=false  |-------------------+
+ +---------------+                   | UPDATE_CARD_EVENT
+         |                   +---------------+
+         v                   |backend.service|
++------------------+         +---------------+
+| allow.service    |
+|  endEdit         |
++------------------+
 
 @endditaa

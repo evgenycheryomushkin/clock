@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { WorkEvent } from './data/work-event';
+import { WorkEvent } from '../data/work-event';
 import { Observable } from 'rxjs';
-import { EventProcessor } from './event-processor';
+import { EventProcessor } from '../core/event-processor';
 
 /**
  * EventHubService provides 3 methods to process events:

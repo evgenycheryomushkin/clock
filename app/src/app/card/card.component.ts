@@ -1,9 +1,16 @@
 import { Component, Input, ViewChild, AfterViewInit, ElementRef, AfterViewChecked, AfterContentChecked, OnChanges, Renderer2 } from '@angular/core';
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
-import { EventHubService } from '../event-hub.service';
+import { EventHubService } from '../service/event-hub.service';
 import { WorkEvent } from '../data/work-event';
 import { Card } from '../data/card';
+import { AllowService } from '../service/allow.service';
+import { Subscription, fromEvent } from 'rxjs';
 
+/**
+ * Card component. Manages a card. Allow editing card,
+ * dragging card. Send UPDATE_CARD_EVENT when card is updated.
+ * 
+ */
 @Component({
   selector: 'app-card',
   templateUrl: './card.component.html',
@@ -12,107 +19,107 @@ import { Card } from '../data/card';
 export class CardComponent implements AfterViewInit {
   @Input() card: Card
   
-  dragEnabled = true
-
   // true when card is dragged
   dragging = false
-
-  // flag that card can be edited
-  editEnabled = true
 
   // flag that switch interface into edit mode
   editing = false
 
-  @ViewChild("cardElem", {read: ElementRef}) private cardElem: ElementRef
-  @ViewChild("cardHeaderEdit", {read: ElementRef}) private cardHeaderEditRef: ElementRef
+  // placing new card. Card follows mouse cursor
+  // until user clicks mouse
+  cardPlacing = false
 
-  constructor(
-    private eventHub: EventHubService,
-    private renderer: Renderer2) {
-  }
+  @ViewChild("cardElem", {read: ElementRef}) 
+  private cardElem: ElementRef
+  @ViewChild("cardHeaderEdit", {read: ElementRef}) 
+  private cardHeaderEditRef: ElementRef
 
   lastRect: DOMRect | undefined = undefined
 
+  constructor(
+    private eventHub: EventHubService,
+    public allowService: AllowService,
+    private renderer: Renderer2) {
+      // start placing new card
+      // placing new card means that card
+      // is stick to mouse cursor.
+      // User moves mouse and place card. After 
+      // click card is fixed
+      this.cardPlacing = true
+  }
+
+  /**
+   * Subscription to mouse move event. It is needed
+   * when new card appears. Card is being dragged with
+   * mouse. So card shuld follow mouse coordinates
+   * without click.
+   * After click it will be unsubscribed and not be
+   * clicked anymore.
+   */
+  private startingMouseMoveSubscription: Subscription
+
   ngAfterViewInit() {
     const cardComponent = this
-    this.buildEditProcessor(cardComponent)
-    this.buildSaveProcessor(cardComponent)
-    this.eventHub.emit(new WorkEvent(WorkEvent.EDIT, WorkEvent.ID, ""+this.card.id))
-    setInterval(
-      () => {
-        const rect:DOMRect = cardComponent.cardElem.nativeElement.getBoundingClientRect()        
-        if (JSON.stringify(cardComponent.lastRect) !== JSON.stringify(rect)) {
-          cardComponent.card.rect = rect
-          cardComponent.lastRect  = rect
-          console.log(rect)
-        }
-      },
-      100
-    )
-  }
 
-  buildSaveProcessor(cardComponent: CardComponent) {
-    this.eventHub.subscribe(
-      WorkEvent.EDIT,
-      (event: WorkEvent) => {
-        if (+event.data.get(WorkEvent.ID) == cardComponent.card.id) {
-          cardComponent.editing = true
-          cardComponent.dragEnabled = false
-          setTimeout(() => {
-            cardComponent.cardHeaderEditRef.nativeElement.focus();
-          }, 100);
-        } 
-        cardComponent.editEnabled = false
+    /**
+     * Subscribe to mouse move event. We stick card to mouse move.
+     * After click card is placed and edit mode turns on
+     */
+    this.startingMouseMoveSubscription = fromEvent(document.body, 'mousemove').subscribe((e) => {
+      if (e instanceof MouseEvent) {
+        cardComponent.card.position = {x: e.pageX-20, y: e.pageY-20}
+        console.log(e)
       }
-    )
+    })
   }
 
-  buildEditProcessor(cardComponent: CardComponent) {
-    this.eventHub.subscribe(
-      WorkEvent.SAVE,
-      (event: WorkEvent) => {
-        if (+event.data.get(WorkEvent.ID) == cardComponent.card.id) {
-          cardComponent.editing = false
-          cardComponent.dragEnabled = true
-        } 
-        cardComponent.editEnabled = true
-      }
-    )
+  /**
+   * Mouse click event. Needed for new card drag 
+   * When new card is dragged - it is dragged
+   * without mouse press. It will finish dragging
+   * after mouse click.
+   */
+  mouseClick() {
+    if (this.cardPlacing) {
+      this.cardPlacing = false
+      this.startingMouseMoveSubscription.unsubscribe()
+      this.allowService.switchNewEdit()
+      this.editing = true
+    }
   }
 
+  /**
+   * Event when ral drag is started.
+   * dragging flag elevates card.
+   */
   dragStarted() {
     this.dragging = true
-    const workEvent = new WorkEvent(WorkEvent.DRAG_START, WorkEvent.ID, ""+this.card.id)
-    this.eventHub.emit(workEvent)
   }
 
   dragEnded(event: CdkDragEnd) {
     this.dragging = false
     // todo check that this position is working
     this.card.position = event.source.getFreeDragPosition();
-    this.eventHub.emit(
-      new WorkEvent(
-          WorkEvent.DRAG_END, 
-          WorkEvent.ID, ""+this.card.id, 
-          WorkEvent.POS, ""+this.card.position))
+    this.eventHub.emit(new WorkEvent(
+      WorkEvent.UPDATE_CARD_EVENT, WorkEvent.CARD, JSON.stringify(this.card)))
   }
 
   onEditClick() {
-    if (this.editEnabled)
-      this.eventHub.emit(
-        new WorkEvent(WorkEvent.EDIT, 
-          WorkEvent.ID, ""+this.card.id))
+    if (this.allowService.startEditIfAllowed()) {
+      this.editing = true
+    }
   }
+
   onSaveClick() {
+    this.allowService.endEdit()
+    this.editing = false
     this.eventHub.emit(new WorkEvent(
-      WorkEvent.SAVE, 
-      WorkEvent.ID, ""+this.card.id, 
-      WorkEvent.HEADER, ""+this.card.header, 
-      WorkEvent.DESCRIPTION, ""+this.card.description))
+      WorkEvent.UPDATE_CARD_EVENT, WorkEvent.CARD, JSON.stringify(this.card)))
   }
+
   onDoneClick() {
     this.eventHub.emit(
-      new WorkEvent(WorkEvent.DONE, 
-        WorkEvent.ID, ""+this.card.id))
+      new WorkEvent(WorkEvent.DONE_CARD_EVENT, 
+        WorkEvent.ID, this.card.id))
   }
 }

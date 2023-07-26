@@ -19,8 +19,8 @@ ext {
 // artifact properties
 group = 'com.cheremushkin'
 version = '0.1-SNAPSHOT'
-mainClassName = 'com.cheremushkin.DataStreamJob'
-description = """Flink Quickstart Job"""
+mainClassName = 'com.cheremushkin.WorkTaskBackend'
+description = """WorkTask Backend"""
 
 java {
     toolchain {
@@ -84,6 +84,8 @@ dependencies {
 
     // Add test dependencies here.
     testImplementation "junit:junit:4.12"
+    testImplementation "org.apache.flink:flink-test-utils:${flinkVersion}"
+    testImplementation "org.apache.flink:flink-test-utils-junit:${flinkVersion}"
 }
 
 // make compileOnly dependencies available for tests:

@@ -1,40 +1,35 @@
 @startditaa NewCard
- /--\UI_ADD_EVENT  KEY_EVENT(n)+-------------+
- |+ |-------------+------------|app.component|
- \--/             |            +-------------+
-                  |   
-                  v   
-         +------------------+
-         | allow.service    |
-         |   new_allowed {c}|
-         +------------------+
-                 |
-                 | ALLOW_ADD_EVENT
-                 v
+ /---\
+ |+  |add.component                        +------------------+
+ |   |------------+----------------------->| allow.service    |
+ \---/            |                        |   new_allowed {c}|
+                  |                        +------------------+
+                  | ALLOW_ADD_EVENT
+                  v
          +------------------+
          |card.service      | 
-         +------------------+        
+         +------------------+
                  |
-                 |  CARD_GET_ID_EVENT
+                 |  CARD_GET_ID_EVENT 
                  v
          +------------------+
-         |backend.service   | 
+         |backend.service   | enrich with key from routing service
          +------------------+        
                  |
-                 | BACKEND_NEW_ID_EVENT(id)
+                 | BACKEND_NEW_ID_EVENT(ID)
                  v
          +------------------+
          |card.service      | 
          |new Card(id)      |
          +------------------+        
                  |
-                 | CARD_PLACE_EVENT
+                 | 
                  v
         +-------------------+
-        |card.component     |
+        |card.component     | constructor(cardPlacing = true)
         +-------------------+
                 |
-                | NEW_EDIT_EVENT 
+                | NEW_EDIT_EVENT
                 v
 
 @endditaa

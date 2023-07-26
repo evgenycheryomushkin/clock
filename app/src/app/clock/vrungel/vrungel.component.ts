@@ -1,6 +1,10 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ClockComponent } from '../clock/clock.component';
 
+/**
+ * Nice drawn clock. Credits
+ * https://www.sberbank.com/promo/kandinsky/
+ */
 @Component({
   selector: 'app-vrungel',
   templateUrl: './vrungel.component.html',

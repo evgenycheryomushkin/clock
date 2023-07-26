@@ -25,8 +25,7 @@ public class WorkTaskKafkaDeserializer implements KafkaDeserializationSchema<Wor
 
     @Override
     public WorkEvent deserialize(ConsumerRecord<byte[], byte[]> record) throws Exception {
-        WorkEvent workEvent = objectMapper.readValue(record.value(), WorkEvent.class);
-        return workEvent;
+        return objectMapper.readValue(record.value(), WorkEvent.class);
     }
 
     @Override
