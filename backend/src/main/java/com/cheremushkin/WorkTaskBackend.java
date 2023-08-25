@@ -4,6 +4,8 @@ import com.cheremushkin.data.WorkEvent;
 import com.cheremushkin.main.MainFunction;
 import com.cheremushkin.validate.ValidateKeyFunction;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import org.apache.flink.connector.base.DeliveryGuarantee;
+import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.flink.connector.kafka.source.reader.deserializer.KafkaRecordDeserializationSchema;
@@ -22,8 +24,21 @@ public class WorkTaskBackend {
 		stream
 				.map(new ValidateKeyFunction())
 				.flatMap(new MainFunction())
-				.print();
+				.sinkTo()
 		env.execute("Flink Java API Skeleton");
+	}
+
+	private static buildKafkaSink() {
+		KafkaSink<String> sink = KafkaSink.<String>builder()
+				.setBootstrapServers("localhost:9092")
+
+				.setRecordSerializer(KafkaRecordSerializationSchema.builder()
+						.setTopic("topic-name")
+						.setValueSerializationSchema(new SimpleStringSchema())
+						.build()
+				)
+				.setDeliveryGuarantee(DeliveryGuarantee.AT_LEAST_ONCE)
+				.build();
 	}
 
 	private static KafkaSource<WorkEvent> buildKafkaSource() {

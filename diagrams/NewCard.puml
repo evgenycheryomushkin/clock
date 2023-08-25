@@ -1,9 +1,12 @@
 @startditaa NewCard
- /---\
- |+  |add.component                        +------------------+
- |   |------------+----------------------->| allow.service    |
- \---/            |                        |   new_allowed {c}|
-                  |                        +------------------+
+ /---\             +------------------+
+ |+  |add.component| allow.service    |
+ |   |-------------+   new_allowed    |
+ \---/             |    {c}           |
+                   +---------+--------+
+                             |
+                  +----------+
+                  |
                   | ALLOW_ADD_EVENT
                   v
          +------------------+
@@ -26,7 +29,7 @@
                  | 
                  v
         +-------------------+
-        |card.component     | constructor(cardPlacing = true)
+        |card.component     | constructor
         +-------------------+
                 |
                 | NEW_EDIT_EVENT

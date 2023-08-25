@@ -41,9 +41,9 @@ export class WorkEvent {
    * 
    * Called when user enter URL in browser. URL can contain
    * session key (16 hex digits number). URL is in form 
-   * worktask.io/key . URL may not contain key: worktask.io
+   * clock.io/key . URL may not contain key: clock.io
    * In this case session is new. We obtain new session from 
-   * server and redirect to URL worktask.io/new_key
+   * server and redirect to URL clock.io/new_key
    */
   static APP_NAVIGATION_END_EVENT = "APP_NAVIGATION_END_EVENT"
   static SESSION_KEY = "SESSION_KEY"

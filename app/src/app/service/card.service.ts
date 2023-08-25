@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { WorkEvent } from '../data/work-event';
 import { EventHubService } from './event-hub.service';
 import { Card } from '../data/card';
+import { CardPlaceService } from './card-place.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,10 @@ import { Card } from '../data/card';
 export class CardService {
   public cards = new Array<Card>()
 
-  constructor(eventHubService: EventHubService) { 
+  constructor(
+    eventHubService: EventHubService,
+    cardPlaceService: CardPlaceService
+  ) { 
     const cardService = this;
     /**
      * Signal to add new card. 
@@ -22,19 +26,21 @@ export class CardService {
         return new WorkEvent(WorkEvent.CARD_GET_ID_EVENT)
       }
     )
+
     /**
-     * Receive new ID from backend and start
-     * dragging new card to given position
+     * Receive new ID from backend. Create new card and put it
+     * into free space
      */
     eventHubService.subscribe(WorkEvent.BACKEND_NEW_ID_EVENT,
       (event: WorkEvent) => {
-        const card = new Card(event.data.get(WorkEvent.ID), "", "", new Date(), {x:0, y:0})
-        this.cards.push(card)
+        const card = new Card(event.data.get(WorkEvent.ID), "", "", new Date())
+        const place = cardPlaceService.findPlace(cardService.cards)
+        cardService.cards.push(card)
       }
     )
   }
 
-    init() {
-      console.log("Card Service initialized")
-    }  
+  init() {
+    console.log("Card Service initialized")
   }
+}

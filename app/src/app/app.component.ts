@@ -8,6 +8,7 @@ import { BackendService } from './service/backend.service';
 import { Rectangle } from './data/rectangle';
 import { AllowService } from './service/allow.service';
 import { RoutingService } from './service/routing.service';
+import { CardPlaceService } from './service/card-place.service';
 
 /**
  * Application component. It contains clock and list of cards.
@@ -32,6 +33,7 @@ export class AppComponent implements OnInit {
     backendService: BackendService,
     routingService: RoutingService,
     allowService: AllowService,
+    cardPlaceService: CardPlaceService,
 
     private router: Router,
     private renderer: Renderer2
@@ -41,6 +43,7 @@ export class AppComponent implements OnInit {
     backendService.init()
     routingService.init()
     allowService.init()
+    cardPlaceService.init()
   }
 
   ngOnInit(): void {

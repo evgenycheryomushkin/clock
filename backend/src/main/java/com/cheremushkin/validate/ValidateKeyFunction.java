@@ -1,6 +1,5 @@
 package com.cheremushkin.validate;
 
-import com.cheremushkin.Util;
 import com.cheremushkin.data.WorkEvent;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.common.state.MapState;
@@ -8,6 +7,7 @@ import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 
 import java.time.ZonedDateTime;
+import java.util.Random;
 
 /**
  * Validate key. Create new key in case of new session. Validate existing key
@@ -15,6 +15,9 @@ import java.time.ZonedDateTime;
  */
 public class ValidateKeyFunction extends RichMapFunction<WorkEvent, WorkEvent> {
 
+    Random r = new Random();
+    int maxAttempts = 10;
+    int keyLength = 4;
     /**
      * Map of session keys and their information.
      * Information contains creation date and modification date.
@@ -31,7 +34,15 @@ public class ValidateKeyFunction extends RichMapFunction<WorkEvent, WorkEvent> {
             if (!event.getData().containsKey(WorkEvent.SESSION_KEY)) {
                 // this session is new
                 // we should generate new key here
-                String key = Util.generate();
+                String key = null;
+                int attempt = 0;
+                while (key == null || keyMap.contains(key)) {
+                    if (attempt++ > maxAttempts) {
+                        attempt = 0;
+                        keyLength ++;
+                    }
+                    key = generate(keyLength);
+                }
                 keyMap.put(key, new KeyInfo());
                 return WorkEvent.builder()
                         .type(WorkEvent.UI_START_WITHOUT_KEY_EVENT)
@@ -54,5 +65,13 @@ public class ValidateKeyFunction extends RichMapFunction<WorkEvent, WorkEvent> {
             // another event - just move forward
             return event;
         }
+    }
+
+    /**
+     * Generate new key or id. Key consists of 4 hex digits.
+     * @return new key or id, that contains 4 hex digits.
+     */
+    String generate(int keyLength) {
+        return String.format("%08x", r.nextInt()).substring(0,keyLength);
     }
 }
