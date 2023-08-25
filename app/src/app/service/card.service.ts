@@ -3,6 +3,8 @@ import { WorkEvent } from '../data/work-event';
 import { EventHubService } from './event-hub.service';
 import { Card } from '../data/card';
 import { CardPlaceService } from './card-place.service';
+import { Rectangle } from '../data/rectangle';
+import { AllowService } from './allow.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,8 @@ export class CardService {
 
   constructor(
     eventHubService: EventHubService,
-    cardPlaceService: CardPlaceService
+    cardPlaceService: CardPlaceService,
+    allowService: AllowService
   ) { 
     const cardService = this;
     /**
@@ -33,9 +36,17 @@ export class CardService {
      */
     eventHubService.subscribe(WorkEvent.BACKEND_NEW_ID_EVENT,
       (event: WorkEvent) => {
-        const card = new Card(event.data.get(WorkEvent.ID), "", "", new Date())
-        const place = cardPlaceService.findPlace(cardService.cards)
+        const viewPort:Rectangle = {
+          x: window.scrollX,
+          y: window.scrollY,
+          w: window.innerWidth,
+          h: window.innerHeight
+        }
+        const place = cardPlaceService.findPlace(cardService.cards, viewPort)
+        const card = new Card(event.data.get(WorkEvent.ID), "", "", new Date(),
+            {x:place.x, y:place.y})
         cardService.cards.push(card)
+        allowService.endNew()
       }
     )
   }

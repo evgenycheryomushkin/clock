@@ -5,7 +5,6 @@ cdkDrag
 (cdkDragEnded)="dragEnded($event)"
 [ngClass]="{'mat-elevation-z8' : dragging}"
 [cdkDragDisabled]="!allowService.dragEnabled" 
-(click) = "mouseClick()"
 >
     <mat-card-title>
       <mat-form-field *ngIf="editing">

@@ -4,7 +4,6 @@ import { EventHubService } from '../service/event-hub.service';
 import { WorkEvent } from '../data/work-event';
 import { Card } from '../data/card';
 import { AllowService } from '../service/allow.service';
-import { Subscription } from 'rxjs';
 
 /**
  * Card component. Manages a card. Allow editing card,
@@ -24,38 +23,16 @@ export class CardComponent implements AfterViewInit {
   // flag that switch interface into edit mode
   editing = false
 
-  // placing new card. Card follows mouse cursor
-  // until user clicks mouse
-  cardPlacing = false
-
   @ViewChild("cardElem", {read: ElementRef}) 
   private cardElem: ElementRef
   @ViewChild("cardHeaderEdit", {read: ElementRef}) 
   private cardHeaderEditRef: ElementRef
 
-  lastRect: DOMRect
-
   constructor(
     private eventHub: EventHubService,
     public allowService: AllowService,
     private renderer: Renderer2) {
-      // start placing new card
-      // placing new card means that card
-      // is stick to mouse cursor.
-      // User moves mouse and place card. After 
-      // click card is fixed
-      this.cardPlacing = true
   }
-
-  /**
-   * Subscription to mouse move event. It is needed
-   * when new card appears. Card is being dragged with
-   * mouse. So card shuld follow mouse coordinates
-   * without click.
-   * After click it will be unsubscribed and not be
-   * clicked anymore.
-   */
-  private startingMouseMoveSubscription: Subscription
 
   ngAfterViewInit() {
     console.log(this.card)

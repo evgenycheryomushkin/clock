@@ -1,3 +1,4 @@
+import { Point } from "@angular/cdk/drag-drop";
 import { CardComponent } from "../card/card.component";
 
 /**
@@ -9,7 +10,8 @@ export class Card{
       public id: string,
       public header: string,
       public description: string,
-      public created: Date
+      public created: Date,
+      public position: Point
       ) {
       }
     /**
