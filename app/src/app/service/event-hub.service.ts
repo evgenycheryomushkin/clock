@@ -55,7 +55,7 @@ export class EventHubService {
    * @param complete never called normally
    */
   subscribe(
-    eventType: string|RegExp,
+    eventType: String|String[]|RegExp,
     next: (event: WorkEvent, eventProcessor: EventProcessor) => WorkEvent | void,
     error: (err: any) => void = () => {},
     complete: () => void  = () => {}
@@ -78,19 +78,31 @@ export class EventStream {
   }
 
   buildEventProcessor(
-      eventType: string|RegExp,
+      eventType: String|String[]|RegExp,
       next: (value: WorkEvent, eventProcessor: EventProcessor) => WorkEvent | void,
       error: (err: any) => void = () => {},
       complete: () => void  = () => {}
   ): EventProcessor {
     if (eventType instanceof RegExp) {
+      // event is of type regex
       const eventProcessor = new EventProcessor(next, error,
         complete, this);
       if (this.processors.get(eventType) == null) this.processors.set(eventType, new Array<EventProcessor>())
       this.processors.get(eventType)?.push(eventProcessor);
       return eventProcessor    
-    } else
-    return this.buildEventProcessor(
-      new RegExp("^"+eventType+"$"), next, error, complete)
+    } else if (eventType instanceof String) {
+      // event is of type string
+      return this.buildEventProcessor(
+        new RegExp("^"+eventType+"$"), next, error, complete)
+    } else {
+      // event is of type string []
+      var regexString = "^("
+      for(var i = 0; i < eventType.length; i ++) {
+        if (i>0) regexString = regexString + "|"
+        regexString = regexString + eventType[i]
+      }
+      return this.buildEventProcessor(
+        new RegExp(regexString+")$"), next, error, complete)
+    }
   }
 }
