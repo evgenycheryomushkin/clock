@@ -45,3 +45,7 @@ rm c:/kafka_2.13-3.4.0/data -rf
 rm c:/kafka_2.13-3.4.0/logs -rf
 ```
 
+#### Start pre-back
+cd socket-server
+npx tsc -w
+node .\build\index.js
