@@ -20,12 +20,18 @@
     "@angular/platform-browser": "~13.0.0",
     "@angular/platform-browser-dynamic": "~13.0.0",
     "@angular/router": "~13.0.0",
+    "@stomp/ng2-stompjs": "^8.0.0",
+    "@stomp/stompjs": "^7.0.0",
     "crypto": "^1.0.1",
     "crypto-browserify": "^3.12.0",
+    "ng2-stomp-service": "^1.2.2",
     "rxjs": "~7.4.0",
     "socket.io-client": "^4.6.1",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3",
     "tslib": "^2.3.0",
     "typescript-map": "^0.1.0",
+    "ws": "^8.14.1",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {

@@ -5,7 +5,7 @@ import { TSMap } from "typescript-map";
  * with type and optional data to exchange
  * events inside fronend and on backend.
  */
-export class WorkEvent {
+export class CardEvent {
 
   /**
    * New card events
@@ -127,7 +127,7 @@ export class WorkEvent {
   /**
    * Creation date time
    */
-  public createDate: Date;
+  public createDate: number;
   /**
    * Data in for of string key-value pairs
    */
@@ -149,13 +149,13 @@ export class WorkEvent {
    */
   constructor(
     type: string,
-    ...args: string[] | WorkEvent[]
+    ...args: string[] | CardEvent[]
     ) {
         this.type = type
-        this.createDate = new Date()
+        this.createDate = new Date().getTime();
         this.data = new TSMap<string, any>()
         if (args.length == 0) return
-        if (args[0] instanceof WorkEvent) {
+        if (args[0] instanceof CardEvent) {
           const event = args[0]
           event.data.forEach(
             (value: string, key?: string) => {

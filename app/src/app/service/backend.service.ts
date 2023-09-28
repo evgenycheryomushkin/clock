@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { io } from 'socket.io-client';
 import { EventHubService } from './event-hub.service';
-import { WorkEvent } from '../data/work-event';
+import { CardEvent } from '../data/card-event';
 import { RoutingService } from './routing.service';
+import { StompService } from '@stomp/ng2-stompjs';
 
 
 /**
@@ -16,31 +16,30 @@ import { RoutingService } from './routing.service';
   providedIn: 'root'
 })
 export class BackendService {
-  SOCKET_IO_URI = 'http://localhost:3000'
-  BACKEND_SOCKET_NAME = 'backend'
-
-  private socket = io(this.SOCKET_IO_URI);
-
+  
   init() {
     console.log("Backend Service was initialized")
   }
 
   constructor(
-    private eventHubService: EventHubService,
-    private routingService: RoutingService) { 
-    const backend = this
+    eventHubService: EventHubService,
+    private routingService: RoutingService,
+    private stompService: StompService) { 
+
+      const backend = this
 
     // subscribe to several events and forward them to backend
     eventHubService.subscribe(
-      [WorkEvent.CARD_GET_ID_EVENT, WorkEvent.UI_START_EVENT],
-      (event: WorkEvent) => {
-        event.data.set(WorkEvent.SESSION_KEY, backend.routingService.getKey())
-        this.socket.emit(backend.BACKEND_SOCKET_NAME, JSON.stringify(event))
+      [CardEvent.CARD_GET_ID_EVENT, CardEvent.UI_START_EVENT],
+      (event: CardEvent) => {
+        event.data.set(CardEvent.SESSION_KEY, backend.routingService.getKey())
+        console.log("Send event to backend:", event)
+        this.stompService.publish(
+          { 
+            destination: '/exchange/clock/backend', 
+            body: JSON.stringify(event) 
+          });
       }
     )
   }
-
-  // generateNewId(): string {
-  //   return [...crypto.getRandomValues(new Uint8Array(8))].map(m=>('0'+m.toString(16)).slice(-2)).join('');
-  // }
 }

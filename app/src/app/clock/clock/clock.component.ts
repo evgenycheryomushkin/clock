@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { EventHubService } from 'src/app/service/event-hub.service';
-import { WorkEvent } from 'src/app/data/work-event';
+import { CardEvent } from 'src/app/data/card-event';
 
 /**
  * Clock component

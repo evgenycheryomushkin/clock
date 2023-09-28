@@ -18,8 +18,8 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 public class WorkTaskBackend {
 
 	public static final String BOOTSTRAP_SERVER = "localhost:9092";
-	public static final String OUTPUT_TOPIC = "worktask-outgoing-events";
-	public static final String INPUT_TOPIC = "worktask-incoming-events";
+	public static final String OUTPUT_TOPIC = "clock-backend-to-frontend";
+	public static final String INPUT_TOPIC = "clock-frontend-to-backend";
 
 	public static void main(String[] args) throws Exception {
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();

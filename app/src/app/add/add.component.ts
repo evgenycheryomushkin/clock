@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EventHubService } from '../service/event-hub.service';
-import { WorkEvent } from '../data/work-event';
+import { CardEvent } from '../data/card-event';
 import { filter, fromEvent, map, tap } from 'rxjs';
 import { AllowService } from '../service/allow.service';
 
@@ -39,7 +39,7 @@ export class AddComponent implements OnInit {
   newCardClick() {
     if (this.allowService.startNewIdIfAllowed()) {
       this.eventHubService.emit(
-        new WorkEvent(WorkEvent.ALLOW_ADD_EVENT));
+        new CardEvent(CardEvent.ALLOW_ADD_EVENT));
     }
   }
 
@@ -53,7 +53,7 @@ export class AddComponent implements OnInit {
       .pipe(filter(e => e.code == 'KeyN'),
         filter(e => addComponent.allowService.startNewIdIfAllowed()),
         tap(e => e.preventDefault()),
-        map(() => new WorkEvent(WorkEvent.ALLOW_ADD_EVENT)
+        map(() => new CardEvent(CardEvent.ALLOW_ADD_EVENT)
         ));
       addComponent.eventHubService.registerSource(keyboardEventObserver);
   }

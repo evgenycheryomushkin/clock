@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { WorkEvent } from '../data/work-event';
+import { CardEvent } from '../data/card-event';
 import { Observable } from 'rxjs';
 import { EventProcessor } from '../core/event-processor';
 
@@ -23,18 +23,18 @@ export class EventHubService {
     // log all events for debug purposes
     this.subscribe(
       RegExp(".*"),
-      (event: WorkEvent) => {
+      (event: CardEvent) => {
           console.log(event.type, event)
       })
     }
 
-  registerSource(observable: Observable<WorkEvent>) {
+  registerSource(observable: Observable<CardEvent>) {
     observable.subscribe(
       next => this.sourceSream.emit(next)
     )
   }
 
-  emit(workEvent: WorkEvent) {
+  emit(workEvent: CardEvent) {
     this.sourceSream.emit(workEvent)
   }
 
@@ -56,7 +56,7 @@ export class EventHubService {
    */
   subscribe(
     eventType: String|String[]|RegExp,
-    next: (event: WorkEvent, eventProcessor: EventProcessor) => WorkEvent | void,
+    next: (event: CardEvent, eventProcessor: EventProcessor) => CardEvent | void,
     error: (err: any) => void = () => {},
     complete: () => void  = () => {}
   ): void {
@@ -70,7 +70,7 @@ export class EventHubService {
 export class EventStream {
   private processors: Map<RegExp,Array<EventProcessor>> = new Map()
     
-  emit(workEvent: WorkEvent) {
+  emit(workEvent: CardEvent) {
     this.processors.forEach((processorList: EventProcessor[], key: RegExp) => {
       if (key.test(workEvent.type)) 
         processorList.forEach(processor => processor.next(workEvent))
@@ -79,10 +79,11 @@ export class EventStream {
 
   buildEventProcessor(
       eventType: String|String[]|RegExp,
-      next: (value: WorkEvent, eventProcessor: EventProcessor) => WorkEvent | void,
+      next: (value: CardEvent, eventProcessor: EventProcessor) => CardEvent | void,
       error: (err: any) => void = () => {},
       complete: () => void  = () => {}
   ): EventProcessor {
+    const type = typeof eventType;
     if (eventType instanceof RegExp) {
       // event is of type regex
       const eventProcessor = new EventProcessor(next, error,
@@ -90,7 +91,7 @@ export class EventStream {
       if (this.processors.get(eventType) == null) this.processors.set(eventType, new Array<EventProcessor>())
       this.processors.get(eventType)?.push(eventProcessor);
       return eventProcessor    
-    } else if (eventType instanceof String) {
+    } else if (type == "string") {
       // event is of type string
       return this.buildEventProcessor(
         new RegExp("^"+eventType+"$"), next, error, complete)

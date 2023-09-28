@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { EventHubService } from "./event-hub.service";
-import { WorkEvent } from "../data/work-event";
+import { CardEvent } from "../data/card-event";
 
 
 /**

@@ -1,7 +1,7 @@
 import { Component, Input, ViewChild, AfterViewInit, ElementRef, Renderer2 } from '@angular/core';
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { EventHubService } from '../service/event-hub.service';
-import { WorkEvent } from '../data/work-event';
+import { CardEvent } from '../data/card-event';
 import { Card } from '../data/card';
 import { AllowService } from '../service/allow.service';
 
@@ -61,8 +61,8 @@ export class CardComponent implements AfterViewInit {
    */
   dragEnded(event: CdkDragEnd) {
     this.dragging = false
-    this.eventHub.emit(new WorkEvent(
-      WorkEvent.UPDATE_CARD_EVENT, WorkEvent.CARD, JSON.stringify(this.card)))
+    this.eventHub.emit(new CardEvent(
+      CardEvent.UPDATE_CARD_EVENT, CardEvent.CARD, JSON.stringify(this.card)))
   }
 
   /**
@@ -81,8 +81,8 @@ export class CardComponent implements AfterViewInit {
   onSaveClick() {
     this.allowService.endEdit()
     this.editing = false
-    this.eventHub.emit(new WorkEvent(
-      WorkEvent.UPDATE_CARD_EVENT, WorkEvent.CARD, JSON.stringify(this.card)))
+    this.eventHub.emit(new CardEvent(
+      CardEvent.UPDATE_CARD_EVENT, CardEvent.CARD, JSON.stringify(this.card)))
   }
 
   /**
@@ -91,7 +91,7 @@ export class CardComponent implements AfterViewInit {
    */
   onDoneClick() {
     this.eventHub.emit(
-      new WorkEvent(WorkEvent.DONE_CARD_EVENT, 
-        WorkEvent.ID, this.card.id))
+      new CardEvent(CardEvent.DONE_CARD_EVENT, 
+        CardEvent.ID, this.card.id))
   }
 }

@@ -1,11 +1,10 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { filter, map } from 'rxjs';
 import { CardService } from './service/card.service';
-import { WorkEvent } from './data/work-event';
+import { CardEvent } from './data/card-event';
 import { EventHubService } from './service/event-hub.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { BackendService } from './service/backend.service';
-import { Rectangle } from './data/rectangle';
 import { AllowService } from './service/allow.service';
 import { RoutingService } from './service/routing.service';
 import { CardPlaceService } from './service/card-place.service';
@@ -57,8 +56,8 @@ export class AppComponent implements OnInit {
         filter(e => e instanceof NavigationEnd),
         map((e) => e as NavigationEnd),
         map((ne: NavigationEnd) => {
-          return new WorkEvent(WorkEvent.APP_NAVIGATION_END_EVENT, 
-            WorkEvent.SESSION_KEY, ne.url.slice(1))
+          return new CardEvent(CardEvent.APP_NAVIGATION_END_EVENT, 
+            CardEvent.SESSION_KEY, ne.url.slice(1))
         }))
     this.eventHubService.registerSource(navigationEnd)
   }

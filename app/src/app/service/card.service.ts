@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { WorkEvent } from '../data/work-event';
+import { CardEvent } from '../data/card-event';
 import { EventHubService } from './event-hub.service';
 import { Card } from '../data/card';
 import { CardPlaceService } from './card-place.service';
@@ -24,9 +24,9 @@ export class CardService {
      * This event already contains verification from allow.service.
      * Send CARD_GET_ID_EVENT further to backend.
      */
-    eventHubService.subscribe(WorkEvent.ALLOW_ADD_EVENT,
+    eventHubService.subscribe(CardEvent.ALLOW_ADD_EVENT,
       () => {
-        return new WorkEvent(WorkEvent.CARD_GET_ID_EVENT)
+        return new CardEvent(CardEvent.CARD_GET_ID_EVENT)
       }
     )
 
@@ -34,8 +34,8 @@ export class CardService {
      * Receive new ID from backend. Create new card and put it
      * into free space
      */
-    eventHubService.subscribe(WorkEvent.BACKEND_NEW_ID_EVENT,
-      (event: WorkEvent) => {
+    eventHubService.subscribe(CardEvent.BACKEND_NEW_ID_EVENT,
+      (event: CardEvent) => {
         const viewPort:Rectangle = {
           x: window.scrollX,
           y: window.scrollY,
@@ -43,7 +43,7 @@ export class CardService {
           h: window.innerHeight
         }
         const place = cardPlaceService.findPlace(cardService.cards, viewPort)
-        const card = new Card(event.data.get(WorkEvent.ID), "", "", new Date(),
+        const card = new Card(event.data.get(CardEvent.ID), "", "", new Date(),
             {x:place.x, y:place.y})
         cardService.cards.push(card)
         allowService.endNew()
