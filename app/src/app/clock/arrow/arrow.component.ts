@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '
 import { loadImage } from '../clock/clock.component';
 
 /**
- * Component responsible for drawing arrow. Click has 2-3 arrows.
+ * Component responsible for drawing arrow. Clock has 2-3 arrows.
  * Each arrow has center position. It is middle bottom point of image.
  * Arrow is directed upwards. There is also offset parameter d
  * that can be positive or negative. D is vertical offset from center to

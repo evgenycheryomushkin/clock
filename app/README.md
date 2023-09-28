@@ -1,28 +1,6 @@
-# Work Task Repository
-This repository is start of work task project. Create tests and arrange them in work desktop.
+# Clock Repository
+This repository is start of clock project. Clock and list of tasks.
 
-## Installation
-
-1. Install and run kafka (windows). Linux is almost same, just paths are different.
-Download kafka from official website. Unpack it to c:\kafka_2.13-3.4.0
-
-Edit c:\kafka_2.13-3.4.0\conf\server.properties
-```
-log.dirs=c:/kafka_2.13-3.4.0/logs
-delete.topic.enable=true
-```
-
-Edit c:\kafka_2.13-3.4.0\conf\zookeper.properties
-```
-dataDir=c:/kafka_2.13-3.4.0/data/zookeeper
-```
-
-#### Troubleshoot kafka
-If kafka did not load then delete
-```
-rm c:/kafka_2.13-3.4.0/data -rf
-rm c:/kafka_2.13-3.4.0/logs -rf
-```
 
 2. Install and run GUI
 ```

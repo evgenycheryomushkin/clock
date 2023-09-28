@@ -1,6 +1,5 @@
 package com.cheremushkin.main;
 
-import com.cheremushkin.Util;
 import com.cheremushkin.data.Card;
 import com.cheremushkin.data.WorkEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,8 +11,11 @@ import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.util.Collector;
 
+import java.util.Random;
+
 public class MainFunction extends RichFlatMapFunction<WorkEvent, WorkEvent> {
 
+    Random r = new Random();
     ObjectMapper objectMapper = new ObjectMapper();
 
     /**
@@ -56,7 +58,7 @@ public class MainFunction extends RichFlatMapFunction<WorkEvent, WorkEvent> {
             case WorkEvent.CARD_GET_ID_EVENT:
                 // Event is processed when new card is created and id is generated. This id is sent
                 // back to UI
-                String id = Util.generate();
+                String id = generate();
                 activeCardState.put(id, Card.builder().id(id).build());
                 out.collect(WorkEvent.builder().type(WorkEvent.BACKEND_NEW_ID_EVENT).build().add(WorkEvent.ID, id));
                 return;
@@ -75,5 +77,12 @@ public class MainFunction extends RichFlatMapFunction<WorkEvent, WorkEvent> {
                 activeCardState.remove(cardToDelete.getId());
                 doneCardState.put(cardToDelete.getId(), cardToDelete);
         }
+    }
+    /**
+     * Generate new key or id. Key consists of 8 hex digits.
+     * @return new key or id, that contains 8 hex digits.
+     */
+    String generate() {
+        return String.format("%08x", r.nextInt());
     }
 }

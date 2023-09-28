@@ -1,5 +1,5 @@
 import { Observer } from "rxjs"
-import { WorkEvent } from "../data/work-event"
+import { CardEvent } from "../data/card-event"
 import { EventStream } from "../service/event-hub.service"
 
 /**
@@ -23,23 +23,23 @@ import { EventStream } from "../service/event-hub.service"
  * EventProcessor should not be instantiated directly, 
  * it should be instantiated via EventHubService.buildProcessor
  */
-export class EventProcessor implements Observer<WorkEvent> {
+export class EventProcessor implements Observer<CardEvent> {
 
   constructor(
-    private nextValue: (value: WorkEvent,
-      eventProcessor: EventProcessor) => WorkEvent | void,
+    private nextValue: (value: CardEvent,
+      eventProcessor: EventProcessor) => CardEvent | void,
     public error: (err: any) => void,
     public complete: () => void,
     private eventStream: EventStream
   ) {
   }
 
-  next: (value: WorkEvent) => void = (value: WorkEvent) => {
+  next: (value: CardEvent) => void = (value: CardEvent) => {
     const resEvent = this.nextValue(value, this)
     if (resEvent != null) this.emit(resEvent)
   }
 
-  emit(workEvent: WorkEvent) {
+  emit(workEvent: CardEvent) {
     this.eventStream.emit(workEvent)
   }
 }

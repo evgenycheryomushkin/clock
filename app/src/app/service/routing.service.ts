@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
 import { io } from 'socket.io-client';
 import { EventHubService } from './event-hub.service';
-import { WorkEvent } from '../data/work-event';
+import { CardEvent } from '../data/card-event';
 import { EventProcessor } from '../core/event-processor';
 import {Location} from '@angular/common';
 
+/**
+ * Takes care of session key (key parameter). Store key and 
+ * give it to events if necessary by getKey
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -25,16 +29,16 @@ export class RoutingService {
     ) { 
     const routingService = this
     eventHubService.subscribe(
-        WorkEvent.APP_NAVIGATION_END_EVENT,
-        (event: WorkEvent, eventProcessor: EventProcessor) => {
-            const res = new WorkEvent(WorkEvent.UI_START_EVENT, event)
+        CardEvent.APP_NAVIGATION_END_EVENT,
+        (event: CardEvent, eventProcessor: EventProcessor) => {
+            const res = new CardEvent(CardEvent.UI_START_EVENT, event)
             eventProcessor.emit(res)
         })
     
     eventHubService.subscribe(
-      WorkEvent.BACKEND_NEW_KEY_EVENT,
-      (event: WorkEvent, eventProcessor: EventProcessor) => {
-        routingService.key = event.data.get(WorkEvent.SESSION_KEY)
+      CardEvent.BACKEND_NEW_KEY_EVENT,
+      (event: CardEvent, eventProcessor: EventProcessor) => {
+        routingService.key = event.data.get(CardEvent.SESSION_KEY)
         routingService.location.replaceState("/"+routingService.key)
       })
   }

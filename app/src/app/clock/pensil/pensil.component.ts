@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ClockComponent, loadImage } from '../clock/clock.component';
 
 /**
- * Pensol drawn clock. Credits
+ * Pensil drawn clock. Credits
  * https://www.sberbank.com/promo/kandinsky/
  */
 @Component({

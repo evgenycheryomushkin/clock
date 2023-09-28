@@ -5,7 +5,7 @@ import { TSMap } from "typescript-map";
  * with type and optional data to exchange
  * events inside fronend and on backend.
  */
-export class WorkEvent {
+export class CardEvent {
 
   /**
    * New card events
@@ -13,6 +13,7 @@ export class WorkEvent {
 
   /**
    * Add new card event. New card is allowed to be added.
+   * See diagrams at diagrams/ folder for details.
    * New card button is pressed. After that allow service is 
    * checked. If allow service allow adding new card, this event occurs.
    * Sender: add.component
@@ -40,9 +41,9 @@ export class WorkEvent {
    * 
    * Called when user enter URL in browser. URL can contain
    * session key (16 hex digits number). URL is in form 
-   * worktask.io/key . URL may not contain key: worktask.io
+   * clock.io/key . URL may not contain key: clock.io
    * In this case session is new. We obtain new session from 
-   * server and redirect to URL worktask.io/new_key
+   * server and redirect to URL clock.io/new_key
    */
   static APP_NAVIGATION_END_EVENT = "APP_NAVIGATION_END_EVENT"
   static SESSION_KEY = "SESSION_KEY"
@@ -126,7 +127,7 @@ export class WorkEvent {
   /**
    * Creation date time
    */
-  public createDate: Date;
+  public createDate: number;
   /**
    * Data in for of string key-value pairs
    */
@@ -148,13 +149,13 @@ export class WorkEvent {
    */
   constructor(
     type: string,
-    ...args: string[] | WorkEvent[]
+    ...args: string[] | CardEvent[]
     ) {
         this.type = type
-        this.createDate = new Date()
+        this.createDate = new Date().getTime();
         this.data = new TSMap<string, any>()
         if (args.length == 0) return
-        if (args[0] instanceof WorkEvent) {
+        if (args[0] instanceof CardEvent) {
           const event = args[0]
           event.data.forEach(
             (value: string, key?: string) => {

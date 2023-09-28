@@ -1,2 +1,5 @@
-.vscode
 .idea
+.vscode
+.gradle
+node_modules
+build

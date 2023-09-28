@@ -1,18 +1,22 @@
 import { Point } from "@angular/cdk/drag-drop";
-import { ElementRef } from "@angular/core";
+import { CardComponent } from "../card/card.component";
 
 /**
  * Card representation. Contains bounding rectangle (not used).
  * Contains id, header, description, creation date, position
  */
 export class Card{
-    rect: any;
     constructor(
       public id: string,
       public header: string,
       public description: string,
-      public created: Date, 
-      public position: Point) {
+      public created: Date,
+      public position: Point
+      ) {
       }
-    }
-  
+    /**
+     * Backward reference to card component,
+     * that contains given card
+     */
+    public cardComponent: CardComponent
+}

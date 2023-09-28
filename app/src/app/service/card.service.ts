@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
-import { WorkEvent } from '../data/work-event';
+import { CardEvent } from '../data/card-event';
 import { EventHubService } from './event-hub.service';
 import { Card } from '../data/card';
+import { CardPlaceService } from './card-place.service';
+import { Rectangle } from '../data/rectangle';
+import { AllowService } from './allow.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +12,11 @@ import { Card } from '../data/card';
 export class CardService {
   public cards = new Array<Card>()
 
-  constructor(eventHubService: EventHubService) { 
+  constructor(
+    eventHubService: EventHubService,
+    cardPlaceService: CardPlaceService,
+    allowService: AllowService
+  ) { 
     const cardService = this;
     /**
      * Signal to add new card. 
@@ -17,24 +24,34 @@ export class CardService {
      * This event already contains verification from allow.service.
      * Send CARD_GET_ID_EVENT further to backend.
      */
-    eventHubService.subscribe(WorkEvent.ALLOW_ADD_EVENT,
+    eventHubService.subscribe(CardEvent.ALLOW_ADD_EVENT,
       () => {
-        return new WorkEvent(WorkEvent.CARD_GET_ID_EVENT)
+        return new CardEvent(CardEvent.CARD_GET_ID_EVENT)
       }
     )
+
     /**
-     * Receive new ID from backend and start
-     * dragging new card to given position
+     * Receive new ID from backend. Create new card and put it
+     * into free space
      */
-    eventHubService.subscribe(WorkEvent.BACKEND_NEW_ID_EVENT,
-      (event: WorkEvent) => {
-        const card = new Card(event.data.get(WorkEvent.ID), "", "", new Date(), {x:0, y:0})
-        this.cards.push(card)
+    eventHubService.subscribe(CardEvent.BACKEND_NEW_ID_EVENT,
+      (event: CardEvent) => {
+        const viewPort:Rectangle = {
+          x: window.scrollX,
+          y: window.scrollY,
+          w: window.innerWidth,
+          h: window.innerHeight
+        }
+        const place = cardPlaceService.findPlace(cardService.cards, viewPort)
+        const card = new Card(event.data.get(CardEvent.ID), "", "", new Date(),
+            {x:place.x, y:place.y})
+        cardService.cards.push(card)
+        allowService.endNew()
       }
     )
   }
 
-    init() {
-      console.log("Card Service initialized")
-    }  
+  init() {
+    console.log("Card Service initialized")
   }
+}

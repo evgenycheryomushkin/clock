@@ -1,13 +1,13 @@
 import { Injectable } from "@angular/core";
 import { EventHubService } from "./event-hub.service";
-import { WorkEvent } from "../data/work-event";
+import { CardEvent } from "../data/card-event";
 
 
 /**
  * Allow service should be asked:
- * is new card allowed,
- * is edit card allowed,
- * is drag allowed.
+ * if new card allowed,
+ * if edit card allowed,
+ * if drag allowed.
  * 
  * And it should be notified:
  * if new card is being creating,
