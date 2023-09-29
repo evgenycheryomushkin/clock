@@ -33,7 +33,16 @@
             "arguments": {
                 "x-queue-type": "classic"
             }
-        }
+        },
+        {
+          "name": "backend-to-frontend",
+          "vhost": "/",
+          "durable": true,
+          "auto_delete": false,
+          "arguments": {
+              "x-queue-type": "classic"
+          }
+      }
     ],
     "exchanges": [
         {
@@ -54,6 +63,14 @@
             "destination_type": "queue",
             "routing_key": "backend",
             "arguments": {}
-        }
-    ]
+        },
+        {
+          "source": "clock",
+          "vhost": "/",
+          "destination": "backend-to-frontend",
+          "destination_type": "queue",
+          "routing_key": "frontend",
+          "arguments": {}
+      }
+  ]
 }

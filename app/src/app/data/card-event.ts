@@ -36,7 +36,7 @@ export class CardEvent {
   /**
    * Navigation events
    * Event: End user navigation
-   * Parameters: SESSION_KEY - session key
+   * Parameters: sessionKey - session key
    * Sender: app.component
    * 
    * Called when user enter URL in browser. URL can contain
@@ -46,13 +46,12 @@ export class CardEvent {
    * server and redirect to URL clock.io/new_key
    */
   static APP_NAVIGATION_END_EVENT = "APP_NAVIGATION_END_EVENT"
-  static SESSION_KEY = "SESSION_KEY"
 
   /**
    * Sent when UI is started.
    * Event: UI is sent to backend when UI is started. User
    * enter url in browser.
-   * Parameters: SESSION_KEY - session key. Can be empty or
+   * Parameters: sessionKey - session key. Can be empty or
    * contain 16 hex digits.
    * Sender: backend.service
    * 
@@ -97,7 +96,7 @@ export class CardEvent {
    * 
    * Sender: Backend
    * Receiver: routing.service
-   * Parameters: SESSION_KEY - session key
+   * Parameters: sessionKey - session key
    */
   static BACKEND_NEW_KEY_EVENT = "BACKEND_NEW_KEY_EVENT"
 
@@ -128,6 +127,10 @@ export class CardEvent {
    * Creation date time
    */
   public createDate: number;
+  /**
+   * Session key. Is set by routing service.
+   */
+  public sessionKey: string = "";
   /**
    * Data in for of string key-value pairs
    */

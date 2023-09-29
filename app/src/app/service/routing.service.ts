@@ -38,7 +38,7 @@ export class RoutingService {
     eventHubService.subscribe(
       CardEvent.BACKEND_NEW_KEY_EVENT,
       (event: CardEvent, eventProcessor: EventProcessor) => {
-        routingService.key = event.data.get(CardEvent.SESSION_KEY)
+        routingService.key = event.sessionKey
         routingService.location.replaceState("/"+routingService.key)
       })
   }

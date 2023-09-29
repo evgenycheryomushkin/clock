@@ -1,13 +1,15 @@
 package com.cheremushkin.data;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.extern.jackson.Jacksonized;
-
-@Data
-@Builder
-@Jacksonized
+@Getter
+@Setter
 public class Card {
     String id;
+    public Card(String id) {
+        if (id == null) throw new RuntimeException("id is null");
+        this.id = id;
+    }
 }

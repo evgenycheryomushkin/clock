@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.*;
 
 public class MainFunctionTest {
-    Logger log = LoggerFactory.getLogger(MainFunctionTest.class);
 
     @Test
     public void testGenerate() {

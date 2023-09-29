@@ -3,6 +3,7 @@ import { EventHubService } from './event-hub.service';
 import { CardEvent } from '../data/card-event';
 import { RoutingService } from './routing.service';
 import { StompService } from '@stomp/ng2-stompjs';
+import { Message } from '@stomp/stompjs';
 
 
 /**
@@ -28,18 +29,24 @@ export class BackendService {
 
       const backend = this
 
-    // subscribe to several events and forward them to backend
-    eventHubService.subscribe(
-      [CardEvent.CARD_GET_ID_EVENT, CardEvent.UI_START_EVENT],
-      (event: CardEvent) => {
-        event.data.set(CardEvent.SESSION_KEY, backend.routingService.getKey())
-        console.log("Send event to backend:", event)
-        this.stompService.publish(
-          { 
-            destination: '/exchange/clock/backend', 
-            body: JSON.stringify(event) 
-          });
-      }
-    )
+      const subscription = this.stompService.subscribe('/queue/backend-to-frontend');
+      subscription.subscribe((message: Message) => {
+        const event: CardEvent = JSON.parse(message.body)
+        console.log(event)
+      })
+
+      // subscribe to several events and forward them to backend
+      eventHubService.subscribe(
+        [CardEvent.CARD_GET_ID_EVENT, CardEvent.UI_START_EVENT],
+        (event: CardEvent) => {
+          event.sessionKey = backend.routingService.getKey()
+          console.log("Send event to backend:", event)
+          this.stompService.publish(
+            { 
+              destination: '/exchange/clock/backend', 
+              body: JSON.stringify(event) 
+            });
+        }
+      )
   }
 }

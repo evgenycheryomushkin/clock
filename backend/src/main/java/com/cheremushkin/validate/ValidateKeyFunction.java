@@ -1,6 +1,6 @@
 package com.cheremushkin.validate;
 
-import com.cheremushkin.data.WorkEvent;
+import com.cheremushkin.data.ClockEvent;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
@@ -9,11 +9,13 @@ import org.apache.flink.api.common.typeinfo.TypeInformation;
 import java.time.ZonedDateTime;
 import java.util.Random;
 
+import static com.cheremushkin.data.ClockEvent.ERROR_DESCRIPTION;
+
 /**
  * Validate key. Create new key in case of new session. Validate existing key
  * if session already exists.
  */
-public class ValidateKeyFunction extends RichMapFunction<WorkEvent, WorkEvent> {
+public class ValidateKeyFunction extends RichMapFunction<ClockEvent, ClockEvent> {
 
     Random r = new Random();
     int maxAttempts = 10;
@@ -28,10 +30,10 @@ public class ValidateKeyFunction extends RichMapFunction<WorkEvent, WorkEvent> {
                     TypeInformation.of(KeyInfo.class));
 
     @Override
-    public WorkEvent map(WorkEvent event) throws Exception {
-        if (event.getType().equals(WorkEvent.UI_START_EVENT)) {
+    public ClockEvent map(ClockEvent event) throws Exception {
+        if (event.getType().equals(ClockEvent.UI_START_EVENT)) {
             MapState<String, KeyInfo> keyMap = getRuntimeContext().getMapState(keyMapDescriptor);
-            if (!event.getData().containsKey(WorkEvent.SESSION_KEY)) {
+            if (event.getSessionKey() == null || event.getSessionKey().isEmpty()) {
                 // this session is new
                 // we should generate new key here
                 String key = null;
@@ -39,26 +41,26 @@ public class ValidateKeyFunction extends RichMapFunction<WorkEvent, WorkEvent> {
                 while (key == null || keyMap.contains(key)) {
                     if (attempt++ > maxAttempts) {
                         attempt = 0;
-                        keyLength ++;
+                        keyLength++;
                     }
                     key = generate(keyLength);
                 }
                 keyMap.put(key, new KeyInfo());
-                return WorkEvent.builder()
-                        .type(WorkEvent.UI_START_WITHOUT_KEY_EVENT)
-                        .build()
-                        .add(WorkEvent.SESSION_KEY, key);
+                ClockEvent returnEvent = new ClockEvent(ClockEvent.UI_START_WITHOUT_KEY_EVENT);
+                returnEvent.setSessionKey(key);
+                return returnEvent;
             } else {
                 // This session is existing. User returned with this key
-                String key = event.getData().get(WorkEvent.SESSION_KEY);
+                String key = event.getSessionKey();
                 if (keyMap.contains(key)) {
                     // key is valid
                     keyMap.get(key).updated = ZonedDateTime.now();
-                    return WorkEvent.builder().type(WorkEvent.UI_START_WITH_KEY_EVENT).build()
-                            .add(WorkEvent.SESSION_KEY, event.getData().get(WorkEvent.SESSION_KEY));
+                    ClockEvent returnEvent = new ClockEvent(ClockEvent.UI_START_WITH_KEY_EVENT);
+                    returnEvent.setSessionKey(key);
+                    return returnEvent;
                 } else {
                     // key is not valid
-                    return WorkEvent.buildErrorEvent();
+                    return ClockEvent.buildErrorEvent().add(ERROR_DESCRIPTION, "Invalid session key");
                 }
             }
         } else {
@@ -69,9 +71,10 @@ public class ValidateKeyFunction extends RichMapFunction<WorkEvent, WorkEvent> {
 
     /**
      * Generate new key or id. Key consists of 4 hex digits.
+     *
      * @return new key or id, that contains 4 hex digits.
      */
     String generate(int keyLength) {
-        return String.format("%08x", r.nextInt()).substring(0,keyLength);
+        return String.format("%08x", r.nextInt()).substring(0, keyLength);
     }
 }
