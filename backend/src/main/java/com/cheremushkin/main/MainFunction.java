@@ -2,6 +2,7 @@ package com.cheremushkin.main;
 
 import com.cheremushkin.data.Card;
 import com.cheremushkin.data.ClockEvent;
+import com.cheremushkin.data.Session;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.state.MapState;
@@ -46,11 +47,18 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
             case ClockEvent.UI_START_WITHOUT_KEY_EVENT:
                 // This session is new. We should create new value for session.
                 // and return key inside event (BACKEND_NEW_KEY_EVENT
-                Session session = Session.builder().build();
+                Session session = new Session(event.getSessionKey());
                 sessionState.update(session);
                 ClockEvent newEvent = new ClockEvent(ClockEvent.BACKEND_NEW_KEY_EVENT);
                 newEvent.setSessionKey(event.getSessionKey());
                 out.collect(newEvent);
+                return;
+            case ClockEvent.UI_START_WITH_KEY_EVENT:
+                // This session already exists.
+                // return key inside event (BACKEND_EXISTING_KEY_EVENT
+                ClockEvent e = new ClockEvent(ClockEvent.BACKEND_EXISTING_KEY_EVENT);
+                e.setSessionKey(event.getSessionKey());
+                out.collect(e);
                 return;
             case ClockEvent.CARD_GET_ID_EVENT:
                 // Event is processed when new card is created and id is generated. This id is sent
@@ -61,7 +69,8 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
                 return;
             case ClockEvent.UPDATE_CARD_EVENT:
                 // event is sent when card is updated
-                Card card = objectMapper.readValue(event.getData().get(ClockEvent.CARD), Card.class);
+                Card card = activeCardState.get(event.getData().get(ClockEvent.ID));
+
                 activeCardState.put(card.getId(), card);
                 return;
             case ClockEvent.DELETE_CARD_EVENT:
@@ -73,6 +82,10 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
                 Card cardToDelete = activeCardState.get(idToDelete);
                 activeCardState.remove(cardToDelete.getId());
                 doneCardState.put(cardToDelete.getId(), cardToDelete);
+                break;
+            default:
+                out.collect(event);
+
         }
     }
 

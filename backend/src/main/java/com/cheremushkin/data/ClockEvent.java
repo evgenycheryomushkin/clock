@@ -2,9 +2,11 @@ package com.cheremushkin.data;
 
 import com.cheremushkin.serializer.ClockSerializer;
 import com.esotericsoftware.kryo.DefaultSerializer;
+import com.esotericsoftware.kryo.NotNull;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -83,6 +85,7 @@ final public class ClockEvent {
      * Arise in main function when new id is generated. After that it is send to UI
      */
     public static final String BACKEND_NEW_ID_EVENT = "BACKEND_NEW_ID_EVENT";
+    public static final String BACKEND_EXISTING_KEY_EVENT = "BACKEND_EXISTING_KEY_EVENT";
     /**
      * New card id. Is sent with BACKEND_NEW_ID_EVENT to UI.
      */
@@ -139,22 +142,17 @@ final public class ClockEvent {
 
     @JsonCreator
     public ClockEvent(
-            @JsonProperty("type") String type,
-            @JsonProperty("createDate") Long createDate,
-            @JsonProperty("sessionKey") String sessionKey,
-            @JsonProperty("data") Map<String, String> data) {
-        if (type == null) throw new RuntimeException("type is null");
-        if (createDate == null) throw new RuntimeException("createDate is null");
-        if (sessionKey == null) throw new RuntimeException("session key is null");
-        if (data == null) throw new RuntimeException("data is null");
+            @JsonProperty("type") @NonNull String type,
+            @JsonProperty("createDate") @NonNull Long createDate,
+            @JsonProperty("sessionKey") @NonNull String sessionKey,
+            @JsonProperty("data") @NonNull Map<String, String> data) {
         this.type = type;
         this.createDate = createDate;
         this.sessionKey = sessionKey;
         this.data = data;
     }
 
-    public ClockEvent(String type) {
-        if (type == null) throw new RuntimeException("type is null");
+    public ClockEvent(@NonNull String type) {
         this.type = type;
         this.createDate = System.currentTimeMillis();
         this.sessionKey = "";
@@ -166,7 +164,6 @@ final public class ClockEvent {
     }
 
     public ClockEvent add(String key, String value) {
-        if (data == null) data = new HashMap<>();
         data.put(key, value);
         return this;
     }

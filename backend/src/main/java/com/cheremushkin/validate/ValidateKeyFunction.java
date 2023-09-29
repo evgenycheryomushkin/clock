@@ -19,7 +19,7 @@ public class ValidateKeyFunction extends RichMapFunction<ClockEvent, ClockEvent>
 
     Random r = new Random();
     int maxAttempts = 10;
-    int keyLength = 4;
+    int keyLength = 16;
     /**
      * Map of session keys and their information.
      * Information contains creation date and modification date.

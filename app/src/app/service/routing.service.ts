@@ -32,6 +32,7 @@ export class RoutingService {
         CardEvent.APP_NAVIGATION_END_EVENT,
         (event: CardEvent, eventProcessor: EventProcessor) => {
             const res = new CardEvent(CardEvent.UI_START_EVENT, event)
+            res.sessionKey = event.sessionKey
             eventProcessor.emit(res)
         })
     
@@ -41,5 +42,10 @@ export class RoutingService {
         routingService.key = event.sessionKey
         routingService.location.replaceState("/"+routingService.key)
       })
-  }
+      eventHubService.subscribe(
+        CardEvent.BACKEND_EXISTING_KEY_EVENT,
+        (event: CardEvent, eventProcessor: EventProcessor) => {
+          routingService.key = event.sessionKey
+        })
+    }
 }

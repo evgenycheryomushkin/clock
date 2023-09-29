@@ -11,8 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ClockSerializer extends Serializer<ClockEvent> {
+
+    final static String V1 = "KRYO_CLOCK_V1_2023-10-01";
+
     @Override
     public void write(Kryo kryo, Output output, ClockEvent object) {
+        output.writeString(V1);
         output.writeString(object.getType());
         output.writeLong(object.getCreateDate());
         output.writeString(object.getSessionKey());
@@ -25,6 +29,7 @@ public class ClockSerializer extends Serializer<ClockEvent> {
 
     @Override
     public ClockEvent read(Kryo kryo, Input input, Class type) {
+        String version = input.readString();
         String t = input.readString();
         Long time = input.readLong();
         String key = input.readString();

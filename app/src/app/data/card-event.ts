@@ -64,14 +64,20 @@ export class CardEvent {
   /**
    * Update card event. Sent when card is saved
    * or when card is finished dragging.
-   * Parameters: CARD - json card to save
+   * Parameters: CARD_HEADER      - card header to save
+   * Parameters: CARD_DESCRIPTION - card description to save
+   * Parameters: CARD_X, CARD_Y   - card x, y to save
    * Sender: card.component
    * Receiver: Backend
    * 
    * Send card information to backend
    */
   static UPDATE_CARD_EVENT = "UPDATE_CARD_EVENT"
-  static CARD = "CARD"
+  
+  static CARD_HEADER      = "CARD_HEADER"
+  static CARD_DESCRIPTION = "CARD_DESCRIPTION"
+  static CARD_X           = "CARD_X"
+  static CARD_Y           = "CARD_Y"
 
   /**
    * Sent when drag start to be enabled
@@ -100,6 +106,16 @@ export class CardEvent {
    */
   static BACKEND_NEW_KEY_EVENT = "BACKEND_NEW_KEY_EVENT"
 
+  
+  /**
+   * Generated on backend. Confirm existing session key.
+   * 
+   * Sender: backend
+   * Receiver: routing.service
+   * Parameters: sessionKey - confirmed session key
+   */
+  static BACKEND_EXISTING_KEY_EVENT = "BACKEND_EXISTING_KEY_EVENT";
+
   /**
    * Generated on backend. Send new card key to frontend.
    * 
@@ -110,6 +126,11 @@ export class CardEvent {
   static BACKEND_NEW_ID_EVENT = "BACKEND_NEW_ID_EVENT"
 
   /**
+   * Card id
+   */
+  static ID = "ID"
+
+  /**
    * Generated when card is done. Done means that card disappears from 
    * frontend.
    * Sender: card.component
@@ -117,7 +138,6 @@ export class CardEvent {
    * Parameters: ID - card id
    */
   static DONE_CARD_EVENT = "DONE_CARD_EVENT"
-  static ID = "ID"
 
   /**
    * WorkEvent type
