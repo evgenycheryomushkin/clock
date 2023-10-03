@@ -3,6 +3,8 @@ import { EventHubService } from './event-hub.service';
 import { CardEvent } from '../data/card-event';
 import { RoutingService } from './routing.service';
 import { StompService } from '@stomp/ng2-stompjs';
+import { Message } from '@stomp/stompjs';
+import { TSMap } from 'typescript-map';
 
 
 /**
@@ -22,24 +24,43 @@ export class BackendService {
   }
 
   constructor(
-    eventHubService: EventHubService,
+    private eventHubService: EventHubService,
     private routingService: RoutingService,
     private stompService: StompService) { 
 
       const backend = this
 
-    // subscribe to several events and forward them to backend
-    eventHubService.subscribe(
-      [CardEvent.CARD_GET_ID_EVENT, CardEvent.UI_START_EVENT],
-      (event: CardEvent) => {
-        event.data.set(CardEvent.SESSION_KEY, backend.routingService.getKey())
-        console.log("Send event to backend:", event)
-        this.stompService.publish(
-          { 
-            destination: '/exchange/clock/backend', 
-            body: JSON.stringify(event) 
-          });
-      }
-    )
+      const subscription = this.stompService.subscribe('/queue/backend-to-frontend');
+      subscription.subscribe((message: Message) => {
+        const event = JSON.parse(message.body)
+        const cardEvent: CardEvent = new CardEvent(event.type)
+        cardEvent.sessionKey = event.sessionKey
+        cardEvent.data = new TSMap<string, string>()
+        for(var prop in event.data) {
+          cardEvent.data.set(prop, event.data[prop])
+        }
+        cardEvent.createDate = event.createDate
+
+        backend.eventHubService.emit(cardEvent)
+      })
+
+      // subscribe to several events and forward them to backend
+      eventHubService.subscribe(
+        [
+          CardEvent.CARD_GET_ID_EVENT, 
+          CardEvent.UI_START_EVENT,
+          CardEvent.UPDATE_CARD_EVENT
+        ],
+        (event: CardEvent) => {
+          if (backend.routingService.getKey() != "") 
+            event.sessionKey = backend.routingService.getKey()
+          console.log("Send event to backend:", event)
+          this.stompService.publish(
+            { 
+              destination: '/exchange/clock/backend', 
+              body: JSON.stringify(event) 
+            });
+        }
+      )
   }
 }

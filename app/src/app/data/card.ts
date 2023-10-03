@@ -10,7 +10,7 @@ export class Card{
       public id: string,
       public header: string,
       public description: string,
-      public created: Date,
+      public created: number,
       public position: Point
       ) {
       }

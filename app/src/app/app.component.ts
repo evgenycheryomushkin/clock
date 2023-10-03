@@ -56,8 +56,9 @@ export class AppComponent implements OnInit {
         filter(e => e instanceof NavigationEnd),
         map((e) => e as NavigationEnd),
         map((ne: NavigationEnd) => {
-          return new CardEvent(CardEvent.APP_NAVIGATION_END_EVENT, 
-            CardEvent.SESSION_KEY, ne.url.slice(1))
+          const event = new CardEvent(CardEvent.APP_NAVIGATION_END_EVENT)
+          event.sessionKey = ne.url.slice(1)
+          return event
         }))
     this.eventHubService.registerSource(navigationEnd)
   }

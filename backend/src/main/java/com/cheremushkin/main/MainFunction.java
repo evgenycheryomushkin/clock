@@ -1,7 +1,8 @@
 package com.cheremushkin.main;
 
 import com.cheremushkin.data.Card;
-import com.cheremushkin.data.WorkEvent;
+import com.cheremushkin.data.ClockEvent;
+import com.cheremushkin.data.Session;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.state.MapState;
@@ -13,7 +14,7 @@ import org.apache.flink.util.Collector;
 
 import java.util.Random;
 
-public class MainFunction extends RichFlatMapFunction<WorkEvent, WorkEvent> {
+public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
 
     Random r = new Random();
     ObjectMapper objectMapper = new ObjectMapper();
@@ -37,49 +38,60 @@ public class MainFunction extends RichFlatMapFunction<WorkEvent, WorkEvent> {
                     "sessionDoneCards", TypeInformation.of(String.class), TypeInformation.of(Card.class));
 
     @Override
-    public void flatMap(WorkEvent event, Collector<WorkEvent> out) throws Exception {
+    public void flatMap(ClockEvent event, Collector<ClockEvent> out) throws Exception {
         ValueState<Session> sessionState = getRuntimeContext().getState(sessionDescriptor);
         MapState<String, Card> activeCardState = getRuntimeContext().getMapState(
                 activeCardsDescriptor
         );
         switch (event.getType()) {
-            case WorkEvent.UI_START_WITHOUT_KEY_EVENT:
+            case ClockEvent.UI_START_WITHOUT_KEY_EVENT:
                 // This session is new. We should create new value for session.
                 // and return key inside event (BACKEND_NEW_KEY_EVENT
-                Session session = Session.builder().build();
+                Session session = new Session(event.getSessionKey());
                 sessionState.update(session);
-                out.collect(
-                        WorkEvent.builder()
-                                .type(WorkEvent.BACKEND_NEW_KEY_EVENT)
-                                .build()
-                                .add(WorkEvent.SESSION_KEY, event.getData().get(WorkEvent.SESSION_KEY))
-                );
+                ClockEvent newEvent = new ClockEvent(ClockEvent.BACKEND_NEW_KEY_EVENT);
+                newEvent.setSessionKey(event.getSessionKey());
+                out.collect(newEvent);
                 return;
-            case WorkEvent.CARD_GET_ID_EVENT:
+            case ClockEvent.UI_START_WITH_KEY_EVENT:
+                // This session already exists.
+                // return key inside event (BACKEND_EXISTING_KEY_EVENT
+                ClockEvent e = new ClockEvent(ClockEvent.BACKEND_EXISTING_KEY_EVENT);
+                e.setSessionKey(event.getSessionKey());
+                out.collect(e);
+                return;
+            case ClockEvent.CARD_GET_ID_EVENT:
                 // Event is processed when new card is created and id is generated. This id is sent
                 // back to UI
                 String id = generate();
-                activeCardState.put(id, Card.builder().id(id).build());
-                out.collect(WorkEvent.builder().type(WorkEvent.BACKEND_NEW_ID_EVENT).build().add(WorkEvent.ID, id));
+                activeCardState.put(id, new Card(id));
+                out.collect(new ClockEvent(ClockEvent.BACKEND_NEW_ID_EVENT).add(ClockEvent.ID, id));
                 return;
-            case WorkEvent.UPDATE_CARD_EVENT:
+            case ClockEvent.UPDATE_CARD_EVENT:
                 // event is sent when card is updated
-                Card card = objectMapper.readValue(event.getData().get(WorkEvent.CARD), Card.class);
+                Card card = activeCardState.get(event.getData().get(ClockEvent.ID));
+
                 activeCardState.put(card.getId(), card);
                 return;
-            case WorkEvent.DELETE_CARD_EVENT:
+            case ClockEvent.DELETE_CARD_EVENT:
                 // event is sent when card is deleted - moved ti done
                 MapState<String, Card> doneCardState = getRuntimeContext().getMapState(
                         doneCardsDescriptor
                 );
-                String idToDelete = event.getData().get(WorkEvent.ID);
+                String idToDelete = event.getData().get(ClockEvent.ID);
                 Card cardToDelete = activeCardState.get(idToDelete);
                 activeCardState.remove(cardToDelete.getId());
                 doneCardState.put(cardToDelete.getId(), cardToDelete);
+                break;
+            default:
+                out.collect(event);
+
         }
     }
+
     /**
      * Generate new key or id. Key consists of 8 hex digits.
+     *
      * @return new key or id, that contains 8 hex digits.
      */
     String generate() {
