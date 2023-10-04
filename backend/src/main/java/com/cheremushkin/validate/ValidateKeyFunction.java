@@ -18,8 +18,6 @@ import static com.cheremushkin.data.ClockEvent.ERROR_DESCRIPTION;
 public class ValidateKeyFunction extends RichMapFunction<ClockEvent, ClockEvent> {
 
     Random r = new Random();
-    int maxAttempts = 10;
-    int keyLength = 16;
     /**
      * Map of session keys and their information.
      * Information contains creation date and modification date.
@@ -39,11 +37,7 @@ public class ValidateKeyFunction extends RichMapFunction<ClockEvent, ClockEvent>
                 String key = null;
                 int attempt = 0;
                 while (key == null || keyMap.contains(key)) {
-                    if (attempt++ > maxAttempts) {
-                        attempt = 0;
-                        keyLength++;
-                    }
-                    key = generate(keyLength);
+                    key = generate();
                 }
                 keyMap.put(key, new KeyInfo());
                 ClockEvent returnEvent = new ClockEvent(ClockEvent.UI_START_WITHOUT_KEY_EVENT);
@@ -70,11 +64,11 @@ public class ValidateKeyFunction extends RichMapFunction<ClockEvent, ClockEvent>
     }
 
     /**
-     * Generate new key or id. Key consists of 4 hex digits.
+     * Generate new key or id. Key consists of 8 hex digits.
      *
-     * @return new key or id, that contains 4 hex digits.
+     * @return new key or id, that contains 8 hex digits.
      */
-    String generate(int keyLength) {
-        return String.format("%08x", r.nextInt()).substring(0, keyLength);
+    String generate() {
+        return String.format("%08x", r.nextInt());
     }
 }

@@ -13,6 +13,15 @@ import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.util.Collector;
 
 import java.util.Random;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
+
+import static com.cheremushkin.data.ClockEvent.CARD_DESCRIPTION;
+import static com.cheremushkin.data.ClockEvent.CARD_HEADER;
+import static com.cheremushkin.data.ClockEvent.CARD_X;
+import static com.cheremushkin.data.ClockEvent.CARD_Y;
+import static com.cheremushkin.data.ClockEvent.ID;
 
 public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
 
@@ -40,9 +49,8 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
     @Override
     public void flatMap(ClockEvent event, Collector<ClockEvent> out) throws Exception {
         ValueState<Session> sessionState = getRuntimeContext().getState(sessionDescriptor);
-        MapState<String, Card> activeCardState = getRuntimeContext().getMapState(
-                activeCardsDescriptor
-        );
+        MapState<String, Card> activeCardState = getRuntimeContext().getMapState(activeCardsDescriptor);
+        MapState<String, Card> doneCardState = getRuntimeContext().getMapState(doneCardsDescriptor);
         switch (event.getType()) {
             case ClockEvent.UI_START_WITHOUT_KEY_EVENT:
                 // This session is new. We should create new value for session.
@@ -57,28 +65,49 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
                 // This session already exists.
                 // return key inside event (BACKEND_EXISTING_KEY_EVENT
                 ClockEvent e = new ClockEvent(ClockEvent.BACKEND_EXISTING_KEY_EVENT);
-                e.setSessionKey(event.getSessionKey());
-                out.collect(e);
+                String sessionKey = event.getSessionKey();
+                e.setSessionKey(sessionKey);
+
+                StreamSupport.stream(Spliterators.spliteratorUnknownSize(activeCardState.iterator(), Spliterator.ORDERED),
+                                false)
+                        .forEach(
+                                entry -> {
+                                    out.collect(new ClockEvent(ClockEvent.EMIT_CARD)
+                                            .sessionKey(sessionKey)
+                                            .add(CARD_HEADER, entry.getValue().getHeader())
+                                            .add(CARD_DESCRIPTION, entry.getValue().getDescription())
+                                            .add(CARD_X, String.valueOf(entry.getValue().getX()))
+                                            .add(CARD_Y, String.valueOf(entry.getValue().getY()))
+                                    );
+                                }
+                        );
                 return;
             case ClockEvent.CARD_GET_ID_EVENT:
                 // Event is processed when new card is created and id is generated. This id is sent
                 // back to UI
-                String id = generate();
+                String id = generate(activeCardState, doneCardState);
                 activeCardState.put(id, new Card(id));
-                out.collect(new ClockEvent(ClockEvent.BACKEND_NEW_ID_EVENT).add(ClockEvent.ID, id));
+                out.collect(new ClockEvent(ClockEvent.BACKEND_NEW_ID_EVENT).add(ID, id));
                 return;
             case ClockEvent.UPDATE_CARD_EVENT:
                 // event is sent when card is updated
-                Card card = activeCardState.get(event.getData().get(ClockEvent.ID));
-
-                activeCardState.put(card.getId(), card);
+                Card card = activeCardState.get(event.getData().get(ID));
+                if (event.getData().get(ID) != null) {
+                    card.setId(event.getData().get(ID));
+                    if (event.getData().get(CARD_HEADER) != null)
+                        card.setHeader(event.getData().get(CARD_HEADER));
+                    if (event.getData().get(CARD_DESCRIPTION) != null)
+                        card.setDescription(event.getData().get(CARD_DESCRIPTION));
+                    if (event.getData().get(CARD_X) != null)
+                        card.setX(Integer.valueOf(event.getData().get(CARD_X)));
+                    if (event.getData().get(CARD_Y) != null)
+                        card.setY(Integer.valueOf(event.getData().get(CARD_Y)));
+                    activeCardState.put(card.getId(), card);
+                }
                 return;
             case ClockEvent.DELETE_CARD_EVENT:
                 // event is sent when card is deleted - moved ti done
-                MapState<String, Card> doneCardState = getRuntimeContext().getMapState(
-                        doneCardsDescriptor
-                );
-                String idToDelete = event.getData().get(ClockEvent.ID);
+                String idToDelete = event.getData().get(ID);
                 Card cardToDelete = activeCardState.get(idToDelete);
                 activeCardState.remove(cardToDelete.getId());
                 doneCardState.put(cardToDelete.getId(), cardToDelete);
@@ -94,7 +123,11 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
      *
      * @return new key or id, that contains 8 hex digits.
      */
-    String generate() {
-        return String.format("%08x", r.nextInt());
+    String generate(MapState<String, Card> activeCardState, MapState<String, Card> doneCardState) throws Exception {
+        String newKey = null;
+        while (newKey == null || activeCardState.contains(newKey) || doneCardState.contains(newKey)) {
+            newKey = String.format("%08x", r.nextInt());
+        }
+        return newKey;
     }
 }

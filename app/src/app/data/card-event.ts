@@ -175,7 +175,7 @@ export class CardEvent {
     ...args: string[] | CardEvent[]
     ) {
         this.type = type
-        this.createDate = new Date().getTime();
+        this.createDate = Date.now();
         this.data = new TSMap<string, any>()
         if (args.length == 0) return
         if (args[0] instanceof CardEvent) {

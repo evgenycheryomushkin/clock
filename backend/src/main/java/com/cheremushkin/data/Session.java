@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 @DefaultSerializer(SessionSerializer.class)
 public class Session {
+    
     Long createDate;
     String sessionKey;
 

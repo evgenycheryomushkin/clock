@@ -7,7 +7,7 @@ plugins {
 
 ext {
     javaVersion = '11'
-    flinkVersion = '1.17.0'
+    flinkVersion = '1.17.1'
     scalaBinaryVersion = '2.12'
     slf4jVersion = '1.7.36'
     log4jVersion = '2.20.0'
@@ -48,6 +48,10 @@ configurations {
 dependencies {
     implementation "org.apache.flink:flink-streaming-java:${flinkVersion}"
     implementation "org.apache.flink:flink-clients:${flinkVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
 
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
@@ -56,10 +60,10 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
     flinkShadowJar "org.apache.flink:flink-connector-rabbitmq:3.0.1-1.17"
-    implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+    flinkShadowJar "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    flinkShadowJar "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    flinkShadowJar "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    flinkShadowJar "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
 
     runtimeOnly "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
     runtimeOnly "org.apache.logging.log4j:log4j-api:${log4jVersion}"

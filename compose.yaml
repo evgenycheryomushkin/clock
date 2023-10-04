@@ -1,0 +1,45 @@
+services:
+  clock-rabbit: 
+    build: ./rabbitmq/
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "15674:15674"
+    volumes:
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+  
+  backendbuild:
+    build: backend/
+    image: flinkjar
+  
+  jobmanager:
+    container_name: jobmanager_jar
+    image: flinkjar
+    depends_on:
+      - backendbuild
+    ports:
+      - "8081:8081"
+      - "6123:6123"
+    command: standalone-job --job-classname com.cheremushkin.ClockBackend
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.adress: jobmanager
+        jobmanager.web.log.path: /opt/flink/log/output.log
+        parallelism.default: 1
+
+  taskmanager:
+    container_name: taskmanager_jar
+    image: flinkjar
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    scale: 1
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 6
+        taskmanager.web.log.path: /opt/flink/log/output.log
+        parallelism.default: 1

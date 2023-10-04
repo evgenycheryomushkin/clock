@@ -10,3 +10,11 @@ The structure of project
 
 This project is implemented using event-driven architecture. Events passes from frontend to backend using rabbitmq.
 
+
+
+TODO
+nano flink-1.17.1/conf/flink-conf.yaml
+./flink-1.17.1/bin/start-cluster.sh
+cp /mnt/c/nataraj/programs/home/Clock/backend/build/libs/worktask-backend-0.1-SNAPSHOT-all.jar .
+./flink-1.17.1/bin/flink run worktask-backend-0.1-SNAPSHOT-all.jar
+

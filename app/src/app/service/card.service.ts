@@ -9,6 +9,7 @@ import { AllowService } from './allow.service';
 @Injectable({
   providedIn: 'root'
 })
+//TODO catch EMIT_CARD event
 export class CardService {
   public cards = new Array<Card>()
 
@@ -43,7 +44,7 @@ export class CardService {
           h: window.innerHeight
         }
         const place = cardPlaceService.findPlace(cardService.cards, viewPort)
-        const card = new Card(event.data.get(CardEvent.ID), "", "", new Date(),
+        const card = new Card(event.data.get(CardEvent.ID), "", "", Date.now(),
             {x:place.x, y:place.y})
         cardService.cards.push(card)
         allowService.endNew()
