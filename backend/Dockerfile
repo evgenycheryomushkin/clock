@@ -7,4 +7,3 @@ RUN gradle clean shadowJar --no-daemon
 
 FROM flink:1.17.1
 COPY --from=gradleBuild /home/gradle/build/libs/*all.jar /opt/flink/usr/lib/
-RUN ls /opt/flink/usr/lib/
