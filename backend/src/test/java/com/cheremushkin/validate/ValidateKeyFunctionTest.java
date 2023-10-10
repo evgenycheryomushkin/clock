@@ -8,7 +8,7 @@ public class ValidateKeyFunctionTest {
     @Test
     public void testGenerate() {
         ValidateKeyFunction v = new ValidateKeyFunction();
-        String key = v.generate(4);
-        assertEquals(4, key.length());
+        String key = v.generate();
+        assertEquals(8, key.length());
     }
 }

@@ -30,7 +30,7 @@ public class ClockBackend {
         );
 
         final RMQConnectionConfig connectionConfig = new RMQConnectionConfig.Builder()
-                .setHost("localhost")
+                .setHost("rabbitmq")
                 .setPort(5672)
                 .setVirtualHost("/")
                 .setUserName("guest")
@@ -41,7 +41,7 @@ public class ClockBackend {
                 .addSource(new RMQSource<>(
                         connectionConfig,
                         "frontend-to-backend",
-                        true,
+                        false,
                         new RMQDeserializer()))
                 .setParallelism(1);
 

@@ -1,53 +1,56 @@
 services:
   frontend:
     build: ./app/
+    ports:
+      - 8080:80
     
-  rabbit: 
+  rabbitmq: 
     build: ./rabbitmq/
-  
-  backendbuild:
-    build: backend/
-    image: flinkjar
+    ports:
+      - 5672:5672
+      - 15672:15672
+      - 15674:15674
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 20s
+      retries: 5
+
+  backend:
+    build: ./backend/
+    command: "flink run -d /opt/ClockJob.jar --checkpointing --event-time --fromSavepoint /tmp/flink-savepoints/tm_172.20.0.537713-34535f"
+    depends_on:
+      jobmanager:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./flink/conf:/opt/flink/conf
+      - ./flink/data:/tmp/
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+      - RABBIT_HOST=rabbitmq
 
   jobmanager:
-    container_name: jobmanager_jar
-    image: flinkjar
-    depends_on:
-      - backendbuild
+    image: apache/flink:1.17.1-scala_2.12-java11
+    command: "jobmanager.sh start-foreground"
     ports:
-      - "8081:8081"
-      - "6123:6123"
-    command: standalone-job --job-classname com.cheremushkin.ClockBackend
+      - 8081:8081
+    volumes:
+      - ./flink/conf:/opt/flink/conf
+      - ./flink/data:/tmp/
     environment:
-      - |
-        FLINK_PROPERTIES=
-        jobmanager.rpc.adress: jobmanager
-        jobmanager.web.log.path: /opt/flink/log/output.log
-        parallelism.default: 1
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+      - RABBIT_HOST=rabbitmq
 
   taskmanager:
-    container_name: taskmanager_jar
-    image: flinkjar
+    image: apache/flink:1.17.1-scala_2.12-java11
     depends_on:
-      - backendbuild
       - jobmanager
-    command: taskmanager
-    scale: 1
+    command: "taskmanager.sh start-foreground"
+    volumes:
+      - ./flink/conf:/opt/flink/conf
+      - ./flink/data:/tmp/
     environment:
-      - |
-        FLINK_PROPERTIES=
-        jobmanager.rpc.address: jobmanager
-        taskmanager.numberOfTaskSlots: 6
-        taskmanager.web.log.path: /opt/flink/log/output.log
-        parallelism.default: 1
-          
-  flinkcliient:
-    container_name: flinkclient_jar
-    image: flinkjar
-    depends_on:
-      - backendbuild
-      - rabbit
-      - taskmanager
-      - frontend
-    command: flink run /opt/flink/usr/lib/worktask-backend-0.1-SNAPSHOT-all.jar
-
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+      - RABBIT_HOST=rabbitmq

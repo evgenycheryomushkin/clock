@@ -14,7 +14,7 @@ import { ClockModule } from './clock/clock.module';
 import { HttpClientModule } from '@angular/common/http';
 
 const stompConfig: StompConfig = {
-  url: 'ws://127.0.0.1:15674/ws',
+  url: 'ws://localhost:15674/ws',
 
   headers: {
     login: 'guest',
