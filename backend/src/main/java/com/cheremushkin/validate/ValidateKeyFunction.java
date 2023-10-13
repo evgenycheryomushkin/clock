@@ -1,6 +1,7 @@
 package com.cheremushkin.validate;
 
 import com.cheremushkin.data.ClockEvent;
+import com.cheremushkin.data.KeyInfo;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
@@ -48,7 +49,7 @@ public class ValidateKeyFunction extends RichMapFunction<ClockEvent, ClockEvent>
                 String key = event.getSessionKey();
                 if (keyMap.contains(key)) {
                     // key is valid
-                    keyMap.get(key).updated = ZonedDateTime.now();
+                    keyMap.get(key).setUpdated(System.currentTimeMillis());
                     ClockEvent returnEvent = new ClockEvent(ClockEvent.UI_START_WITH_KEY_EVENT);
                     returnEvent.setSessionKey(key);
                     return returnEvent;

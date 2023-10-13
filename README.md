@@ -18,3 +18,12 @@ nano flink-1.17.1/conf/flink-conf.yaml
 cp /mnt/c/nataraj/programs/home/Clock/backend/build/libs/worktask-backend-0.1-SNAPSHOT-all.jar .
 ./flink-1.17.1/bin/flink run worktask-backend-0.1-SNAPSHOT-all.jar
 
+
+
+docker build --progress=plain --tag=clock_backend .
+docker run flinkjar
+docker exec -it flinkjar bash
+docker run --rm -it --entrypoint /bin/bash clock_backend
+
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)

@@ -1,7 +1,8 @@
 FROM gradle:7.4 as gradleBuild
-COPY --chown=gradle:gradle src/ /home/gradle/src/
 COPY --chown=gradle:gradle build.gradle /home/gradle/
 COPY --chown=gradle:gradle settings.gradle /home/gradle/
+RUN gradle dependencies
+COPY --chown=gradle:gradle src/ /home/gradle/src/
 WORKDIR /home/gradle
 RUN gradle clean installShadowDist --no-daemon
 

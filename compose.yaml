@@ -18,7 +18,7 @@ services:
 
   backend:
     build: ./backend/
-    command: "flink run -d /opt/ClockJob.jar --checkpointing --event-time --fromSavepoint /tmp/flink-savepoints/tm_172.20.0.537713-34535f"
+    command: "flink run -d /opt/ClockJob.jar --checkpointing --event-time"
     depends_on:
       jobmanager:
         condition: service_started
@@ -26,7 +26,8 @@ services:
         condition: service_healthy
     volumes:
       - ./flink/conf:/opt/flink/conf
-      - ./flink/data:/tmp/
+      - ./flink/data:/tmp/:rw
+      - ./flink/log:/opt/flink/log:rw
     environment:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
       - RABBIT_HOST=rabbitmq
@@ -38,7 +39,8 @@ services:
       - 8081:8081
     volumes:
       - ./flink/conf:/opt/flink/conf
-      - ./flink/data:/tmp/
+      - ./flink/data:/tmp/:rw
+      - ./flink/log:/opt/flink/log:rw
     environment:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
       - RABBIT_HOST=rabbitmq
@@ -50,7 +52,8 @@ services:
     command: "taskmanager.sh start-foreground"
     volumes:
       - ./flink/conf:/opt/flink/conf
-      - ./flink/data:/tmp/
+      - ./flink/data:/tmp/:rw
+      - ./flink/log:/opt/flink/log:rw
     environment:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
       - RABBIT_HOST=rabbitmq

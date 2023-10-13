@@ -1,11 +1,3 @@
-docker build --progress=plain --tag=clock_backend .
-docker run flinkjar
-docker exec -it flinkjar bash
-docker run --rm -it --entrypoint /bin/bash clock_backend
-
-docker stop $(docker ps -a -q)
-docker rm $(docker ps -a -q)
-
 
 «Трудно сказать, в какой именно момент рождается дружба. 
 Когда по капле наливаешь воду в сосуд, бывает какая-то одна, 

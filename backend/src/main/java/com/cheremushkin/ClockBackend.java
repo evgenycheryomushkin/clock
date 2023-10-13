@@ -1,6 +1,8 @@
 package com.cheremushkin;
 
+import com.cheremushkin.data.Card;
 import com.cheremushkin.data.ClockEvent;
+import com.cheremushkin.data.Session;
 import com.cheremushkin.main.MainFunction;
 import com.cheremushkin.validate.ValidateKeyFunction;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
@@ -17,6 +19,11 @@ public class ClockBackend {
 
     public static void main(String[] args) throws Exception {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        env.getConfig().enableForceKryo();
+
+        //        env.getConfig().registerKryoType(Card.class);
+//        env.getConfig().registerKryoType(ClockEvent.class);
+//        env.getConfig().registerKryoType(Session.class);
 
         env.getConfig().setRestartStrategy(RestartStrategies.fixedDelayRestart(4, 10000));
         env.enableCheckpointing(30000);
