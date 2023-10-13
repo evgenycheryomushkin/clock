@@ -4,6 +4,7 @@ import com.cheremushkin.data.Card;
 import com.cheremushkin.data.ClockEvent;
 import com.cheremushkin.data.Session;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
@@ -23,6 +24,7 @@ import static com.cheremushkin.data.ClockEvent.CARD_X;
 import static com.cheremushkin.data.ClockEvent.CARD_Y;
 import static com.cheremushkin.data.ClockEvent.ID;
 
+@Slf4j
 public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
 
     Random r = new Random();
@@ -48,6 +50,7 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
 
     @Override
     public void flatMap(ClockEvent event, Collector<ClockEvent> out) throws Exception {
+        log.info("main {}", event);
         ValueState<Session> sessionState = getRuntimeContext().getState(sessionDescriptor);
         MapState<String, Card> activeCardState = getRuntimeContext().getMapState(activeCardsDescriptor);
         MapState<String, Card> doneCardState = getRuntimeContext().getMapState(doneCardsDescriptor);

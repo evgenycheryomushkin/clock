@@ -2,12 +2,15 @@ package com.cheremushkin.validate;
 
 import com.cheremushkin.data.ClockEvent;
 import com.cheremushkin.data.KeyInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.shaded.guava30.com.google.common.collect.Iterators;
 
 import java.time.ZonedDateTime;
+import java.util.Iterator;
 import java.util.Random;
 
 import static com.cheremushkin.data.ClockEvent.ERROR_DESCRIPTION;
@@ -16,6 +19,7 @@ import static com.cheremushkin.data.ClockEvent.ERROR_DESCRIPTION;
  * Validate key. Create new key in case of new session. Validate existing key
  * if session already exists.
  */
+@Slf4j
 public class ValidateKeyFunction extends RichMapFunction<ClockEvent, ClockEvent> {
 
     Random r = new Random();
@@ -30,8 +34,10 @@ public class ValidateKeyFunction extends RichMapFunction<ClockEvent, ClockEvent>
 
     @Override
     public ClockEvent map(ClockEvent event) throws Exception {
+        MapState<String, KeyInfo> keyMap = getRuntimeContext().getMapState(keyMapDescriptor);
+        log.info("validate {}", event);
+        log.info("total sessions {}", getSize(keyMap));
         if (event.getType().equals(ClockEvent.UI_START_EVENT)) {
-            MapState<String, KeyInfo> keyMap = getRuntimeContext().getMapState(keyMapDescriptor);
             if (event.getSessionKey() == null || event.getSessionKey().isEmpty()) {
                 // this session is new
                 // we should generate new key here
@@ -62,6 +68,11 @@ public class ValidateKeyFunction extends RichMapFunction<ClockEvent, ClockEvent>
             // another event - just move forward
             return event;
         }
+    }
+
+    private long getSize(MapState<String, KeyInfo> keyMap) throws Exception {
+        Iterator<String> iterator = keyMap.keys().iterator();
+        return Iterators.size(iterator);
     }
 
     /**

@@ -21,11 +21,6 @@ public class ClockBackend {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.getConfig().enableForceKryo();
 
-        //        env.getConfig().registerKryoType(Card.class);
-//        env.getConfig().registerKryoType(ClockEvent.class);
-//        env.getConfig().registerKryoType(Session.class);
-
-        env.getConfig().setRestartStrategy(RestartStrategies.fixedDelayRestart(4, 10000));
         env.enableCheckpointing(30000);
         env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
         env.getCheckpointConfig().setMinPauseBetweenCheckpoints(10000);

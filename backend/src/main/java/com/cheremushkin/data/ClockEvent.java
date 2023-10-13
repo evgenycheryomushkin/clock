@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
+@ToString
 @DefaultSerializer(ClockSerializer.class)
 final public class ClockEvent {
     /**

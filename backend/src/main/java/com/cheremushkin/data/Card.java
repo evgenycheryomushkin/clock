@@ -2,13 +2,11 @@ package com.cheremushkin.data;
 
 import com.cheremushkin.serializer.CardSerializer;
 import com.esotericsoftware.kryo.DefaultSerializer;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@ToString
 @DefaultSerializer(CardSerializer.class)
 public class Card {
     String id;
