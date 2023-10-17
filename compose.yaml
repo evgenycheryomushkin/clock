@@ -16,24 +16,8 @@ services:
       timeout: 20s
       retries: 5
 
-  backend:
-    build: ./backend/
-    command: "flink run -d /opt/ClockJob.jar --checkpointing --event-time"
-    depends_on:
-      jobmanager:
-        condition: service_started
-      rabbitmq:
-        condition: service_healthy
-    volumes:
-      - ./flink/conf:/opt/flink/conf
-      - ./flink/data:/tmp/:rw
-      - ./flink/log:/opt/flink/log:rw
-    environment:
-      - JOB_MANAGER_RPC_ADDRESS=jobmanager
-      - RABBIT_HOST=rabbitmq
-
   jobmanager:
-    build: ./backend/
+    image: flink:1.17.1-scala_2.12-java11
     command: "jobmanager.sh start-foreground"
     depends_on:
       rabbitmq:
@@ -49,7 +33,7 @@ services:
       - RABBIT_HOST=rabbitmq
 
   taskmanager:
-    build: ./backend/
+    image: flink:1.17.1-scala_2.12-java11
     depends_on:
       jobmanager:
         condition: service_started

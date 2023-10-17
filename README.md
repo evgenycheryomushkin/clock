@@ -27,3 +27,17 @@ docker run --rm -it --entrypoint /bin/bash clock_backend
 
 docker stop $(docker ps -a -q)
 docker rm $(docker ps -a -q)
+
+
+
+docker compose build
+docker compose up
+Это запустит rabbitmq и flink в docker compose. Далее нужно зайти на консоль
+localhost:8081 и задеплоить приложение.
+cd backend
+./gradlew installShadowDist
+задеплоить артефакт 
+\backend\build\libs\clock-backend-0.1-SNAPSHOT-all.jar
+указать savepoint для восстановления 
+/tmp/flink-checkpoints-directory/f602676b7febd24bf839dd638b9a3ddc/chk-7/_metadata
+

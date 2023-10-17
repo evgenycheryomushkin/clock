@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SessionSerializer extends Serializer<Session> {
 
-    static final String V1 = "KRYO_SESSION_V1_2023-10-01";
+    static final String V1 = "SESSION_KRYO_V1_2023-10-01";
 
     @Override
     public void write(Kryo kryo, Output output, Session session) {

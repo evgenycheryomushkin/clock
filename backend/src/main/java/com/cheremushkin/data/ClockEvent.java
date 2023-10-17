@@ -1,6 +1,6 @@
 package com.cheremushkin.data;
 
-import com.cheremushkin.serializer.ClockSerializer;
+import com.cheremushkin.serializer.ClockEventSerializer;
 import com.esotericsoftware.kryo.DefaultSerializer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @ToString
-@DefaultSerializer(ClockSerializer.class)
+@DefaultSerializer(ClockEventSerializer.class)
 final public class ClockEvent {
     /**
      * Fired in: UI

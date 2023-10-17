@@ -8,7 +8,7 @@ import com.esotericsoftware.kryo.io.Output;
 
 public class CardSerializer extends Serializer<Card> {
 
-    final static String V1 = "KRYO_CARD_V1_2023-10-01";
+    final static String V1 = "CARD_KRYO_V1_2023-10-01";
 
     @Override
     public void write(Kryo kryo, Output output, Card card) {
