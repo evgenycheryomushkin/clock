@@ -35,29 +35,30 @@ public class ValidateKeyFunction extends RichMapFunction<ClockEvent, ClockEvent>
     @Override
     public ClockEvent map(ClockEvent event) throws Exception {
         MapState<String, KeyInfo> keyMap = getRuntimeContext().getMapState(keyMapDescriptor);
+        String sessionKey;
         log.info("validate {}", event);
         log.info("total sessions {}", getSize(keyMap));
         if (event.getType().equals(ClockEvent.UI_START_EVENT)) {
             if (event.getSessionKey() == null || event.getSessionKey().isEmpty()) {
                 // this session is new
                 // we should generate new key here
-                String key = null;
+                sessionKey = null;
                 int attempt = 0;
-                while (key == null || keyMap.contains(key)) {
-                    key = generate();
+                while (sessionKey == null || keyMap.contains(sessionKey)) {
+                    sessionKey = generate();
                 }
-                keyMap.put(key, new KeyInfo());
+                keyMap.put(sessionKey, new KeyInfo());
                 ClockEvent returnEvent = new ClockEvent(ClockEvent.UI_START_WITHOUT_KEY_EVENT);
-                returnEvent.setSessionKey(key);
+                returnEvent.setSessionKey(sessionKey);
                 return returnEvent;
             } else {
                 // This session is existing. User returned with this key
-                String key = event.getSessionKey();
-                if (keyMap.contains(key)) {
+                sessionKey = event.getSessionKey();
+                if (keyMap.contains(sessionKey)) {
                     // key is valid
-                    keyMap.get(key).setUpdated(System.currentTimeMillis());
+                    keyMap.get(sessionKey).setUpdated(System.currentTimeMillis());
                     ClockEvent returnEvent = new ClockEvent(ClockEvent.UI_START_WITH_KEY_EVENT);
-                    returnEvent.setSessionKey(key);
+                    returnEvent.setSessionKey(sessionKey);
                     return returnEvent;
                 } else {
                     // key is not valid
@@ -66,7 +67,11 @@ public class ValidateKeyFunction extends RichMapFunction<ClockEvent, ClockEvent>
             }
         } else {
             // another event - just move forward
-            return event;
+            sessionKey = event.getSessionKey();
+            if (!keyMap.contains(sessionKey))
+                return ClockEvent.buildErrorEvent().add(ERROR_DESCRIPTION, "Invalid session key");
+            else
+                return event;
         }
     }
 
