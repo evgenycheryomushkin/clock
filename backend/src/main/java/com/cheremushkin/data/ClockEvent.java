@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-@ToString
 @DefaultSerializer(ClockEventSerializer.class)
 final public class ClockEvent {
     /**
@@ -110,6 +109,11 @@ final public class ClockEvent {
      * Card property of data
      */
     public static final String CARD = "CARD";
+
+    /**
+     * Update card successful on backend
+     */
+    public static final String BACKEND_UPDATE_SUCCESS = "BACKEND_UPDATE_SUCCESS";
 
     /**
      * Error event, should be passed to UI when error occurs.

@@ -18,6 +18,8 @@ import org.apache.flink.streaming.connectors.rabbitmq.common.RMQConnectionConfig
 public class ClockBackend {
 
     public static void main(String[] args) throws Exception {
+        String rabbitHost = System.getenv("RABBIT_HOST");
+        if (rabbitHost == null) rabbitHost = "localhost";
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.getConfig().enableForceKryo();
 
@@ -32,7 +34,7 @@ public class ClockBackend {
         );
 
         final RMQConnectionConfig connectionConfig = new RMQConnectionConfig.Builder()
-                .setHost("rabbitmq")
+                .setHost(rabbitHost)
                 .setPort(5672)
                 .setVirtualHost("/")
                 .setUserName("guest")

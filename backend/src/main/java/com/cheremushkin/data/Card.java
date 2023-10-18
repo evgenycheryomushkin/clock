@@ -9,7 +9,7 @@ import lombok.*;
 @ToString
 @DefaultSerializer(CardSerializer.class)
 public class Card {
-    String id;
+    @NonNull String id;
     String header;
     String description;
     Integer x;

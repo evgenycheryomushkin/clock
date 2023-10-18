@@ -51,6 +51,7 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
     @Override
     public void flatMap(ClockEvent event, Collector<ClockEvent> out) throws Exception {
         log.info("main {}", event);
+        String id;
         ValueState<Session> sessionState = getRuntimeContext().getState(sessionDescriptor);
         MapState<String, Card> activeCardState = getRuntimeContext().getMapState(activeCardsDescriptor);
         MapState<String, Card> doneCardState = getRuntimeContext().getMapState(doneCardsDescriptor);
@@ -77,6 +78,8 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
                                 entry -> {
                                     out.collect(new ClockEvent(ClockEvent.EMIT_CARD)
                                             .sessionKey(sessionKey)
+                                            // todo date
+                                            .add(ID, entry.getValue().getId())
                                             .add(CARD_HEADER, entry.getValue().getHeader())
                                             .add(CARD_DESCRIPTION, entry.getValue().getDescription())
                                             .add(CARD_X, String.valueOf(entry.getValue().getX()))
@@ -88,15 +91,16 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
             case ClockEvent.CARD_GET_ID_EVENT:
                 // Event is processed when new card is created and id is generated. This id is sent
                 // back to UI
-                String id = generate(activeCardState, doneCardState);
+                id = generate(activeCardState, doneCardState);
                 activeCardState.put(id, new Card(id));
                 out.collect(new ClockEvent(ClockEvent.BACKEND_NEW_ID_EVENT).add(ID, id));
                 return;
             case ClockEvent.UPDATE_CARD_EVENT:
                 // event is sent when card is updated
-                Card card = activeCardState.get(event.getData().get(ID));
+                id = event.getData().get(ID);
+                Card card = activeCardState.get(id);
                 if (event.getData().get(ID) != null) {
-                    card.setId(event.getData().get(ID));
+                    card.setId(id);
                     if (event.getData().get(CARD_HEADER) != null)
                         card.setHeader(event.getData().get(CARD_HEADER));
                     if (event.getData().get(CARD_DESCRIPTION) != null)
@@ -106,18 +110,19 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
                     if (event.getData().get(CARD_Y) != null)
                         card.setY(Integer.valueOf(event.getData().get(CARD_Y)));
                     activeCardState.put(card.getId(), card);
+                    out.collect(new ClockEvent(ClockEvent.BACKEND_UPDATE_SUCCESS).add(ID, id));
                 }
                 return;
             case ClockEvent.DELETE_CARD_EVENT:
                 // event is sent when card is deleted - moved ti done
-                String idToDelete = event.getData().get(ID);
-                Card cardToDelete = activeCardState.get(idToDelete);
+                id = event.getData().get(ID);
+                Card cardToDelete = activeCardState.get(id);
                 activeCardState.remove(cardToDelete.getId());
                 doneCardState.put(cardToDelete.getId(), cardToDelete);
+                out.collect(new ClockEvent(ClockEvent.BACKEND_UPDATE_SUCCESS).add(ID, id));
                 break;
             default:
                 out.collect(event);
-
         }
     }
 

@@ -14,7 +14,7 @@ public class SessionSerializer extends Serializer<Session> {
 
     @Override
     public void write(Kryo kryo, Output output, Session session) {
-        log.info("write session {}", session);
+        log.debug("write session {}", session);
         output.writeString(V1);
         output.writeString(session.getSessionKey());
         output.writeLong(session.getCreateDate());
@@ -26,7 +26,7 @@ public class SessionSerializer extends Serializer<Session> {
         String sessionKey = input.readString();
         Long createDate = input.readLong();
         Session session = new Session(sessionKey, createDate);
-        log.info("read session {}", session);
+        log.debug("read session {}", session);
         return session;
     }
 }
