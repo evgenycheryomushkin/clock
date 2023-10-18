@@ -1,8 +1,7 @@
 package com.cheremushkin.data;
 
-import com.cheremushkin.serializer.ClockSerializer;
+import com.cheremushkin.serializer.ClockEventSerializer;
 import com.esotericsoftware.kryo.DefaultSerializer;
-import com.esotericsoftware.kryo.NotNull;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -12,6 +11,7 @@ import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Work event. Both come from UI and internal server events
@@ -20,8 +20,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-@ToString
-@DefaultSerializer(ClockSerializer.class)
+@DefaultSerializer(ClockEventSerializer.class)
 final public class ClockEvent {
     /**
      * Fired in: UI
@@ -112,6 +111,11 @@ final public class ClockEvent {
     public static final String CARD = "CARD";
 
     /**
+     * Update card successful on backend
+     */
+    public static final String BACKEND_UPDATE_SUCCESS = "BACKEND_UPDATE_SUCCESS";
+
+    /**
      * Error event, should be passed to UI when error occurs.
      * For example session key is invalid
      */
@@ -121,6 +125,20 @@ final public class ClockEvent {
      * Error description. Stored in data map.
      */
     public static final String ERROR_DESCRIPTION = "ERROR_DESCRIPTION";
+
+    public static final String CARD_HEADER      = "CARD_HEADER";
+    public static final String CARD_DESCRIPTION = "CARD_DESCRIPTION";
+    public static final String CARD_X           = "CARD_X";
+    public static final String CARD_Y           = "CARD_Y";
+
+    /**
+     * Emit card from backend to UI.
+     * Sent when existing user logs in.
+     *
+     * Sender: backend
+     * Receiver: card.service
+     */
+    public static final String EMIT_CARD = "EMIT_CARD";
 
     /**
      * Type of event. Returned from UI. Also filled on backend.
@@ -142,10 +160,10 @@ final public class ClockEvent {
 
     @JsonCreator
     public ClockEvent(
-            @JsonProperty("type") @NonNull String type,
+            @JsonProperty("type")       @NonNull String type,
             @JsonProperty("createDate") @NonNull Long createDate,
             @JsonProperty("sessionKey") @NonNull String sessionKey,
-            @JsonProperty("data") @NonNull Map<String, String> data) {
+            @JsonProperty("data")       @NonNull Map<String, String> data) {
         this.type = type;
         this.createDate = createDate;
         this.sessionKey = sessionKey;
@@ -166,5 +184,18 @@ final public class ClockEvent {
     public ClockEvent add(String key, String value) {
         data.put(key, value);
         return this;
+    }
+
+    public ClockEvent sessionKey(String sessionKey) {
+        this.sessionKey = sessionKey;
+        return this;
+    }
+
+    public String toString() {
+        return "ClockEvent(type=" + this.getType() +
+                ", createDate=" + this.getCreateDate() +
+                ", sessionKey=" + this.getSessionKey() +
+                ", data=[" + this.getData().entrySet().stream()
+                .map(e -> e.getKey()+":"+e.getValue()).collect(Collectors.joining(","))+ "])";
     }
 }

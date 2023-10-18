@@ -41,6 +41,8 @@ export class BackendService {
         }
         cardEvent.createDate = event.createDate
 
+        console.log("receive event from stomp", cardEvent)
+
         backend.eventHubService.emit(cardEvent)
       })
 

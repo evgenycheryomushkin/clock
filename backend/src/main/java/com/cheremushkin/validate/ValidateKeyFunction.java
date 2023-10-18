@@ -1,12 +1,16 @@
 package com.cheremushkin.validate;
 
 import com.cheremushkin.data.ClockEvent;
+import com.cheremushkin.data.KeyInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.shaded.guava30.com.google.common.collect.Iterators;
 
 import java.time.ZonedDateTime;
+import java.util.Iterator;
 import java.util.Random;
 
 import static com.cheremushkin.data.ClockEvent.ERROR_DESCRIPTION;
@@ -15,11 +19,10 @@ import static com.cheremushkin.data.ClockEvent.ERROR_DESCRIPTION;
  * Validate key. Create new key in case of new session. Validate existing key
  * if session already exists.
  */
+@Slf4j
 public class ValidateKeyFunction extends RichMapFunction<ClockEvent, ClockEvent> {
 
     Random r = new Random();
-    int maxAttempts = 10;
-    int keyLength = 16;
     /**
      * Map of session keys and their information.
      * Information contains creation date and modification date.
@@ -31,32 +34,31 @@ public class ValidateKeyFunction extends RichMapFunction<ClockEvent, ClockEvent>
 
     @Override
     public ClockEvent map(ClockEvent event) throws Exception {
+        MapState<String, KeyInfo> keyMap = getRuntimeContext().getMapState(keyMapDescriptor);
+        String sessionKey;
+        log.info("validate {}", event);
+        log.info("total sessions {}", getSize(keyMap));
         if (event.getType().equals(ClockEvent.UI_START_EVENT)) {
-            MapState<String, KeyInfo> keyMap = getRuntimeContext().getMapState(keyMapDescriptor);
             if (event.getSessionKey() == null || event.getSessionKey().isEmpty()) {
                 // this session is new
                 // we should generate new key here
-                String key = null;
+                sessionKey = null;
                 int attempt = 0;
-                while (key == null || keyMap.contains(key)) {
-                    if (attempt++ > maxAttempts) {
-                        attempt = 0;
-                        keyLength++;
-                    }
-                    key = generate(keyLength);
+                while (sessionKey == null || keyMap.contains(sessionKey)) {
+                    sessionKey = generate();
                 }
-                keyMap.put(key, new KeyInfo());
+                keyMap.put(sessionKey, new KeyInfo());
                 ClockEvent returnEvent = new ClockEvent(ClockEvent.UI_START_WITHOUT_KEY_EVENT);
-                returnEvent.setSessionKey(key);
+                returnEvent.setSessionKey(sessionKey);
                 return returnEvent;
             } else {
                 // This session is existing. User returned with this key
-                String key = event.getSessionKey();
-                if (keyMap.contains(key)) {
+                sessionKey = event.getSessionKey();
+                if (keyMap.contains(sessionKey)) {
                     // key is valid
-                    keyMap.get(key).updated = ZonedDateTime.now();
+                    keyMap.get(sessionKey).setUpdated(System.currentTimeMillis());
                     ClockEvent returnEvent = new ClockEvent(ClockEvent.UI_START_WITH_KEY_EVENT);
-                    returnEvent.setSessionKey(key);
+                    returnEvent.setSessionKey(sessionKey);
                     return returnEvent;
                 } else {
                     // key is not valid
@@ -65,16 +67,25 @@ public class ValidateKeyFunction extends RichMapFunction<ClockEvent, ClockEvent>
             }
         } else {
             // another event - just move forward
-            return event;
+            sessionKey = event.getSessionKey();
+            if (!keyMap.contains(sessionKey))
+                return ClockEvent.buildErrorEvent().add(ERROR_DESCRIPTION, "Invalid session key");
+            else
+                return event;
         }
     }
 
+    private long getSize(MapState<String, KeyInfo> keyMap) throws Exception {
+        Iterator<String> iterator = keyMap.keys().iterator();
+        return Iterators.size(iterator);
+    }
+
     /**
-     * Generate new key or id. Key consists of 4 hex digits.
+     * Generate new key or id. Key consists of 8 hex digits.
      *
-     * @return new key or id, that contains 4 hex digits.
+     * @return new key or id, that contains 8 hex digits.
      */
-    String generate(int keyLength) {
-        return String.format("%08x", r.nextInt()).substring(0, keyLength);
+    String generate() {
+        return String.format("%08x", r.nextInt());
     }
 }

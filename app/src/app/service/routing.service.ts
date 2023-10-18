@@ -24,6 +24,7 @@ export class RoutingService {
     return this.key
   }
 
+  // TODO catch ERROR event
   constructor(eventHubService: EventHubService,
     private location: Location
     ) { 

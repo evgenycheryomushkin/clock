@@ -139,6 +139,25 @@ export class CardEvent {
    */
   static DONE_CARD_EVENT = "DONE_CARD_EVENT"
 
+
+  /**
+   * EMIT_CARD. When new frontend login with old session.
+   * 
+   * Sender: backend
+   * Receiver: card.service
+   * Parameters: card
+   */
+
+  static EMIT_CARD = "EMIT_CARD"
+
+  /**
+   * Backend update successful.
+   * Sender: backend
+   * Receiver: ?
+   * Parameters: ID - card id
+   */
+  static BACKEND_UPDATE_SUCCESS = "BACKEND_UPDATE_SUCCESS"
+
   /**
    * WorkEvent type
    */
@@ -175,7 +194,7 @@ export class CardEvent {
     ...args: string[] | CardEvent[]
     ) {
         this.type = type
-        this.createDate = new Date().getTime();
+        this.createDate = Date.now();
         this.data = new TSMap<string, any>()
         if (args.length == 0) return
         if (args[0] instanceof CardEvent) {

@@ -5,11 +5,14 @@ import com.esotericsoftware.kryo.DefaultSerializer;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @DefaultSerializer(SessionSerializer.class)
 public class Session {
+    
     Long createDate;
     String sessionKey;
 

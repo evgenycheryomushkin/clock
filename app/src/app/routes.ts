@@ -12,7 +12,7 @@ import { AppComponent } from "./app.component";
 export const routes: Routes = [
     {
       matcher: (url) => {
-        if (url.length === 1 && url[0].path.match(RegExp("^([0-9abcdef]{4}|)$","i"))) {
+        if (url.length === 1 && url[0].path.match(RegExp("^([0-9abcdef]{8}|)$","i"))) {
           const path = url[0].path
           return {
             consumed: url,

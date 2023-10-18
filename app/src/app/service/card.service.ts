@@ -43,8 +43,26 @@ export class CardService {
           h: window.innerHeight
         }
         const place = cardPlaceService.findPlace(cardService.cards, viewPort)
-        const card = new Card(event.data.get(CardEvent.ID), "", "", new Date(),
+        const card = new Card(event.data.get(CardEvent.ID), "", "", Date.now(),
             {x:place.x, y:place.y})
+        cardService.cards.push(card)
+        allowService.endNew()
+      }
+    )
+
+    /**
+     * Receive new ID from backend. Create new card and put it
+     * into free space
+     */
+    eventHubService.subscribe(CardEvent.EMIT_CARD,
+      (event: CardEvent) => {
+        const header      = event.data.get(CardEvent.CARD_HEADER)
+        const description = event.data.get(CardEvent.CARD_DESCRIPTION)
+        const x           = +event.data.get(CardEvent.CARD_X)
+        const y           = +event.data.get(CardEvent.CARD_Y)
+
+        const card = new Card(event.data.get(CardEvent.ID), header, description, 
+        Date.now(), {x:x, y:y})
         cardService.cards.push(card)
         allowService.endNew()
       }

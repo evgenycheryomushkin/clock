@@ -5,13 +5,16 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class SessionSerializer extends Serializer<Session> {
 
-    static final String V1 = "KRYO_SESSION_V1_2023-10-01";
+    static final String V1 = "SESSION_KRYO_V1_2023-10-01";
 
     @Override
     public void write(Kryo kryo, Output output, Session session) {
+        log.debug("write session {}", session);
         output.writeString(V1);
         output.writeString(session.getSessionKey());
         output.writeLong(session.getCreateDate());
@@ -22,6 +25,8 @@ public class SessionSerializer extends Serializer<Session> {
         String version = input.readString();
         String sessionKey = input.readString();
         Long createDate = input.readLong();
-        return new Session(sessionKey, createDate);
+        Session session = new Session(sessionKey, createDate);
+        log.debug("read session {}", session);
+        return session;
     }
 }

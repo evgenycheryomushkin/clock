@@ -6,13 +6,12 @@ import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClockSerializer extends Serializer<ClockEvent> {
+public class ClockEventSerializer extends Serializer<ClockEvent> {
 
-    final static String V1 = "KRYO_CLOCK_V1_2023-10-01";
+    final static String V1 = "CLOCK_EVENT_KRYO_V1_2023-10-01";
 
     @Override
     public void write(Kryo kryo, Output output, ClockEvent object) {
