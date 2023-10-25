@@ -56,18 +56,26 @@ export class CardService {
      */
     eventHubService.subscribe(CardEvent.EMIT_CARD,
       (event: CardEvent) => {
+        const id          = event.data.get(CardEvent.ID)
         const header      = event.data.get(CardEvent.CARD_HEADER)
         const description = event.data.get(CardEvent.CARD_DESCRIPTION)
         const x           = +event.data.get(CardEvent.CARD_X)
         const y           = +event.data.get(CardEvent.CARD_Y)
 
-        const card = new Card(event.data.get(CardEvent.ID), header, description, 
-        Date.now(), {x:x, y:y})
-        cardService.cards.push(card)
-        allowService.endNew()
+        // if (!cardService.cardsHasId(id)) {
+          const card = new Card(id, header, description, 
+          Date.now(), {x:x, y:y})
+          cardService.cards.push(card)
+        // }
       }
     )
   }
+  // cardsHasId(id: string): boolean {
+  //   for(var card:Card in this.cards) {
+  //     if (card.id == id) return true
+  //   }
+  //   return false
+  // }
 
   init() {
     console.log("Card Service initialized")

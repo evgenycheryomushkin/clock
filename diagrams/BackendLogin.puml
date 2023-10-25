@@ -3,6 +3,7 @@
     +--------+                        +--------+                        +--------+
     |frontend|                        |frontend|                        |frontend|
     +--------+                        +--------+                        +--------+
+        |
         |UI_START_EVENT                   |UI_START_EVENT                   |UI_START_EVENT
         |no key                           |right existing key               |not existing key
         v                                 v                                 v
