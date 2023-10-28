@@ -76,15 +76,15 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
                                 false)
                         .forEach(
                                 entry -> {
-                                    out.collect(new ClockEvent(ClockEvent.EMIT_CARD)
+                                    ClockEvent emit = new ClockEvent(ClockEvent.EMIT_CARD)
                                             .sessionKey(sessionKey)
                                             // todo date
                                             .add(ID, entry.getValue().getId())
                                             .add(CARD_HEADER, entry.getValue().getHeader())
                                             .add(CARD_DESCRIPTION, entry.getValue().getDescription())
                                             .add(CARD_X, String.valueOf(entry.getValue().getX()))
-                                            .add(CARD_Y, String.valueOf(entry.getValue().getY()))
-                                    );
+                                            .add(CARD_Y, String.valueOf(entry.getValue().getY()));
+                                    out.collect(emit);
                                 }
                         );
                 return;
@@ -97,9 +97,9 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
                 return;
             case ClockEvent.UPDATE_CARD_EVENT:
                 // event is sent when card is updated
-                id = event.getData().get(ID);
-                Card card = activeCardState.get(id);
                 if (event.getData().get(ID) != null) {
+                    id = event.getData().get(ID);
+                    Card card = activeCardState.get(id);
                     card.setId(id);
                     if (event.getData().get(CARD_HEADER) != null)
                         card.setHeader(event.getData().get(CARD_HEADER));
@@ -113,7 +113,7 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
                     out.collect(new ClockEvent(ClockEvent.BACKEND_UPDATE_SUCCESS).add(ID, id));
                 }
                 return;
-            case ClockEvent.DELETE_CARD_EVENT:
+            case ClockEvent.DONE_CARD_EVENT:
                 // event is sent when card is deleted - moved ti done
                 id = event.getData().get(ID);
                 Card cardToDelete = activeCardState.get(id);

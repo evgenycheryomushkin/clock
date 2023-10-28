@@ -36,17 +36,20 @@ export class CardService {
      */
     eventHubService.subscribe(CardEvent.BACKEND_NEW_ID_EVENT,
       (event: CardEvent) => {
-        const viewPort:Rectangle = {
-          x: window.scrollX,
-          y: window.scrollY,
-          w: window.innerWidth,
-          h: window.innerHeight
+        const id = event.data.get(CardEvent.ID)
+        if (!cardService.cardWithIdExists(id)) {
+          const viewPort:Rectangle = {
+            x: window.scrollX,
+            y: window.scrollY,
+            w: window.innerWidth,
+            h: window.innerHeight
+          }
+          const place = cardPlaceService.findPlace(cardService.cards, viewPort)
+          const card = new Card(id, "", "", Date.now(),
+              {x:place.x, y:place.y})
+          cardService.cards.push(card)
+          allowService.endNew()
         }
-        const place = cardPlaceService.findPlace(cardService.cards, viewPort)
-        const card = new Card(event.data.get(CardEvent.ID), "", "", Date.now(),
-            {x:place.x, y:place.y})
-        cardService.cards.push(card)
-        allowService.endNew()
       }
     )
 
@@ -69,13 +72,27 @@ export class CardService {
         // }
       }
     )
+
+    /**
+    * Done card. Fired when done is clicked. Remove card from cards list.
+    */
+    eventHubService.subscribe(CardEvent.DONE_CARD_EVENT,
+      (event: CardEvent) => {
+        const cardsWithoutGiven: Card[] = new Array<Card>()
+        cardService.cards.forEach(card => {
+          if (event.data.get(CardEvent.ID) != card.id) cardsWithoutGiven.push(card)
+        })
+        cardService.cards = cardsWithoutGiven
+      }
+    )
   }
-  // cardsHasId(id: string): boolean {
-  //   for(var card:Card in this.cards) {
-  //     if (card.id == id) return true
-  //   }
-  //   return false
-  // }
+  cardWithIdExists(id: string): boolean {
+    var idExists = false
+    this.cards.forEach(card => {
+      if (id == card.id) idExists = true
+    })
+    return idExists
+  }
 
   init() {
     console.log("Card Service initialized")

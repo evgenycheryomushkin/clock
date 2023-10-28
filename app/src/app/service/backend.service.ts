@@ -42,8 +42,14 @@ export class BackendService {
         cardEvent.createDate = event.createDate
 
         console.log("receive event from stomp", cardEvent)
-
-        backend.eventHubService.emit(cardEvent)
+        if (
+          cardEvent.type == CardEvent.BACKEND_EXISTING_KEY_EVENT ||
+          cardEvent.type == CardEvent.BACKEND_NEW_KEY_EVENT ||
+          cardEvent.type == CardEvent.BACKEND_NEW_ID_EVENT ||
+          cardEvent.type == CardEvent.EMIT_CARD //TODO rename to backend emit card
+        ) {
+          backend.eventHubService.emit(cardEvent)
+        }
       })
 
       // subscribe to several events and forward them to backend
@@ -51,7 +57,8 @@ export class BackendService {
         [
           CardEvent.CARD_GET_ID_EVENT, 
           CardEvent.UI_START_EVENT,
-          CardEvent.UPDATE_CARD_EVENT
+          CardEvent.UPDATE_CARD_EVENT,
+          CardEvent.DONE_CARD_EVENT
         ],
         (event: CardEvent) => {
           if (backend.routingService.getKey() != "") 

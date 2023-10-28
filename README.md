@@ -34,4 +34,4 @@ cd backend
 a064532330c8   flink:1.17.1-scala_2.12-java11   "/docker-entrypoint.…"   29 seconds ago   Up 4 seconds              6123/tcp, 0.0.0.0:8081->8081/tcp     clock-jobmanager-1
 
 > docker exec -it a064532330c8  bash
-root@a064532330c8:/opt/flink# flink run -s /tmp/flink-checkpoints-directory/6dd3dc929a3267e81d69b9722c1187ad/chk-10 /backend/libs/clock-backend-0.1-SNAPSHOT-all.jar
+root@a064532330c8:/opt/flink# flink run -s /tmp/flink-checkpoints-directory/6dd3dc929a3267e81d69b9722c1187ad/chk-10 /app/clock.jar

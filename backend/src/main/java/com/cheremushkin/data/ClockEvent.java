@@ -103,7 +103,7 @@ final public class ClockEvent {
      * They are moved to archive.
      * Event data: ID = card id.
      */
-    public static final String DELETE_CARD_EVENT = "DELETE_CARD_EVENT";
+    public static final String DONE_CARD_EVENT = "DONE_CARD_EVENT";
 
     /**
      * Card property of data

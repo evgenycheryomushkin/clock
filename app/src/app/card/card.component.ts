@@ -100,8 +100,10 @@ export class CardComponent implements AfterViewInit {
    * on backend.
    */
   onDoneClick() {
-    this.eventHub.emit(
-      new CardEvent(CardEvent.DONE_CARD_EVENT, 
-        CardEvent.ID, this.card.id))
+    if (!this.editing) {
+      this.eventHub.emit(
+        new CardEvent(CardEvent.DONE_CARD_EVENT, 
+          CardEvent.ID, this.card.id))
+    }
   }
 }
