@@ -60,6 +60,8 @@ export class CardComponent implements AfterViewInit {
    * @param event event with new coordinates etc
    */
   dragEnded(event: CdkDragEnd) {
+    this.card.position.x = event.dropPoint.x
+    this.card.position.y = event.dropPoint.y
     this.dragging = false
     this.eventHub.emit(new CardEvent(
       CardEvent.UPDATE_CARD_EVENT, 

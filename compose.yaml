@@ -14,7 +14,7 @@ services:
       test: [ "CMD", "rabbitmqctl", "status"]
       interval: 5s
       timeout: 20s
-      retries: 5
+      retries: 20
 
   jobmanager:
     build: ./backend/
@@ -48,3 +48,14 @@ services:
     environment:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
       - RABBIT_HOST=rabbitmq
+  # backend:
+  #   build: ./backend/
+  #   depends_on:
+  #     jobmanager:
+  #       condition: service_started
+  #     rabbitmq:
+  #       condition: service_healthy
+  #   environment:
+  #     - JOB_MANAGER_RPC_ADDRESS=jobmanager
+  #     - RABBIT_HOST=rabbitmq
+  #   command: "flink run /app/clock.jar"
