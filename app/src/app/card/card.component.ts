@@ -66,8 +66,8 @@ export class CardComponent implements AfterViewInit {
     this.eventHub.emit(new CardEvent(
       CardEvent.UPDATE_CARD_EVENT, 
       CardEvent.ID, this.card.id,
-      CardEvent.CARD_X, ""+this.card.position.x,
-      CardEvent.CARD_Y, ""+this.card.position.y
+      CardEvent.CARD_X, ""+this.card.position.x.toFixed(),
+      CardEvent.CARD_Y, ""+this.card.position.y.toFixed()
       ))
   }
 
@@ -92,8 +92,8 @@ export class CardComponent implements AfterViewInit {
       CardEvent.ID, this.card.id,
       CardEvent.CARD_HEADER, this.card.header,
       CardEvent.CARD_DESCRIPTION, this.card.description,
-      CardEvent.CARD_X, ""+this.card.position.x,
-      CardEvent.CARD_Y, ""+this.card.position.y      
+      CardEvent.CARD_X, ""+this.card.position.x.toFixed(),
+      CardEvent.CARD_Y, ""+this.card.position.y.toFixed()      
       ));
   }
 

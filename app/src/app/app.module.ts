@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { StompConfig, StompService } from '@stomp/ng2-stompjs';
+import { InjectableRxStompConfig, RxStompService, rxStompServiceFactory } from '@stomp/ng2-stompjs';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
@@ -12,19 +12,7 @@ import { RouterModule } from '@angular/router';
 import { routes } from 'src/app/routes';
 import { ClockModule } from './clock/clock.module';
 import { HttpClientModule } from '@angular/common/http';
-
-const stompConfig: StompConfig = {
-  url: 'ws://localhost:15674/ws',
-
-  headers: {
-    login: 'guest',
-    passcode: 'guest'
-  },
-  heartbeat_in: 0, 
-  heartbeat_out: 20000, 
-  reconnect_delay: 5000,
-  debug: true
-};
+import { myRxStompConfig } from './my-rx-stomp.config';
 
 @NgModule({
   declarations: [
@@ -42,10 +30,14 @@ const stompConfig: StompConfig = {
     RouterModule.forRoot(routes)
   ],
   providers: [
-    StompService,
     {
-      provide: StompConfig,
-      useValue: stompConfig
+      provide: InjectableRxStompConfig,
+      useValue: myRxStompConfig
+    },
+    {
+      provide: RxStompService,
+      useFactory: rxStompServiceFactory,
+      deps: [InjectableRxStompConfig]
     }
   ],
   bootstrap: [AppComponent]

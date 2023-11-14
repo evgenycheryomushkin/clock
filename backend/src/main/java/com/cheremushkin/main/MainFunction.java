@@ -1,9 +1,9 @@
 package com.cheremushkin.main;
 
 import com.cheremushkin.data.Card;
+import com.cheremushkin.data.ClockEnvelope;
 import com.cheremushkin.data.ClockEvent;
 import com.cheremushkin.data.Session;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.state.MapState;
@@ -25,52 +25,60 @@ import static com.cheremushkin.data.ClockEvent.CARD_Y;
 import static com.cheremushkin.data.ClockEvent.ID;
 
 @Slf4j
-public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
+public class MainFunction extends RichFlatMapFunction<ClockEnvelope, ClockEnvelope> {
 
     Random r = new Random();
-    ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Information about session. Contains create date, last login date.
      */
     ValueStateDescriptor<Session> sessionDescriptor =
-            new ValueStateDescriptor<Session>("session", TypeInformation.of(Session.class));
+            new ValueStateDescriptor<>("session", TypeInformation.of(Session.class));
+
     /**
      * Active cards. All information about cards. Map key is card id, map value is all card information.
      */
     MapStateDescriptor<String, Card> activeCardsDescriptor =
-            new MapStateDescriptor<String, Card>(
+            new MapStateDescriptor<>(
                     "sessionActiveCards", TypeInformation.of(String.class), TypeInformation.of(Card.class));
+
     /**
      * Done cards. All information about cards.
      */
     MapStateDescriptor<String, Card> doneCardsDescriptor =
-            new MapStateDescriptor<String, Card>(
+            new MapStateDescriptor<>(
                     "sessionDoneCards", TypeInformation.of(String.class), TypeInformation.of(Card.class));
 
     @Override
-    public void flatMap(ClockEvent event, Collector<ClockEvent> out) throws Exception {
-        log.info("main {}", event);
+    public void flatMap(ClockEnvelope envelope, Collector<ClockEnvelope> out) throws Exception {
+        log.info("main {}", envelope);
         String id;
         ValueState<Session> sessionState = getRuntimeContext().getState(sessionDescriptor);
         MapState<String, Card> activeCardState = getRuntimeContext().getMapState(activeCardsDescriptor);
         MapState<String, Card> doneCardState = getRuntimeContext().getMapState(doneCardsDescriptor);
-        switch (event.getType()) {
+        ClockEnvelope retEnvelope;
+        switch (envelope.getClockEvent().getType()) {
             case ClockEvent.UI_START_WITHOUT_KEY_EVENT:
                 // This session is new. We should create new value for session.
                 // and return key inside event (BACKEND_NEW_KEY_EVENT
-                Session session = new Session(event.getSessionKey());
+                Session session = new Session(envelope.getClockEvent().getSessionKey());
                 sessionState.update(session);
                 ClockEvent newEvent = new ClockEvent(ClockEvent.BACKEND_NEW_KEY_EVENT);
-                newEvent.setSessionKey(event.getSessionKey());
-                out.collect(newEvent);
+                newEvent.setSessionKey(envelope.getClockEvent().getSessionKey());
+                out.collect(
+                        new ClockEnvelope(envelope.getReplyTo(), newEvent));
                 return;
             case ClockEvent.UI_START_WITH_KEY_EVENT:
                 // This session already exists.
                 // return key inside event (BACKEND_EXISTING_KEY_EVENT
-                ClockEvent e = new ClockEvent(ClockEvent.BACKEND_EXISTING_KEY_EVENT);
-                String sessionKey = event.getSessionKey();
-                e.setSessionKey(sessionKey);
+                String sessionKey = envelope.getClockEvent().getSessionKey();
+
+                ClockEvent existingKeyEvent = new ClockEvent(ClockEvent.BACKEND_EXISTING_KEY_EVENT)
+                        .sessionKey(sessionKey);
+
+                out.collect(
+                        new ClockEnvelope(envelope.getReplyTo(), existingKeyEvent)
+                );
 
                 StreamSupport.stream(Spliterators.spliteratorUnknownSize(activeCardState.iterator(), Spliterator.ORDERED),
                                 false)
@@ -84,7 +92,8 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
                                             .add(CARD_DESCRIPTION, entry.getValue().getDescription())
                                             .add(CARD_X, String.valueOf(entry.getValue().getX()))
                                             .add(CARD_Y, String.valueOf(entry.getValue().getY()));
-                                    out.collect(emit);
+                                    out.collect(
+                                            new ClockEnvelope(envelope.getReplyTo(), emit));
                                 }
                         );
                 return;
@@ -93,36 +102,47 @@ public class MainFunction extends RichFlatMapFunction<ClockEvent, ClockEvent> {
                 // back to UI
                 id = generate(activeCardState, doneCardState);
                 activeCardState.put(id, new Card(id));
-                out.collect(new ClockEvent(ClockEvent.BACKEND_NEW_ID_EVENT).add(ID, id));
+                retEnvelope = new ClockEnvelope(envelope.getReplyTo(),
+                        new ClockEvent(ClockEvent.BACKEND_NEW_ID_EVENT).add(ID, id)
+                                .sessionKey(envelope.getClockEvent().getSessionKey()));
+                out.collect(retEnvelope);
                 return;
             case ClockEvent.UPDATE_CARD_EVENT:
                 // event is sent when card is updated
-                if (event.getData().get(ID) != null) {
-                    id = event.getData().get(ID);
+                if (envelope.getClockEvent().getData().get(ID) != null) {
+                    id = envelope.getClockEvent().getData().get(ID);
                     Card card = activeCardState.get(id);
                     card.setId(id);
-                    if (event.getData().get(CARD_HEADER) != null)
-                        card.setHeader(event.getData().get(CARD_HEADER));
-                    if (event.getData().get(CARD_DESCRIPTION) != null)
-                        card.setDescription(event.getData().get(CARD_DESCRIPTION));
-                    if (event.getData().get(CARD_X) != null)
-                        card.setX(Integer.valueOf(event.getData().get(CARD_X)));
-                    if (event.getData().get(CARD_Y) != null)
-                        card.setY(Integer.valueOf(event.getData().get(CARD_Y)));
+                    if (envelope.getClockEvent().getData().get(CARD_HEADER) != null)
+                        card.setHeader(envelope.getClockEvent().getData().get(CARD_HEADER));
+                    if (envelope.getClockEvent().getData().get(CARD_DESCRIPTION) != null)
+                        card.setDescription(envelope.getClockEvent().getData().get(CARD_DESCRIPTION));
+                    if (envelope.getClockEvent().getData().get(CARD_X) != null)
+                        card.setX(Integer.valueOf(envelope.getClockEvent().getData().get(CARD_X)));
+                    if (envelope.getClockEvent().getData().get(CARD_Y) != null)
+                        card.setY(Integer.valueOf(envelope.getClockEvent().getData().get(CARD_Y)));
                     activeCardState.put(card.getId(), card);
-                    out.collect(new ClockEvent(ClockEvent.BACKEND_UPDATE_SUCCESS).add(ID, id));
+                    retEnvelope = new ClockEnvelope(envelope.getReplyTo(),
+                            new ClockEvent(ClockEvent.BACKEND_UPDATE_SUCCESS).add(ID, id)
+                                    .sessionKey(envelope.getClockEvent().getSessionKey()));
+                    out.collect(retEnvelope);
                 }
                 return;
             case ClockEvent.DONE_CARD_EVENT:
                 // event is sent when card is deleted - moved ti done
-                id = event.getData().get(ID);
+                id = envelope.getClockEvent().getData().get(ID);
                 Card cardToDelete = activeCardState.get(id);
-                activeCardState.remove(cardToDelete.getId());
-                doneCardState.put(cardToDelete.getId(), cardToDelete);
-                out.collect(new ClockEvent(ClockEvent.BACKEND_UPDATE_SUCCESS).add(ID, id));
+                if (cardToDelete != null) {
+                    activeCardState.remove(cardToDelete.getId());
+                    doneCardState.put(cardToDelete.getId(), cardToDelete);
+                    retEnvelope = new ClockEnvelope(envelope.getReplyTo(),
+                            new ClockEvent(ClockEvent.BACKEND_UPDATE_SUCCESS).add(ID, id)
+                                    .sessionKey(envelope.getClockEvent().getSessionKey()));
+                    out.collect(retEnvelope);
+                }
                 break;
             default:
-                out.collect(event);
+                out.collect(envelope);
         }
     }
 

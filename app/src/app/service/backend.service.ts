@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { EventHubService } from './event-hub.service';
 import { CardEvent } from '../data/card-event';
 import { RoutingService } from './routing.service';
-import { StompService } from '@stomp/ng2-stompjs';
-import { Message } from '@stomp/stompjs';
+import { RxStompService } from '@stomp/ng2-stompjs';
+import { Message, StompHeaders } from '@stomp/stompjs';
 import { TSMap } from 'typescript-map';
 
 
@@ -26,12 +26,12 @@ export class BackendService {
   constructor(
     private eventHubService: EventHubService,
     private routingService: RoutingService,
-    private stompService: StompService) { 
+    private stompService: RxStompService) { 
 
       const backend = this
 
-      const subscription = this.stompService.subscribe('/queue/backend-to-frontend');
-      subscription.subscribe((message: Message) => {
+      stompService.unhandledMessage$.subscribe((message: Message) => {
+        console.log(message);
         const event = JSON.parse(message.body)
         const cardEvent: CardEvent = new CardEvent(event.type)
         cardEvent.sessionKey = event.sessionKey
@@ -64,10 +64,14 @@ export class BackendService {
           if (backend.routingService.getKey() != "") 
             event.sessionKey = backend.routingService.getKey()
           console.log("Send event to backend:", event)
+          const headers: StompHeaders = {
+            'reply-to': '/temp-queue/frontend'
+          }
           this.stompService.publish(
             { 
-              destination: '/exchange/clock/backend', 
-              body: JSON.stringify(event) 
+              destination: '/queue/backend', 
+              body: JSON.stringify(event),
+              headers
             });
         }
       )

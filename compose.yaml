@@ -18,7 +18,8 @@ services:
 
   jobmanager:
     build: ./backend/
-    command: "jobmanager.sh start-foreground"
+    command: "standalone-job --job-classname com.cheremushkin.ClockBackend
+     --fromSavepoint /tmp/flink-checkpoints-directory/1a67f2d385b2e2e9668feb8261644310/chk-14"
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -34,7 +35,7 @@ services:
       - RABBIT_HOST=rabbitmq
 
   taskmanager:
-    image: flink:1.17.1-scala_2.12-java11
+    build: ./backend/
     depends_on:
       jobmanager:
         condition: service_started
@@ -48,14 +49,3 @@ services:
     environment:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
       - RABBIT_HOST=rabbitmq
-  # backend:
-  #   build: ./backend/
-  #   depends_on:
-  #     jobmanager:
-  #       condition: service_started
-  #     rabbitmq:
-  #       condition: service_healthy
-  #   environment:
-  #     - JOB_MANAGER_RPC_ADDRESS=jobmanager
-  #     - RABBIT_HOST=rabbitmq
-  #   command: "flink run /app/clock.jar"

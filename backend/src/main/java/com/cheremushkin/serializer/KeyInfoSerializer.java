@@ -5,7 +5,9 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class KeyInfoSerializer extends Serializer<KeyInfo> {
     final static String V1 = "KEY_INFO_KRYO_V1_2023-10-01";
 

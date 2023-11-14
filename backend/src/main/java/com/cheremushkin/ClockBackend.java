@@ -2,10 +2,11 @@ package com.cheremushkin;
 
 import com.cheremushkin.data.Card;
 import com.cheremushkin.data.ClockEvent;
+import com.cheremushkin.data.ClockEnvelope;
+import com.cheremushkin.data.KeyInfo;
 import com.cheremushkin.data.Session;
 import com.cheremushkin.main.MainFunction;
 import com.cheremushkin.validate.ValidateKeyFunction;
-import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
@@ -21,9 +22,13 @@ public class ClockBackend {
         String rabbitHost = System.getenv("RABBIT_HOST");
         if (rabbitHost == null) rabbitHost = "localhost";
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.getConfig().enableForceKryo();
+        env.getConfig().registerKryoType(Card.class);
+        env.getConfig().registerKryoType(ClockEvent.class);
+        env.getConfig().registerKryoType(KeyInfo.class);
+        env.getConfig().registerKryoType(Session.class);
+        env.getConfig().registerKryoType(ClockEnvelope.class);
 
-        env.enableCheckpointing(30000);
+        env.enableCheckpointing(300000);
         env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
         env.getCheckpointConfig().setMinPauseBetweenCheckpoints(10000);
         env.getCheckpointConfig().setCheckpointTimeout(10000);
@@ -41,28 +46,28 @@ public class ClockBackend {
                 .setPassword("guest")
                 .build();
 
-        final DataStream<ClockEvent> stream = env
+        final DataStream<ClockEnvelope> stream = env
                 .addSource(new RMQSource<>(
                         connectionConfig,
-                        "frontend-to-backend",
+                        "backend",
                         false,
                         new RMQDeserializer()))
                 .setParallelism(1);
 
 
-        SingleOutputStreamOperator<ClockEvent> outputStream = stream
+        SingleOutputStreamOperator<ClockEnvelope> outputStream = stream
                 .keyBy(value -> "")
                 .map(new ValidateKeyFunction())
                 .uid("VALIDATE_SESSION_UID")
-                .keyBy(ClockEvent::getSessionKey)
+                .keyBy(envelope -> envelope.getClockEvent().getSessionKey())
                 .flatMap(new MainFunction())
                 .uid("CARD_UID");
 
         outputStream.print();
         outputStream.addSink(new RMQSink<>(
                 connectionConfig,
-                "backend-to-frontend",
-                new RMQSerializer()));
+                new RMQSerializer(),
+                new RMQPublishOptions()));
 
         env.execute("Flink Clock");
     }

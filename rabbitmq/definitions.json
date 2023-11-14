@@ -26,51 +26,22 @@
       ],
     "queues": [
         {
-            "name": "frontend-to-backend",
-            "vhost": "/",
-            "durable": true,
-            "auto_delete": false,
-            "arguments": {
-                "x-queue-type": "classic"
-            }
-        },
-        {
-          "name": "backend-to-frontend",
+          "name": "backend",
           "vhost": "/",
           "durable": true,
           "auto_delete": false,
           "arguments": {
               "x-queue-type": "classic"
           }
-      }
-    ],
-    "exchanges": [
-        {
-            "name": "clock",
-            "vhost": "/",
-            "type": "direct",
-            "durable": true,
-            "auto_delete": false,
-            "internal": false,
-            "arguments": {}
+      },
+      {
+        "name": "frontend",
+        "vhost": "/",
+        "durable": true,
+        "auto_delete": false,
+        "arguments": {
+            "x-queue-type": "classic"
         }
-    ],
-    "bindings": [
-        {
-            "source": "clock",
-            "vhost": "/",
-            "destination": "frontend-to-backend",
-            "destination_type": "queue",
-            "routing_key": "backend",
-            "arguments": {}
-        },
-        {
-          "source": "clock",
-          "vhost": "/",
-          "destination": "backend-to-frontend",
-          "destination_type": "queue",
-          "routing_key": "frontend",
-          "arguments": {}
       }
-  ]
+    ]
 }

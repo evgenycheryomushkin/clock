@@ -1,8 +1,10 @@
 services:
   clock-rabbit: 
+    build: ./
     ports:
       - "5672:5672"
       - "15672:15672"
       - "15674:15674"
-    build: ./
-
+      - "61613:61613"
+    volumes: 
+      - ./logs:/logs:rw
