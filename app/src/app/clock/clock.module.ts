@@ -5,6 +5,7 @@ import { ArrowComponent } from './arrow/arrow.component';
 import { PensilComponent } from './pensil/pensil.component';
 import { VrungelComponent } from './vrungel/vrungel.component';
 import { ForegroundComponent } from './foreground/foreground.component';
+import {ForestComponent} from "./forest/forest.component";
 
 
 
@@ -14,7 +15,8 @@ import { ForegroundComponent } from './foreground/foreground.component';
     ArrowComponent,
     ForegroundComponent,
     PensilComponent,
-    VrungelComponent
+    VrungelComponent,
+    ForestComponent
   ],
   providers: [
   ],
@@ -23,7 +25,8 @@ import { ForegroundComponent } from './foreground/foreground.component';
   ],
   exports: [
     PensilComponent,
-    VrungelComponent
+    VrungelComponent,
+    ForestComponent
   ]
 })
 export class ClockModule { }
