@@ -1,6 +1,7 @@
 services:
   frontend:
     build: ./app/
+    image: echeryomushkin/clock_fronend
     ports:
       - 8080:80
     
