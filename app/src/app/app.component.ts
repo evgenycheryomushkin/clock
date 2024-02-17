@@ -8,6 +8,7 @@ import { BackendService } from './service/backend.service';
 import { AllowService } from './service/allow.service';
 import { RoutingService } from './service/routing.service';
 import { CardPlaceService } from './service/card-place.service';
+import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
 
 /**
  * Application component. It contains clock and list of cards.

@@ -20,7 +20,9 @@ export class CardEvent {
    * Receiver: card.service
    */
   static ALLOW_ADD_EVENT = "ALLOW_ADD_EVENT"
-  
+
+  static SETTINGS_EVENT = "SETTINGS_EVENT"
+
   /**
    * Event: Get new card Id from backend
    * Parameters: none

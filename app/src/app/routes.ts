@@ -12,12 +12,15 @@ import { AppComponent } from "./app.component";
 export const routes: Routes = [
     {
       matcher: (url) => {
-        if (url.length === 1 && url[0].path.match(RegExp("^([0-9abcdef]{8}|)$","i"))) {
-          const path = url[0].path
+        console.log("url", url)
+        if (url.length === 1 
+          && url[1].path.match(RegExp("^([0-9abcdef]{8}|)$","i"))) {
+            const key = url[0].path
+          console.log("key", key)
           return {
             consumed: url,
             posParams: {
-              key: new UrlSegment(path, {})
+              key: new UrlSegment(key, {})
             }
           };
         }

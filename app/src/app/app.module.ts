@@ -13,12 +13,16 @@ import { routes } from 'src/app/routes';
 import { ClockModule } from './clock/clock.module';
 import { HttpClientModule } from '@angular/common/http';
 import { myRxStompConfig } from './my-rx-stomp.config';
+import { SettingsComponent } from './settings/settings.component';
+import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
 
 @NgModule({
   declarations: [
     AddComponent,
     CardComponent,
-    AppComponent
+    AppComponent,
+    SettingsComponent,
+    SettingsDialogComponent
   ],
   imports: [
     BrowserModule,
