@@ -16,11 +16,14 @@ export class CardService {
     eventHubService: EventHubService,
     cardPlaceService: CardPlaceService,
     allowService: AllowService
-  ) { 
+  ) {
     const cardService = this;
+
+    // this.cards.push(new Card("123", "test", "test", 1, {x:500, y:100}))
+
     /**
-     * Signal to add new card. 
-     * Event is sent from add.component. 
+     * Signal to add new card.
+     * Event is sent from add.component.
      * This event already contains verification from allow.service.
      * Send CARD_GET_ID_EVENT further to backend.
      */
@@ -66,7 +69,7 @@ export class CardService {
         const y           = +event.data.get(CardEvent.CARD_Y)
 
         // if (!cardService.cardsHasId(id)) {
-          const card = new Card(id, header, description, 
+          const card = new Card(id, header, description,
           Date.now(), {x:x, y:y})
           cardService.cards.push(card)
         // }

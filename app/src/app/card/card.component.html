@@ -1,10 +1,10 @@
-<mat-card #cardElem class="card" 
-cdkDrag 
+<mat-card #cardElem class="card"
+cdkDrag
 [cdkDragFreeDragPosition]="card.position"
 (cdkDragStarted)="dragStarted()"
 (cdkDragEnded)="dragEnded($event)"
 [ngClass]="{'mat-elevation-z8' : dragging}"
-[cdkDragDisabled]="!allowService.dragEnabled" 
+[cdkDragDisabled]="!allowService.dragEnabled"
 >
     <mat-card-title>
       <mat-form-field *ngIf="editing">
@@ -28,8 +28,8 @@ cdkDrag
     <mat-card-actions align="end">
       <!-- mat-icon-button -->
       <!-- mat-fab -->
-      <button mat-button *ngIf="!editing" (click)="onEditClick()">EDIT</button> 
-      <button mat-button *ngIf="editing"  (click)="onSaveClick()">SAVE</button> 
+      <button mat-button *ngIf="!editing" (click)="onEditClick()">EDIT</button>
+      <button mat-button *ngIf="editing"  (click)="onSaveClick()">SAVE</button>
       <button mat-button (click)="onDoneClick()">DONE</button>
     </mat-card-actions>
     <!-- <mat-card-footer>
