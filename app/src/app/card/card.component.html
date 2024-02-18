@@ -16,6 +16,7 @@ cdkDrag
       {{ editing ? "" : card.header }}
     </mat-card-title>
     <mat-card-subtitle>
+      <div style="width:200px;word-wrap: break-word;">
       <mat-form-field *ngIf="editing">
         <mat-label>Description</mat-label>
         <textarea matInput #cardDescriptionEdit
@@ -24,6 +25,7 @@ cdkDrag
         ></textarea>
       </mat-form-field>
       {{ editing ? "" : card.description }}
+      </div>
     </mat-card-subtitle>
     <mat-card-actions align="end">
       <!-- mat-icon-button -->

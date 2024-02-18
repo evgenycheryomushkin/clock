@@ -18,7 +18,7 @@ export class SettingsDialogComponent {
     eventHubService.subscribe(CardEvent.SETTINGS_EVENT,
       () => {
         console.log("settings visible")
-          settingsDialog.visible = true
+          settingsDialog.visible = !settingsDialog.visible
       }
     )
    }
