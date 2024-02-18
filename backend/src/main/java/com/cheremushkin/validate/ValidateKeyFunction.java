@@ -8,7 +8,6 @@ import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
-import org.apache.flink.shaded.guava30.com.google.common.collect.Iterators;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -89,11 +88,6 @@ public class ValidateKeyFunction extends RichMapFunction<ClockEnvelope, ClockEnv
         return StreamSupport
                 .stream(keyMap.keys().spliterator(), false)
                 .collect(Collectors.joining(","));
-    }
-
-    private long getSize(MapState<String, KeyInfo> keyMap) throws Exception {
-        Iterator<String> iterator = keyMap.keys().iterator();
-        return Iterators.size(iterator);
     }
 
     /**

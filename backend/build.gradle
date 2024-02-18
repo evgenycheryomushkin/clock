@@ -7,7 +7,7 @@ plugins {
 
 ext {
     javaVersion = '11'
-    flinkVersion = '1.18'
+    flinkVersion = '1.18.1'
     scalaBinaryVersion = '2.12'
     slf4jVersion = '1.7.36'
     log4jVersion = '2.20.0'
@@ -47,7 +47,6 @@ configurations {
 
 dependencies {
     implementation "org.apache.flink:flink-streaming-java:${flinkVersion}"
-    implementation "org.apache.flink:flink-streaming-java_2.12:${flinkVersion}"
     implementation "org.apache.flink:flink-clients:${flinkVersion}"
     implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
@@ -73,7 +72,6 @@ dependencies {
     // Add test dependencies here.
     testImplementation 'junit:junit:4.13.2'
     testImplementation "org.apache.flink:flink-test-utils:${flinkVersion}"
-    testImplementation "org.apache.flink:flink-test-utils_2.12:${flinkVersion}"
     testImplementation "org.apache.flink:flink-test-utils-junit:${flinkVersion}"
 }
 
