@@ -7,24 +7,26 @@ cdkDrag
 [cdkDragDisabled]="!allowService.dragEnabled"
 >
     <mat-card-title>
-      <mat-form-field *ngIf="editing">
-        <mat-label>Header</mat-label>
-        <input matInput #cardHeaderEdit
-        [(ngModel)]="card.header"
-        >
-      </mat-form-field>
-      {{ editing ? "" : card.header }}
+      <div style="word-wrap: break-word; margin-left: 15px; margin-top: 5px">
+        <mat-form-field *ngIf="editing">
+          <mat-label>Header</mat-label>
+          <input matInput #cardHeaderEdit
+          [(ngModel)]="card.header"
+          >
+        </mat-form-field>
+        {{ editing ? "" : card.header }}
+      </div>
     </mat-card-title>
     <mat-card-subtitle>
-      <div style="width:200px;word-wrap: break-word;">
-      <mat-form-field *ngIf="editing">
-        <mat-label>Description</mat-label>
-        <textarea matInput #cardDescriptionEdit
-        cdkTextareaAutosize
-        [(ngModel)]="card.description"
-        ></textarea>
-      </mat-form-field>
-      {{ editing ? "" : card.description }}
+      <div style="width:200px;word-wrap: break-word; margin-left: 15px">
+        <mat-form-field *ngIf="editing">
+          <mat-label>Description</mat-label>
+          <textarea matInput #cardDescriptionEdit
+          cdkTextareaAutosize
+          [(ngModel)]="card.description"
+          ></textarea>
+        </mat-form-field>
+        {{ editing ? "" : card.description }}
       </div>
     </mat-card-subtitle>
     <mat-card-actions align="end">

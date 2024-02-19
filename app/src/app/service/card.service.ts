@@ -19,7 +19,7 @@ export class CardService {
   ) {
     const cardService = this;
 
-//    this.cards.push(new Card("123", "test", "test", 1, {x:500, y:100}))
+   // this.cards.push(new Card("123", "test", "test", 1, {x:500, y:100}))
 
     /**
      * Signal to add new card.
