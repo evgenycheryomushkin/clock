@@ -14,7 +14,7 @@ export class CardEvent {
   /**
    * Add new card event. New card is allowed to be added.
    * See diagrams at diagrams/ folder for details.
-   * New card button is pressed. After that allow service is 
+   * New card button is pressed. After that allow service is
    * checked. If allow service allow adding new card, this event occurs.
    * Sender: add.component
    * Receiver: card.service
@@ -27,9 +27,9 @@ export class CardEvent {
    * Event: Get new card Id from backend
    * Parameters: none
    * Sender: card.service
-   * 
+   *
    * Sent when new card event come to card.service. Card service
-   * requests new id from backend. Session key will be added in 
+   * requests new id from backend. Session key will be added in
    * routing service to this event to send it to backend.
    */
   static CARD_GET_ID_EVENT = "CARD_GET_ID_EVENT"
@@ -40,11 +40,11 @@ export class CardEvent {
    * Event: End user navigation
    * Parameters: sessionKey - session key
    * Sender: app.component
-   * 
+   *
    * Called when user enter URL in browser. URL can contain
-   * session key (16 hex digits number). URL is in form 
+   * session key (16 hex digits number). URL is in form
    * clock.io/key . URL may not contain key: clock.io
-   * In this case session is new. We obtain new session from 
+   * In this case session is new. We obtain new session from
    * server and redirect to URL clock.io/new_key
    */
   static APP_NAVIGATION_END_EVENT = "APP_NAVIGATION_END_EVENT"
@@ -56,7 +56,7 @@ export class CardEvent {
    * Parameters: sessionKey - session key. Can be empty or
    * contain 16 hex digits.
    * Sender: backend.service
-   * 
+   *
    * Sent to backend when UI starts. Contains session key or empty
    * for new session. When user first time enter the site. New key
    * is obtained and UI is redirected.
@@ -71,11 +71,11 @@ export class CardEvent {
    * Parameters: CARD_X, CARD_Y   - card x, y to save
    * Sender: card.component
    * Receiver: Backend
-   * 
+   *
    * Send card information to backend
    */
   static UPDATE_CARD_EVENT = "UPDATE_CARD_EVENT"
-  
+
   static CARD_HEADER      = "CARD_HEADER"
   static CARD_DESCRIPTION = "CARD_DESCRIPTION"
   static CARD_X           = "CARD_X"
@@ -96,22 +96,22 @@ export class CardEvent {
   static DRAG_DISABLED_EVENT = "DRAG_DISABLED_EVENT"
 
   /**
-   * Event with new key from backend. Sent when new backend key 
+   * Event with new key from backend. Sent when new backend key
    * is generated.
-   * 
+   *
    * Frontend use first time enters UI. Then backend receives UI_START_EVENT.
-   * Backend generates new key and sent BACKEND_NEW_KEY_EVENT to frontend. 
-   * 
+   * Backend generates new key and sent BACKEND_NEW_KEY_EVENT to frontend.
+   *
    * Sender: Backend
    * Receiver: routing.service
    * Parameters: sessionKey - session key
    */
   static BACKEND_NEW_KEY_EVENT = "BACKEND_NEW_KEY_EVENT"
 
-  
+
   /**
    * Generated on backend. Confirm existing session key.
-   * 
+   *
    * Sender: backend
    * Receiver: routing.service
    * Parameters: sessionKey - confirmed session key
@@ -120,7 +120,7 @@ export class CardEvent {
 
   /**
    * Generated on backend. Send new card key to frontend.
-   * 
+   *
    * Sender: backend
    * Receiver: card.service
    * Parameters: ID - new card id
@@ -133,7 +133,7 @@ export class CardEvent {
   static ID = "ID"
 
   /**
-   * Generated when card is done. Done means that card disappears from 
+   * Generated when card is done. Done means that card disappears from
    * frontend.
    * Sender: card.component
    * Receiver: backend.service
@@ -144,7 +144,7 @@ export class CardEvent {
 
   /**
    * EMIT_CARD. When new frontend login with old session.
-   * 
+   *
    * Sender: backend
    * Receiver: card.service
    * Parameters: card
@@ -181,8 +181,8 @@ export class CardEvent {
    * Constructs a WorkEvent. WorkEvent contains
    * event id and properties as string map.
    * Each property has name and value.
-   * 
-   * @param type event type. See static types of 
+   *
+   * @param type event type. See static types of
    * events in this class.
    * @param args each argument is either key or value.
    * First argument is a key, second is value,

@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { ClockComponent, loadImage } from '../clock/clock.component';
+import { ClockComponent } from '../clock/clock.component';
 
 /**
  * Pensil drawn clock. Credits
@@ -14,11 +14,6 @@ export class ForestComponent extends ClockComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.context = this.backgroundCanvas.nativeElement.getContext('2d')
-    this.loadBackground(this, '/assets/images/forest/background.png')
+    this.loadBackground(this, '/assets/images/forest/background.png').then(r => console.log("background load complete"))
   }
-
-  constructor() {
-    super()
-  }
-
 }

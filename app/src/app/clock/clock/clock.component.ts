@@ -14,7 +14,7 @@ export class ClockComponent {
   /**
    * Background canvas
    */
-  @ViewChild('backgroundCanvas', {static: false}) 
+  @ViewChild('backgroundCanvas', {static: false})
   protected backgroundCanvas: ElementRef;
   /**
    * canvas rendering context
@@ -24,7 +24,7 @@ export class ClockComponent {
    * background image
    */
   protected backgroundImage: HTMLImageElement;
-    
+
   /**
    * Load background image
    * @param app ClickComponent
@@ -32,28 +32,31 @@ export class ClockComponent {
    */
   async loadBackground(app:ClockComponent, imgSrs: string) {
     app.backgroundImage = await loadImage(imgSrs);
+    await this.drawBackground(app);
+  }
 
+  async drawBackground(app: ClockComponent) {
     app.backgroundCanvas.nativeElement.height = app.backgroundImage.height
     app.backgroundCanvas.nativeElement.width = app.backgroundImage.width
 
     app.context.canvas.height = app.backgroundImage.height
     app.context.canvas.width = app.backgroundImage.width
 
-    app.context.drawImage(app.backgroundImage, 0,0)
+    app.context.drawImage(app.backgroundImage, 0, 0)
   }
 }
 
 /**
  * Load image
- * @param src source of image 
+ * @param src source of image
  * @returns promise, as this function is async
  */
 export async function loadImage(src: string): Promise<HTMLImageElement> {
   const image = new Image();
   image.src = src;
   return new Promise(resolve => {
-      image.onload = (ev) => {
-          resolve(image);
-      }
+    image.onload = (ev) => {
+      resolve(image);
+    }
   });
 }
