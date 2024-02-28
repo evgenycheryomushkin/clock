@@ -18,6 +18,7 @@ sudo chmod a+rwx flink -R
 docker compose build
 docker compose up
 ```
+open localhost:8080 in browser
 
 ###Docker helper commands
 
