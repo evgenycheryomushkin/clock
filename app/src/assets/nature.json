@@ -1,0 +1,89 @@
+{
+  "images":
+  [
+     {
+       "width": 1280,
+       "height": 731,
+      "background": "/assets/images/forest/1280_731/background.png",
+      "arrows": [
+          {
+            "type": "minute",
+            "x": 648,
+            "y": 344,
+            "d": -25,
+            "image": "/assets/images/forest/1280_731/minute.png"
+          },
+          {
+            "type": "hour",
+            "x": 648,
+            "y": 344,
+            "d": -90,
+            "image": "/assets/images/forest/1280_731/hour.png"
+          },
+          {
+            "type": "second",
+            "x": 648,
+            "y": 344,
+            "d": -18,
+            "image": "/assets/images/forest/1280_731/second.png"
+          }
+      ]
+    },
+    {
+      "width": 1600,
+      "height": 914,
+      "background": "/assets/images/forest/1600_914/background.png",
+      "arrows": [
+        {
+          "type": "minute",
+          "x": 810,
+          "y": 430,
+          "d": -31,
+          "image": "/assets/images/forest/1600_914/minute.png"
+        },
+        {
+          "type": "hour",
+          "x": 810,
+          "y": 430,
+          "d": -112,
+          "image": "/assets/images/forest/1600_914/hour.png"
+        },
+        {
+          "type": "second",
+          "x": 810,
+          "y": 430,
+          "d": -22,
+          "image": "/assets/images/forest/1600_914/second.png"
+        }
+      ]
+    },
+    {
+      "width": 2560,
+      "height": 1462,
+      "background": "/assets/images/forest/2560_1462/background.png",
+      "arrows": [
+        {
+          "type": "minute",
+          "x": 1296,
+          "y": 688,
+          "d": -50,
+          "image": "/assets/images/forest/2560_1462/minute.png"
+        },
+        {
+          "type": "hour",
+          "x": 1296,
+          "y": 688,
+          "d": -180,
+          "image": "/assets/images/forest/2560_1462/hour.png"
+        },
+        {
+          "type": "second",
+          "x": 1296,
+          "y": 688,
+          "d": -36,
+          "image": "/assets/images/forest/2560_1462/second.png"
+        }
+      ]
+    }
+  ]
+}
