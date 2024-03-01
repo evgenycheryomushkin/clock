@@ -42,10 +42,12 @@ export class ClockComponent implements AfterViewInit {
       .subscribe(
         clock => {
           this.currentClock = clock
+          const i = this.currentClock.images.length-1
           this.loadBackground(this,
-            this.currentClock.images[this.currentClock.images.length-1].background).then(r => {
+            this.currentClock.images[i].background).then(r => {
             console.log("background load complete")
           })
+          this.arrows = this.currentClock.images[i].arrows
         }
       )
   }
@@ -53,10 +55,14 @@ export class ClockComponent implements AfterViewInit {
     this.context = this.backgroundCanvas.nativeElement.getContext('2d')
   }
 
+  lastI = -1
   private async loadBackgroundAdaptive(width: number, height: number) {
     const i:number = this.chooseSize(this.currentClock, width, height)
-    this.loadBackground(this, this.currentClock.images[i].background)
-    this.arrows = this.currentClock.images[i].arrows
+    if (i != this.lastI) {
+      this.lastI = i
+      this.loadBackground(this, this.currentClock.images[i].background)
+      this.arrows = this.currentClock.images[i].arrows
+    }
   }
 
   backgroundImageCache = new TSMap<string, HTMLImageElement>()
@@ -72,7 +78,6 @@ export class ClockComponent implements AfterViewInit {
     if (this.loadBackgroundLock) return
     this.loadBackgroundLock = true
     console.log("load background adaptive")
-    await new Promise(f => setTimeout(f, 1000));
     if (this.backgroundImageCache.has(imgSrs)) {
       app.backgroundImage = this.backgroundImageCache.get(imgSrs)
     } else {
@@ -109,6 +114,7 @@ export class ClockComponent implements AfterViewInit {
  * @returns promise, as this function is async
  */
 export async function loadImage(src: string): Promise<HTMLImageElement> {
+  await new Promise(f => setTimeout(f, 100));
   const image = new Image();
   image.src = src;
   return new Promise(resolve => {
