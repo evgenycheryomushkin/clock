@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { filter, map } from 'rxjs';
+import {filter, fromEvent, map, tap} from 'rxjs';
 import { CardService } from './service/card.service';
 import { CardEvent } from './data/card-event';
 import { EventHubService } from './service/event-hub.service';
@@ -47,11 +47,11 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const appComponent = this
-    this.buildSessionKeySource(appComponent)
+    this.buildSessionKeySource()
+    this.buildResizeSource()
   }
 
-  buildSessionKeySource(appComponent: AppComponent) {
+  buildSessionKeySource(): void {
     const navigationEnd = this.router.events
       .pipe(
         filter(e => e instanceof NavigationEnd),
@@ -62,5 +62,20 @@ export class AppComponent implements OnInit {
           return event
         }))
     this.eventHubService.registerSource(navigationEnd)
+  }
+
+  buildResizeSource() {
+    const appComponent = this
+    const resizeObserver =
+      fromEvent(window, 'resize')
+        .pipe(
+          map(e => e.target),
+          filter(e => e != null && e instanceof Window),
+          map(e => e as Window),
+          map(target =>
+              new CardEvent(CardEvent.RESIZE_EVENT, CardEvent.WIDTH,
+                ""+target.innerWidth, CardEvent.HEIGHT, ""+target.innerHeight)
+          ));
+    appComponent.eventHubService.registerSource(resizeObserver);
   }
 }

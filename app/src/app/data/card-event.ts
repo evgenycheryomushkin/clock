@@ -160,6 +160,12 @@ export class CardEvent {
    */
   static BACKEND_UPDATE_SUCCESS = "BACKEND_UPDATE_SUCCESS"
 
+  static RESIZE_EVENT = "RESIZE_EVENT"
+
+  static WIDTH = "WIDTH"
+
+  static HEIGHT = "HEIGHT"
+
   /**
    * WorkEvent type
    */

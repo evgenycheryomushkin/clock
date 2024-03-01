@@ -49,7 +49,8 @@ export class AddComponent implements OnInit {
    */
   private buildNKeySource() {
     const addComponent = this
-    const keyboardEventObserver = fromEvent<KeyboardEvent>(document, 'keydown')
+    const keyboardEventObserver =
+      fromEvent<KeyboardEvent>(document, 'keydown')
       .pipe(filter(e => e.code == 'KeyN'),
         filter(e => addComponent.allowService.startNewIdIfAllowed()),
         tap(e => e.preventDefault()),

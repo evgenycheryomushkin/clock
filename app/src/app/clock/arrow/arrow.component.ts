@@ -18,7 +18,7 @@ export class ArrowComponent implements AfterViewInit {
   /**
    * Arrow canvas
    */
-  @ViewChild('arrowCanvas', {static: false}) 
+  @ViewChild('arrowCanvas', {static: false})
   private arrowCanvas: ElementRef;
   /**
    * X coordinate of arrow center. For center description
@@ -37,7 +37,7 @@ export class ArrowComponent implements AfterViewInit {
   @Input() d:number;
   /**
    * Name of image. Path to image file relative
-   * to asdets folder.
+   * to assets folder.
    */
   @Input() imageName:string;
   /**
@@ -80,6 +80,9 @@ export class ArrowComponent implements AfterViewInit {
    */
   angle: number;
 
+  constructor() {
+  }
+
   /**
    * Initialize arrow
    */
@@ -102,7 +105,7 @@ export class ArrowComponent implements AfterViewInit {
 
     app.context.canvas.height = 2 * app.h + 2 * app.d
     app.context.canvas.width = 2 * app.h + 2 * app.d
-    
+
     app.left = ""+(app.x - app.h - app.d)+"px"
     app.top = ""+(app.y - app.h - app.d)+"px"
     app.arrowCanvas.nativeElement.height = 2 * app.h + 2 * app.d
@@ -123,9 +126,9 @@ export class ArrowComponent implements AfterViewInit {
   async drawArrow(app:ArrowComponent, angle: number) {
         app.context.save()
         app.context.clearRect(0, 0, app.context.canvas.width, app.context.canvas.height)
-        app.context.translate(app.h + app.d ,app.h + app.d)    
+        app.context.translate(app.h + app.d ,app.h + app.d)
         app.context.rotate(Math.PI / 180 * angle)
-        app.context.drawImage(app.arrowImage, -app.w / 2, 
+        app.context.drawImage(app.arrowImage, -app.w / 2,
           -app.h-app.d)
         app.context.restore()
   }
@@ -144,7 +147,7 @@ export class ArrowComponent implements AfterViewInit {
       app.angle = nowAngle
     }, 50)
   }
-  
+
   /**
    * Calc angle depending on arrow type
    * @param date current time

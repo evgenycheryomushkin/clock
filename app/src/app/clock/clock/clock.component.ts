@@ -1,6 +1,11 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { EventHubService } from 'src/app/service/event-hub.service';
 import { CardEvent } from 'src/app/data/card-event';
+import { HttpClient } from '@angular/common/http';
+import {Arrow, ClockData} from "./data/ClockData";
+import {map} from "rxjs";
+import {TSMap} from "typescript-map";
+
 
 /**
  * Clock component
@@ -10,20 +15,59 @@ import { CardEvent } from 'src/app/data/card-event';
   templateUrl: './clock.component.html',
   styleUrls: ['./clock.component.scss']
 })
-export class ClockComponent {
+export class ClockComponent implements AfterViewInit {
   /**
    * Background canvas
    */
   @ViewChild('backgroundCanvas', {static: false})
-  protected backgroundCanvas: ElementRef;
+  protected backgroundCanvas: ElementRef
+
+  currentClock: ClockData
   /**
    * canvas rendering context
    */
-  protected context: CanvasRenderingContext2D;
+  protected context: CanvasRenderingContext2D
   /**
    * background image
    */
-  protected backgroundImage: HTMLImageElement;
+  protected backgroundImage: HTMLImageElement
+
+  constructor(private eventHub: EventHubService,
+              private  http: HttpClient) {
+    eventHub.subscribe(CardEvent.RESIZE_EVENT, e => {
+      this.loadBackgroundAdaptive(Number(e.data.get(CardEvent.WIDTH)), Number(e.data.get(CardEvent.HEIGHT)))
+    })
+    this.http.get("/assets/nature.json")
+      .pipe(map(o => o as ClockData))
+      .subscribe(
+        clock => {
+          this.currentClock = clock
+          const i = this.currentClock.images.length-1
+          this.loadBackground(this,
+            this.currentClock.images[i].background).then(r => {
+            console.log("background load complete")
+          })
+          this.arrows = this.currentClock.images[i].arrows
+        }
+      )
+  }
+  ngAfterViewInit(): void {
+    this.context = this.backgroundCanvas.nativeElement.getContext('2d')
+  }
+
+  lastI = -1
+  private async loadBackgroundAdaptive(width: number, height: number) {
+    const i:number = this.chooseSize(this.currentClock, width, height)
+    if (i != this.lastI) {
+      this.lastI = i
+      this.loadBackground(this, this.currentClock.images[i].background)
+      this.arrows = this.currentClock.images[i].arrows
+    }
+  }
+
+  backgroundImageCache = new TSMap<string, HTMLImageElement>()
+  loadBackgroundLock = false
+  arrows: Arrow[]
 
   /**
    * Load background image
@@ -31,8 +75,17 @@ export class ClockComponent {
    * @param imgSrs source of image
    */
   async loadBackground(app:ClockComponent, imgSrs: string) {
-    app.backgroundImage = await loadImage(imgSrs);
+    if (this.loadBackgroundLock) return
+    this.loadBackgroundLock = true
+    console.log("load background adaptive")
+    if (this.backgroundImageCache.has(imgSrs)) {
+      app.backgroundImage = this.backgroundImageCache.get(imgSrs)
+    } else {
+      app.backgroundImage = await loadImage(imgSrs)
+      this.backgroundImageCache.set(imgSrs, this.backgroundImage)
+    }
     await this.drawBackground(app);
+    this.loadBackgroundLock = false
   }
 
   async drawBackground(app: ClockComponent) {
@@ -44,6 +97,15 @@ export class ClockComponent {
 
     app.context.drawImage(app.backgroundImage, 0, 0)
   }
+
+  private chooseSize(currentClock: ClockData, width: number, height: number): number {
+    let i;
+    for(i = 0; i < currentClock.images.length-1; i ++) {
+      if ( currentClock.images[i].width >= width && currentClock.images[i].height >= height) break;
+    }
+    console.log("choose size", i, width, height)
+    return i
+  }
 }
 
 /**
@@ -52,6 +114,7 @@ export class ClockComponent {
  * @returns promise, as this function is async
  */
 export async function loadImage(src: string): Promise<HTMLImageElement> {
+  await new Promise(f => setTimeout(f, 100));
   const image = new Image();
   image.src = src;
   return new Promise(resolve => {
