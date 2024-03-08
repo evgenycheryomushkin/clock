@@ -1,4 +1,6 @@
-<mat-card *ngIf="visible" class="settings" cdkDrag>
+<mat-card *ngIf="visible" class="settings" cdkDrag
+          [cdkDragFreeDragPosition]="position"
+>
     <mat-card-title>
         Help
     </mat-card-title>

@@ -58,6 +58,34 @@
       ]
     },
     {
+      "width": 1828,
+      "height": 1044,
+      "background": "/assets/images/forest/1828_1044/background.png",
+      "arrows": [
+        {
+          "type": "minute",
+          "x": 926,
+          "y": 491,
+          "d": -35,
+          "image": "/assets/images/forest/1828_1044/minute.png"
+        },
+        {
+          "type": "hour",
+          "x": 926,
+          "y": 491,
+          "d": -125,
+          "image": "/assets/images/forest/1828_1044/hour.png"
+        },
+        {
+          "type": "second",
+          "x": 926,
+          "y": 491,
+          "d": -26,
+          "image": "/assets/images/forest/1828_1044/second.png"
+        }
+      ]
+    },
+    {
       "width": 2560,
       "height": 1462,
       "background": "/assets/images/forest/2560_1462/background.png",

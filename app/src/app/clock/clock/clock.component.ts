@@ -42,12 +42,7 @@ export class ClockComponent implements AfterViewInit {
       .subscribe(
         clock => {
           this.currentClock = clock
-          const i = this.currentClock.images.length-1
-          this.loadBackground(this,
-            this.currentClock.images[i].background).then(r => {
-            console.log("background load complete")
-          })
-          this.arrows = this.currentClock.images[i].arrows
+          this.loadBackgroundAdaptive(window.innerWidth, window.innerHeight)
         }
       )
   }
