@@ -12,12 +12,14 @@ public class ClockEnvelopeSerializer extends Serializer<ClockEnvelope> {
 
     @Override
     public void write(Kryo kryo, Output output, ClockEnvelope object) {
+        output.writeString(V1);
         output.writeString(object.getReplyTo());
         kryo.writeObject(output, object.getClockEvent());
     }
 
     @Override
     public ClockEnvelope read(Kryo kryo, Input input, Class<ClockEnvelope> type) {
+        String version = input.readString();
         String replyTo = input.readString();
         ClockEvent clockEvent = kryo.readObject(input, ClockEvent.class);
         return new ClockEnvelope(replyTo, clockEvent);

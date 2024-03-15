@@ -25,10 +25,4 @@ public class ClockEventTest {
         String pojoString = "{\"type\":\"UI_START_EVENT\",\"createDate\":1695992828756,\"sessionKey\":\"\",\"data\":{\"SESSION_KEY\":\"\"}}";
         mapper.readValue(pojoString, ClockEvent.class);
     }
-
-    @Test
-    public void testJava() {
-        Math.negateExact()
-    }
-
 }

@@ -51,7 +51,7 @@ public class MainFunction extends RichFlatMapFunction<ClockEnvelope, ClockEnvelo
 
     @Override
     public void flatMap(ClockEnvelope envelope, Collector<ClockEnvelope> out) throws Exception {
-        log.info("main {}", envelope);
+        log.debug("main {}", envelope);
         String id;
         ValueState<Session> sessionState = getRuntimeContext().getState(sessionDescriptor);
         MapState<String, Card> activeCardState = getRuntimeContext().getMapState(activeCardsDescriptor);

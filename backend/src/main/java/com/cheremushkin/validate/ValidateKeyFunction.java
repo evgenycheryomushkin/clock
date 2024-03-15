@@ -37,8 +37,8 @@ public class ValidateKeyFunction extends RichMapFunction<ClockEnvelope, ClockEnv
     public ClockEnvelope map(ClockEnvelope envelope) throws Exception {
         MapState<String, KeyInfo> keyMap = getRuntimeContext().getMapState(keyMapDescriptor);
         String sessionKey;
-        log.info("validate {}", envelope);
-        log.info("total sessions {}", getAllKeys(keyMap));
+        log.debug("validate {}", envelope);
+        log.debug("total sessions {}", getAllKeys(keyMap));
         ClockEvent errorEvent;
         if (envelope.getClockEvent().getType().equals(ClockEvent.UI_START_EVENT)) {
             if (envelope.getClockEvent().getSessionKey() == null ||
@@ -49,6 +49,7 @@ public class ValidateKeyFunction extends RichMapFunction<ClockEnvelope, ClockEnv
                 while (sessionKey == null || keyMap.contains(sessionKey)) {
                     sessionKey = generate();
                 }
+                log.info("new session {}", sessionKey);
                 keyMap.put(sessionKey, new KeyInfo());
                 ClockEvent returnEvent = new ClockEvent(ClockEvent.UI_START_WITHOUT_KEY_EVENT);
                 returnEvent.setSessionKey(sessionKey);
@@ -62,11 +63,13 @@ public class ValidateKeyFunction extends RichMapFunction<ClockEnvelope, ClockEnv
                     keyMap.get(sessionKey).setUpdated(System.currentTimeMillis());
                     ClockEvent returnEvent = new ClockEvent(ClockEvent.UI_START_WITH_KEY_EVENT);
                     returnEvent.setSessionKey(sessionKey);
+                    log.info("valid session {}", sessionKey);
                     return new ClockEnvelope(
                             envelope.getReplyTo(), returnEvent
                     );
                 } else {
                     // key is not valid
+                    log.info("invalid session {}", sessionKey);
                     errorEvent = ClockEvent.buildErrorEvent().add(ERROR_DESCRIPTION, "Invalid session key");
                     return new ClockEnvelope(envelope.getReplyTo(), errorEvent);
                 }

@@ -15,7 +15,7 @@ public class CardSerializer extends Serializer<Card> {
 
     @Override
     public void write(Kryo kryo, Output output, @NonNull Card card) {
-        log.info("write card {}", card);
+        log.trace("write card {}", card);
         output.writeString(V1);
         output.writeString(card.getId());
         output.writeString(card.getHeader());
@@ -37,7 +37,7 @@ public class CardSerializer extends Serializer<Card> {
         card.setDescription(description);
         card.setX(x);
         card.setY(y);
-        log.info("read card {}", card);
+        log.trace("read card {}", card);
         return card;
     }
 }
