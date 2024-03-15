@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { io } from 'socket.io-client';
 import { EventHubService } from './event-hub.service';
 import { CardEvent } from '../data/card-event';
 import { EventProcessor } from '../core/event-processor';
 import {Location} from '@angular/common';
 
 /**
- * Takes care of session key (key parameter). Store key and 
+ * Takes care of session key (key parameter). Store key and
  * give it to events if necessary by getKey
  */
 @Injectable({
@@ -27,7 +26,7 @@ export class RoutingService {
   // TODO catch ERROR event
   constructor(eventHubService: EventHubService,
     private location: Location
-    ) { 
+    ) {
     const routingService = this
     eventHubService.subscribe(
         CardEvent.APP_NAVIGATION_END_EVENT,
@@ -36,7 +35,7 @@ export class RoutingService {
             res.sessionKey = event.sessionKey
             eventProcessor.emit(res)
         })
-    
+
     eventHubService.subscribe(
       CardEvent.BACKEND_NEW_KEY_EVENT,
       (event: CardEvent, eventProcessor: EventProcessor) => {

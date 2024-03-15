@@ -9,7 +9,7 @@ import { TSMap } from 'typescript-map';
 
 /**
  * Backend service. It will receive messages
- * on internal event bus and send them 
+ * on internal event bus and send them
  * to socket io. Also it will work backwards from socket io
  * to internal bus.
  * Later on socket server messages will be forwarded to kafka
@@ -18,7 +18,7 @@ import { TSMap } from 'typescript-map';
   providedIn: 'root'
 })
 export class BackendService {
-  
+
   init() {
     console.log("Backend Service was initialized")
   }
@@ -26,7 +26,7 @@ export class BackendService {
   constructor(
     private eventHubService: EventHubService,
     private routingService: RoutingService,
-    private stompService: RxStompService) { 
+    private stompService: RxStompService) {
 
       const backend = this
 
@@ -55,21 +55,21 @@ export class BackendService {
       // subscribe to several events and forward them to backend
       eventHubService.subscribe(
         [
-          CardEvent.CARD_GET_ID_EVENT, 
+          CardEvent.CARD_GET_ID_EVENT,
           CardEvent.UI_START_EVENT,
           CardEvent.UPDATE_CARD_EVENT,
           CardEvent.DONE_CARD_EVENT
         ],
         (event: CardEvent) => {
-          if (backend.routingService.getKey() != "") 
+          if (backend.routingService.getKey() != "")
             event.sessionKey = backend.routingService.getKey()
           console.log("Send event to backend:", event)
           const headers: StompHeaders = {
             'reply-to': '/temp-queue/frontend'
           }
           this.stompService.publish(
-            { 
-              destination: '/queue/backend', 
+            {
+              destination: '/queue/backend',
               body: JSON.stringify(event),
               headers
             });
