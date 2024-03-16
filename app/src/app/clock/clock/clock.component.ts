@@ -72,7 +72,6 @@ export class ClockComponent implements AfterViewInit {
   async loadBackground(app:ClockComponent, imgSrs: string) {
     if (this.loadBackgroundLock) return
     this.loadBackgroundLock = true
-    console.log("load background adaptive")
     if (this.backgroundImageCache.has(imgSrs)) {
       app.backgroundImage = this.backgroundImageCache.get(imgSrs)
     } else {
@@ -98,7 +97,6 @@ export class ClockComponent implements AfterViewInit {
     for(i = 0; i < currentClock.images.length-1; i ++) {
       if ( currentClock.images[i].width >= width && currentClock.images[i].height >= height) break;
     }
-    console.log("choose size", i, width, height)
     return i
   }
 }

@@ -31,7 +31,6 @@ export class BackendService {
       const backend = this
 
       stompService.unhandledMessage$.subscribe((message: Message) => {
-        console.log(message);
         const event = JSON.parse(message.body)
         const cardEvent: CardEvent = new CardEvent(event.type)
         cardEvent.sessionKey = event.sessionKey
@@ -41,7 +40,6 @@ export class BackendService {
         }
         cardEvent.createDate = event.createDate
 
-        console.log("receive event from stomp", cardEvent)
         if (
           cardEvent.type == CardEvent.BACKEND_EXISTING_KEY_EVENT ||
           cardEvent.type == CardEvent.BACKEND_NEW_KEY_EVENT ||
@@ -63,7 +61,6 @@ export class BackendService {
         (event: CardEvent) => {
           if (backend.routingService.getKey() != "")
             event.sessionKey = backend.routingService.getKey()
-          console.log("Send event to backend:", event)
           const headers: StompHeaders = {
             'reply-to': '/temp-queue/frontend'
           }

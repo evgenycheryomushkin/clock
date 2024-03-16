@@ -15,6 +15,6 @@ export const myRxStompConfig: InjectableRxStompConfig = {
   reconnectDelay: 200,
 
   debug: (msg: string): void => {
-    console.log(new Date(), environment.apiHost, msg);
+    console.log(environment.apiHost, msg);
   }
 };

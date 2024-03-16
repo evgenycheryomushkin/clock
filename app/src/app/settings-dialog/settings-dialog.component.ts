@@ -20,7 +20,6 @@ export class SettingsDialogComponent {
     const settingsDialog = this
     eventHubService.subscribe(CardEvent.SETTINGS_EVENT,
       () => {
-        console.log("settings visible")
         this.position = {
           x: window.pageXOffset + 50,
           y: window.pageYOffset + 50

@@ -16,16 +16,16 @@ import { AllowService } from '../service/allow.service';
 })
 export class CardComponent implements AfterViewInit {
   @Input() card: Card
-  
+
   // true when card is dragged
   dragging = false
 
   // flag that switch interface into edit mode
   editing = false
 
-  @ViewChild("cardElem", {read: ElementRef}) 
+  @ViewChild("cardElem", {read: ElementRef})
   private cardElem: ElementRef
-  @ViewChild("cardHeaderEdit", {read: ElementRef}) 
+  @ViewChild("cardHeaderEdit", {read: ElementRef})
   private cardHeaderEditRef: ElementRef
 
   constructor(
@@ -35,7 +35,6 @@ export class CardComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    console.log(this.card)
     this.card.cardComponent = this
   }
 
@@ -44,7 +43,7 @@ export class CardComponent implements AfterViewInit {
    * @returns card bounding rectangle
    */
   getBoundingRect(): DOMRect {
-    return this.cardElem.nativeElement.getBoundingClientRect()        
+    return this.cardElem.nativeElement.getBoundingClientRect()
   }
 
   /**
@@ -64,7 +63,7 @@ export class CardComponent implements AfterViewInit {
     this.card.position.y = event.dropPoint.y
     this.dragging = false
     this.eventHub.emit(new CardEvent(
-      CardEvent.UPDATE_CARD_EVENT, 
+      CardEvent.UPDATE_CARD_EVENT,
       CardEvent.ID, this.card.id,
       CardEvent.CARD_X, ""+this.card.position.x.toFixed(),
       CardEvent.CARD_Y, ""+this.card.position.y.toFixed()
@@ -88,12 +87,12 @@ export class CardComponent implements AfterViewInit {
     this.allowService.endEdit()
     this.editing = false
     this.eventHub.emit(new CardEvent(
-      CardEvent.UPDATE_CARD_EVENT, 
+      CardEvent.UPDATE_CARD_EVENT,
       CardEvent.ID, this.card.id,
       CardEvent.CARD_HEADER, this.card.header,
       CardEvent.CARD_DESCRIPTION, this.card.description,
       CardEvent.CARD_X, ""+this.card.position.x.toFixed(),
-      CardEvent.CARD_Y, ""+this.card.position.y.toFixed()      
+      CardEvent.CARD_Y, ""+this.card.position.y.toFixed()
       ));
   }
 
@@ -104,7 +103,7 @@ export class CardComponent implements AfterViewInit {
   onDoneClick() {
     if (!this.editing) {
       this.eventHub.emit(
-        new CardEvent(CardEvent.DONE_CARD_EVENT, 
+        new CardEvent(CardEvent.DONE_CARD_EVENT,
           CardEvent.ID, this.card.id))
     }
   }
