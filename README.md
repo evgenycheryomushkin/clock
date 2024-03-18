@@ -20,7 +20,7 @@ docker compose -f frontend.yaml -f backend.yaml -f rabbit.yaml up
 ```
 open localhost:8080 in browser
 
-###Docker helper commands
+### Docker helper commands
 
 docker ps -a
 docker exec -it flinkjar bash
