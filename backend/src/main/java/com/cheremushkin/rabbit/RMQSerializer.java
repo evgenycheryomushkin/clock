@@ -1,4 +1,4 @@
-package com.cheremushkin;
+package com.cheremushkin.rabbit;
 
 import com.cheremushkin.data.ClockEnvelope;
 import com.cheremushkin.data.ClockEvent;
