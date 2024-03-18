@@ -13,7 +13,7 @@ import { EventProcessor } from '../core/event-processor';
   providedIn: 'root'
 })
 export class EventHubService {
-  private sourceSream: EventStream = new EventStream()
+  private sourceStream: EventStream = new EventStream()
 
   init() {
     console.log("Event Hub Service initialized")
@@ -21,21 +21,21 @@ export class EventHubService {
 
   constructor() {
     // log all events for debug purposes
-    // this.subscribe(
-    //   RegExp(".*"),
-    //   (event: CardEvent) => {
-    //       console.log(event.type, event)
-    //   })
+    this.subscribe(
+      RegExp(".*"),
+      (event: CardEvent) => {
+          console.log(event.type, event)
+      })
     }
 
   registerSource(observable: Observable<CardEvent>) {
     observable.subscribe(
-      next => this.sourceSream.emit(next)
+      next => this.sourceStream.emit(next)
     )
   }
 
   emit(workEvent: CardEvent) {
-    this.sourceSream.emit(workEvent)
+    this.sourceStream.emit(workEvent)
   }
 
   /**
@@ -60,7 +60,7 @@ export class EventHubService {
     error: (err: any) => void = () => {},
     complete: () => void  = () => {}
   ): void {
-    this.sourceSream.buildEventProcessor(eventType, next, error, complete)
+    this.sourceStream.buildEventProcessor(eventType, next, error, complete)
   }
 }
 

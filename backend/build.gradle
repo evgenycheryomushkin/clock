@@ -30,7 +30,8 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
-applicationDefaultJvmArgs = ["-Dlog4j.configurationFile=log4j2.properties"]
+applicationDefaultJvmArgs = ["-Dlog4j.configurationFile=log4j2.properties",
+                             "--add-opens", "java.base/jdk.internal.loader=ALL-UNNAMED"]
 
 repositories {
     mavenCentral()

@@ -63,7 +63,6 @@ public class ClockBackend {
                 .flatMap(new MainFunction())
                 .uid("CARD_UID");
 
-        outputStream.print();
         outputStream.addSink(new RMQSink<>(
                 connectionConfig,
                 new RMQSerializer(),
