@@ -15,8 +15,8 @@ This project is implemented using event-driven architecture. Events passes from 
 ### Run the project
 ```
 sudo chmod a+rwx flink -R
-docker compose build
-docker compose up
+docker compose -f frontend.yaml -f backend.yaml -f rabbit.yaml build
+docker compose -f frontend.yaml -f backend.yaml -f rabbit.yaml up
 ```
 open localhost:8080 in browser
 

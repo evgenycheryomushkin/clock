@@ -1,0 +1,13 @@
+services:
+  rabbitmq:
+    build: ./rabbitmq/
+    image: echeryomushkin/clock_rabbit
+    ports:
+      - 5672:5672
+      - 15672:15672
+      - 15674:15674
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 20s
+      retries: 20

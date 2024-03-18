@@ -1,28 +1,9 @@
 services:
-  frontend:
-    build: ./app/
-    image: echeryomushkin/clock_fronend
-    ports:
-      - 8080:80
-    
-  rabbitmq: 
-    build: ./rabbitmq/
-    image: echeryomushkin/clock_rabbit
-    ports:
-      - 5672:5672
-      - 15672:15672
-      - 15674:15674
-    healthcheck:
-      test: [ "CMD", "rabbitmqctl", "status"]
-      interval: 5s
-      timeout: 20s
-      retries: 20
-
   jobmanager:
     build: ./backend/
     image: echeryomushkin/clock_jobmanager
     command: "standalone-job --job-classname com.cheremushkin.ClockBackend"
-#     --fromSavepoint /tmp/flink-checkpoints-directory/1a67f2d385b2e2e9668feb8261644310/chk-14"
+    #     --fromSavepoint /tmp/flink-checkpoints-directory/1a67f2d385b2e2e9668feb8261644310/chk-14"
     depends_on:
       rabbitmq:
         condition: service_healthy
