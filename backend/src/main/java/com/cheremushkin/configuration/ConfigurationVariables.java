@@ -1,9 +1,9 @@
-package com.cheremushkin.util;
+package com.cheremushkin.configuration;
 
 import lombok.Data;
 
 @Data
-public class Configuration {
+public class ConfigurationVariables {
     String rabbitHost;
     String rabbitQueueName;
 }

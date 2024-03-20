@@ -12,15 +12,9 @@ import lombok.ToString;
 @ToString
 @DefaultSerializer(ClockEnvelopeSerializer.class)
 public class ClockEnvelope {
-    /**
-     * Reply-to queue
-     */
     @NonNull
     String replyTo;
 
-    /**
-     * Clock event
-     */
     @NonNull
     ClockEvent clockEvent;
 }
