@@ -12,10 +12,10 @@ import java.time.ZonedDateTime;
 @ToString
 @DefaultSerializer(KeyInfoSerializer.class)
 public class KeyInfo {
+    Long created;
+    Long updated;
     public KeyInfo() {
         created = System.currentTimeMillis();
         updated = created;
     }
-    Long created;
-    Long updated;
 }

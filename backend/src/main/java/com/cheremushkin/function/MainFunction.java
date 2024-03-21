@@ -36,6 +36,4 @@ public class MainFunction extends RichFlatMapFunction<ClockEnvelope, ClockEnvelo
         FlinkUserState userState = new FlinkUserState(getRuntimeContext());
         eventProcessor = new MainEventProcessor(userState);
     }
-
-
 }

@@ -12,7 +12,6 @@ import lombok.ToString;
 @ToString
 @DefaultSerializer(SessionSerializer.class)
 public class Session {
-    
     Long createDate;
     String sessionKey;
 

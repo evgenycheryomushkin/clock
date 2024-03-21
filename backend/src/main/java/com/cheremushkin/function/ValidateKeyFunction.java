@@ -13,8 +13,8 @@ import org.apache.flink.configuration.Configuration;
 
 @Slf4j
 public class ValidateKeyFunction extends RichMapFunction<ClockEnvelope, ClockEnvelope> {
-
     ValidateEventProcessor processor;
+
     @Override
     public ClockEnvelope map(ClockEnvelope envelope) throws Exception {
         log.debug("validate {}", envelope);

@@ -1,7 +1,6 @@
 package com.cheremushkin.mapper;
 
 import com.cheremushkin.data.Card;
-import com.cheremushkin.data.ClockEnvelope;
 import com.cheremushkin.data.ClockEvent;
 
 import java.util.Map;

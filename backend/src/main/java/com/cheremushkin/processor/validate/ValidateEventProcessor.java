@@ -1,14 +1,11 @@
 package com.cheremushkin.processor.validate;
 
-import com.cheremushkin.data.ClockEnvelope;
 import com.cheremushkin.data.ClockEvent;
 import com.cheremushkin.data.KeyInfo;
-import com.cheremushkin.processor.EventProcessor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.state.MapState;
 
-import java.util.List;
 import java.util.Random;
 
 import static com.cheremushkin.mapper.FrontendCardMapper.ERROR_DESCRIPTION;

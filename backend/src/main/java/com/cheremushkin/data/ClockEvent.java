@@ -14,28 +14,13 @@ import java.util.stream.Collectors;
 
 import static com.cheremushkin.mapper.FrontendCardMapper.ERROR_EVENT;
 
-/**
- * Work event. Both come from UI and internal server events
- * are in this class
- */
-
 @Getter
 @Setter
 @DefaultSerializer(ClockEventSerializer.class)
 final public class ClockEvent {
-
     String type;
-    /**
-     * Create time.
-     */
     Long createDate;
-    /**
-     * Session key
-     */
     String sessionKey;
-    /**
-     * Data that is in event
-     */
     Map<String, String> data;
 
     @JsonCreator

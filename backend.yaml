@@ -2,8 +2,8 @@ services:
   jobmanager:
     build: ./backend/
     image: echeryomushkin/clock_jobmanager
-    command: "standalone-job --job-classname com.cheremushkin.ClockBackend 
-         --fromSavepoint /tmp/flink-checkpoints-directory/82b542063206636d030cd9d175028ab5/chk-2"
+    command: "standalone-job --job-classname com.cheremushkin.ClockBackend"
+#         --fromSavepoint /tmp/flink-checkpoints-directory/82b542063206636d030cd9d175028ab5/chk-2"
     depends_on:
       rabbitmq:
         condition: service_healthy

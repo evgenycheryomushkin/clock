@@ -13,12 +13,17 @@ The structure of project
 This project is implemented using event-driven architecture. Events passes from frontend to backend using rabbitmq.
 
 ### Run the project
+1. Change apiHost in 
+```
+nano app/src/environments/environment.prod.ts
+```
+2. Build and run docker project
 ```
 sudo chmod a+rwx flink -R
 docker compose -f frontend.yaml -f backend.yaml -f rabbit.yaml build
 docker compose -f frontend.yaml -f backend.yaml -f rabbit.yaml up
 ```
-open localhost:8080 in browser
+3. open `localhost:8080` in browser
 
 ### Docker helper commands
 

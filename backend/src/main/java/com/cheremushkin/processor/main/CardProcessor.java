@@ -1,7 +1,6 @@
 package com.cheremushkin.processor.main;
 
 import com.cheremushkin.data.Card;
-import com.cheremushkin.data.ClockEnvelope;
 import com.cheremushkin.data.ClockEvent;
 import com.cheremushkin.function.UserState;
 import com.cheremushkin.mapper.FrontendCardMapper;
@@ -12,7 +11,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import static com.cheremushkin.mapper.FrontendCardMapper.*;
+import static com.cheremushkin.mapper.FrontendCardMapper.BACKEND_NEW_ID_EVENT;
+import static com.cheremushkin.mapper.FrontendCardMapper.BACKEND_UPDATE_SUCCESS;
+import static com.cheremushkin.mapper.FrontendCardMapper.ID;
 
 
 public class CardProcessor implements EventProcessor {

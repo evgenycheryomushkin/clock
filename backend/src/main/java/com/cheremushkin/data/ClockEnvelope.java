@@ -14,7 +14,6 @@ import lombok.ToString;
 public class ClockEnvelope {
     @NonNull
     String replyTo;
-
     @NonNull
     ClockEvent clockEvent;
 }
