@@ -1,4 +1,4 @@
-package com.cheremushkin.data;
+package com.cheremushkin.transport;
 
 import com.cheremushkin.serializer.ClockEnvelopeSerializer;
 import com.esotericsoftware.kryo.DefaultSerializer;

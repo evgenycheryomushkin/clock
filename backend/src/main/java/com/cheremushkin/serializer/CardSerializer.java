@@ -32,7 +32,7 @@ public class CardSerializer extends Serializer<Card> {
         String description = input.readString();
         Integer x = kryo.readObjectOrNull(input, Integer.class);
         Integer y = kryo.readObjectOrNull(input, Integer.class);
-        Card card = new Card(id);
+        Card card = Card.build(id);
         card.setHeader(header);
         card.setDescription(description);
         card.setX(x);

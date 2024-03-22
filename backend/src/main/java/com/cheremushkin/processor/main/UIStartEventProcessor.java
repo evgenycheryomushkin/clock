@@ -1,10 +1,10 @@
 package com.cheremushkin.processor.main;
 
 import com.cheremushkin.data.Card;
-import com.cheremushkin.data.ClockEvent;
+import com.cheremushkin.transport.ClockEvent;
 import com.cheremushkin.data.Session;
-import com.cheremushkin.function.FlinkUserState;
-import com.cheremushkin.function.UserState;
+import com.cheremushkin.state.FlinkUserState;
+import com.cheremushkin.state.UserState;
 import com.cheremushkin.mapper.FrontendCardMapper;
 import com.cheremushkin.processor.EventProcessor;
 import lombok.NonNull;
@@ -48,15 +48,14 @@ public class UIStartEventProcessor implements EventProcessor {
         String sessionKey = event.getSessionKey();
         Session session = new Session(sessionKey);
         state.getSessionState().update(session);
-        ClockEvent newEvent = new ClockEvent(BACKEND_NEW_KEY_EVENT).addSessionKey(sessionKey);
+        ClockEvent newEvent = ClockEvent.build(BACKEND_NEW_KEY_EVENT, sessionKey);
         return List.of(newEvent);
     }
 
     private List<ClockEvent> processUIStartWithKey(UserState state, ClockEvent event) throws Exception {
         List<ClockEvent> resultList = new ArrayList<>();
         String sessionKey = event.getSessionKey();
-        ClockEvent existingKeyEvent = new ClockEvent(BACKEND_EXISTING_KEY_EVENT)
-                .addSessionKey(sessionKey);
+        ClockEvent existingKeyEvent = ClockEvent.build(BACKEND_EXISTING_KEY_EVENT, sessionKey);
 
         resultList.add(existingKeyEvent);
 
@@ -69,8 +68,7 @@ public class UIStartEventProcessor implements EventProcessor {
     private List<ClockEvent> getCardsListFromState(UserState state, final String sessionKey) throws Exception {
         Iterable<Card> allCardsForUser = state.getActiveCardState().values();
         return StreamSupport.stream(allCardsForUser.spliterator(), false)
-                .map(FrontendCardMapper::mapCardToEvent)
-                .map(card -> card.addSessionKey(sessionKey))
+                .map(card -> FrontendCardMapper.mapCardToEvent(card, sessionKey))
                 .collect(Collectors.toList());
     }
 }

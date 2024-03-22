@@ -1,8 +1,8 @@
 package com.cheremushkin;
 
 import com.cheremushkin.data.Card;
-import com.cheremushkin.data.ClockEvent;
-import com.cheremushkin.data.ClockEnvelope;
+import com.cheremushkin.transport.ClockEvent;
+import com.cheremushkin.transport.ClockEnvelope;
 import com.cheremushkin.data.KeyInfo;
 import com.cheremushkin.data.Session;
 import com.cheremushkin.function.MainFunction;
@@ -55,7 +55,7 @@ public class ClockBackend {
     }
 
     private static void loadConfigurationVariables() {
-        configurationVariables = ConfigurationUtil.loadConfigurationVariables();
+        configurationVariables = new ConfigurationUtil().loadConfigurationVariables();
     }
 
     private static StreamExecutionEnvironment initStreamExecutionEnvironment() {

@@ -1,6 +1,6 @@
 package com.cheremushkin.processor.validate;
 
-import com.cheremushkin.data.ClockEvent;
+import com.cheremushkin.transport.ClockEvent;
 import com.cheremushkin.data.KeyInfo;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -37,14 +37,13 @@ public class ValidateEventProcessor {
             boolean sessionKeyIsValid = state.contains(sessionKey);
             if (sessionKeyIsValid) {
                 state.get(sessionKey).setUpdated(System.currentTimeMillis());
-                ClockEvent returnEvent = new ClockEvent(UI_START_WITH_KEY_EVENT);
-                returnEvent.setSessionKey(sessionKey);
+                ClockEvent returnEvent = ClockEvent.build(UI_START_WITH_KEY_EVENT, sessionKey);
                 log.info("valid session {}", sessionKey);
                 return returnEvent;
             } else {
                 log.info("invalid session {}", sessionKey);
-                return ClockEvent.buildErrorEvent()
-                        .add(ERROR_DESCRIPTION, "Invalid session key");
+                return ClockEvent.buildErrorEvent("")
+                        .add(ERROR_DESCRIPTION, "Invalid session key: "+sessionKey);
             }
         }
     }
@@ -53,9 +52,8 @@ public class ValidateEventProcessor {
         String sessionKey = event.getSessionKey();
         boolean sessionKeyExists = state.contains(sessionKey);
         if (!sessionKeyExists) {
-            return ClockEvent.buildErrorEvent()
-                    .add(ERROR_DESCRIPTION, "Invalid session key")
-                    .addSessionKey(sessionKey);
+            return ClockEvent.buildErrorEvent("")
+                    .add(ERROR_DESCRIPTION, "Invalid session key: " + sessionKey);
         } else {
             return event;
         }
@@ -68,9 +66,7 @@ public class ValidateEventProcessor {
         }
         log.info("new session {}", sessionKey);
         state.put(sessionKey, new KeyInfo());
-        ClockEvent returnEvent = new ClockEvent(UI_START_WITHOUT_KEY_EVENT);
-        returnEvent.setSessionKey(sessionKey);
-        return returnEvent;
+        return ClockEvent.build(UI_START_WITHOUT_KEY_EVENT, sessionKey);
     }
 
     Random generator = new Random();

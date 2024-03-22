@@ -1,7 +1,6 @@
 package com.cheremushkin.rabbit;
 
-import com.cheremushkin.data.ClockEnvelope;
-import com.cheremushkin.data.ClockEvent;
+import com.cheremushkin.transport.ClockEnvelope;
 import com.rabbitmq.client.AMQP;
 import org.apache.flink.streaming.connectors.rabbitmq.RMQSinkPublishOptions;
 

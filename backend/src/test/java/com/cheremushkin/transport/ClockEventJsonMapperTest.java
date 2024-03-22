@@ -1,12 +1,13 @@
-package com.cheremushkin.data;
+package com.cheremushkin.transport;
 
+import com.cheremushkin.transport.ClockEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import org.junit.Test;
 
 
-public class ClockEventTest {
+public class ClockEventJsonMapperTest {
     ObjectMapper mapper = new ObjectMapper();
 
     @Test(expected = ValueInstantiationException.class)

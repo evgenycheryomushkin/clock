@@ -1,7 +1,6 @@
 package com.cheremushkin.rabbit;
 
-import com.cheremushkin.data.ClockEnvelope;
-import com.cheremushkin.data.ClockEvent;
+import com.cheremushkin.transport.ClockEnvelope;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

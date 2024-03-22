@@ -1,4 +1,4 @@
-package com.cheremushkin.function;
+package com.cheremushkin.state;
 
 import com.cheremushkin.data.Card;
 import com.cheremushkin.data.Session;
@@ -21,7 +21,7 @@ public class FlinkUserState implements UserState {
     final MapState<String, Card> activeCardState;
     final MapState<String, Card> doneCardState;
 
-    FlinkUserState(RuntimeContext runtimeContext) {
+    public FlinkUserState(RuntimeContext runtimeContext) {
         sessionState = runtimeContext.getState(sessionDescriptor);
         activeCardState = runtimeContext.getMapState(activeCardsDescriptor);
         doneCardState = runtimeContext.getMapState(doneCardsDescriptor);

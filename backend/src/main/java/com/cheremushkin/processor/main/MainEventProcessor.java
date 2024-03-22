@@ -1,7 +1,7 @@
 package com.cheremushkin.processor.main;
 
-import com.cheremushkin.data.ClockEvent;
-import com.cheremushkin.function.FlinkUserState;
+import com.cheremushkin.transport.ClockEvent;
+import com.cheremushkin.state.FlinkUserState;
 import com.cheremushkin.processor.EventProcessor;
 import lombok.NonNull;
 

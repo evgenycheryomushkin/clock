@@ -1,7 +1,7 @@
 package com.cheremushkin.function;
 
-import com.cheremushkin.data.ClockEnvelope;
-import com.cheremushkin.data.ClockEvent;
+import com.cheremushkin.transport.ClockEnvelope;
+import com.cheremushkin.transport.ClockEvent;
 import com.cheremushkin.data.KeyInfo;
 import com.cheremushkin.processor.validate.ValidateEventProcessor;
 import lombok.extern.slf4j.Slf4j;

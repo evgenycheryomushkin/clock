@@ -1,4 +1,4 @@
-package com.cheremushkin.function;
+package com.cheremushkin.state;
 
 import com.cheremushkin.data.Card;
 import com.cheremushkin.data.Session;

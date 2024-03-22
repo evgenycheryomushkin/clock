@@ -1,6 +1,6 @@
 package com.cheremushkin.serializer;
 
-import com.cheremushkin.data.ClockEvent;
+import com.cheremushkin.transport.ClockEvent;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;

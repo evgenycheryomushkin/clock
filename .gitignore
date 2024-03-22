@@ -6,3 +6,4 @@ build
 flink/data
 flink/log
 erl_crash.dump
+wireshark/

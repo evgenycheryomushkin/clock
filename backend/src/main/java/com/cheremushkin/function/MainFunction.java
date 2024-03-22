@@ -1,7 +1,8 @@
 package com.cheremushkin.function;
 
-import com.cheremushkin.data.ClockEnvelope;
-import com.cheremushkin.data.ClockEvent;
+import com.cheremushkin.state.FlinkUserState;
+import com.cheremushkin.transport.ClockEnvelope;
+import com.cheremushkin.transport.ClockEvent;
 import com.cheremushkin.processor.EventProcessor;
 import com.cheremushkin.processor.main.MainEventProcessor;
 import lombok.extern.slf4j.Slf4j;

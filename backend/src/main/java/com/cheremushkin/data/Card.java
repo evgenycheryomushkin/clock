@@ -8,17 +8,25 @@ import lombok.*;
 @Setter
 @ToString
 @DefaultSerializer(CardSerializer.class)
-public class Card {
+public class Card implements Cloneable {
     @NonNull String id;
     String header;
     String description;
     Integer x;
     Integer y;
-    public Card(@NonNull String id) {
+    private Card(@NonNull String id) {
         this.id = id;
     }
+    public static Card build(@NonNull String id) {
+        return new Card(id);
+    }
 
-    public Card(Card card) {
+    @Override
+    public Card clone() {
+        return new Card(this);
+    }
+
+    private Card(Card card) {
         this.id = card.id;
         this.header = card.header;
         this.description = card.description;

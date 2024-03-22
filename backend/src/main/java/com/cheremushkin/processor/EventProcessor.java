@@ -1,6 +1,6 @@
 package com.cheremushkin.processor;
 
-import com.cheremushkin.data.ClockEvent;
+import com.cheremushkin.transport.ClockEvent;
 import lombok.NonNull;
 
 import java.util.List;

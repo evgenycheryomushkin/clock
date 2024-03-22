@@ -1,7 +1,7 @@
 package com.cheremushkin.rabbit;
 
-import com.cheremushkin.data.ClockEnvelope;
-import com.cheremushkin.data.ClockEvent;
+import com.cheremushkin.transport.ClockEnvelope;
+import com.cheremushkin.transport.ClockEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Envelope;
