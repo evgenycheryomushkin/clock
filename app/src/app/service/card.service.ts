@@ -1,16 +1,17 @@
-import { Injectable } from '@angular/core';
-import { CardEvent } from '../data/card-event';
-import { EventHubService } from './event-hub.service';
-import { Card } from '../data/card';
-import { CardPlaceService } from './card-place.service';
-import { Rectangle } from '../data/rectangle';
-import { AllowService } from './allow.service';
+import {Injectable} from '@angular/core';
+import {CardEvent} from '../data/card-event';
+import {EventHubService} from './event-hub.service';
+import {Card} from '../data/card';
+import {CardPlaceService} from './card-place.service';
+import {Rectangle} from '../data/rectangle';
+import {AllowService} from './allow.service';
+import {TSMap} from "typescript-map";
 
 @Injectable({
   providedIn: 'root'
 })
 export class CardService {
-  public cards = new Array<Card>()
+  public cards = new TSMap<string, Card>()
 
   constructor(
     eventHubService: EventHubService,
@@ -47,10 +48,12 @@ export class CardService {
             w: window.innerWidth,
             h: window.innerHeight
           }
-          const place = cardPlaceService.findPlace(cardService.cards, viewPort)
-          const card = new Card(id, "", "", Date.now(),
-              {x:place.x, y:place.y})
-          cardService.cards.push(card)
+          const place = cardPlaceService.findPlace(cardService.cards.values(), viewPort)
+          const card = new Card(id, "", "", Date.now(), {x:place.x, y:place.y})
+          cardService.cards.set(card.id, card)
+          setTimeout(() => {
+            eventHubService.emit(new CardEvent(CardEvent.EDIT_CARD_EVENT, CardEvent.ID, card.id))
+          }, 200)
           allowService.endNew()
         }
       }
@@ -68,11 +71,9 @@ export class CardService {
         const x           = +event.data.get(CardEvent.CARD_X)
         const y           = +event.data.get(CardEvent.CARD_Y)
 
-        // if (!cardService.cardsHasId(id)) {
-          const card = new Card(id, header, description,
-          Date.now(), {x:x, y:y})
-          cardService.cards.push(card)
-        // }
+        const card = new Card(id, header, description,
+        Date.now(), {x:x, y:y})
+        cardService.cards.set(card.id, card)
       }
     )
 
@@ -81,20 +82,13 @@ export class CardService {
     */
     eventHubService.subscribe(CardEvent.DONE_CARD_EVENT,
       (event: CardEvent) => {
-        const cardsWithoutGiven: Card[] = new Array<Card>()
-        cardService.cards.forEach(card => {
-          if (event.data.get(CardEvent.ID) != card.id) cardsWithoutGiven.push(card)
-        })
-        cardService.cards = cardsWithoutGiven
+        const cardId = event.data.get(CardEvent.ID)
+        this.cards.delete(cardId)
       }
     )
   }
   cardWithIdExists(id: string): boolean {
-    var idExists = false
-    this.cards.forEach(card => {
-      if (id == card.id) idExists = true
-    })
-    return idExists
+    return this.cards.has(id)
   }
 
   init() {

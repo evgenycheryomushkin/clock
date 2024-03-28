@@ -1,5 +1,5 @@
-import { Point } from "@angular/cdk/drag-drop";
-import { CardComponent } from "../card/card.component";
+import {Point} from "@angular/cdk/drag-drop";
+import {CardComponent} from "../card/card.component";
 
 /**
  * Card representation. Contains bounding rectangle (not used).
@@ -19,4 +19,10 @@ export class Card{
      * that contains given card
      */
     public cardComponent: CardComponent
+
+  copy() {
+    return new Card(
+        this.id, this.header, this.description, this.created, {x: this.position.x, y: this.position.y}
+      )
+  }
 }

@@ -32,6 +32,9 @@ export class CardComponent implements AfterViewInit {
     private eventHub: EventHubService,
     public allowService: AllowService,
     private renderer: Renderer2) {
+    eventHub.subscribe(CardEvent.EDIT_CARD_EVENT, (event: CardEvent) => {
+      if (event.data.get(CardEvent.ID) == this.card.id) this.onEditClick()
+    })
   }
 
   ngAfterViewInit() {

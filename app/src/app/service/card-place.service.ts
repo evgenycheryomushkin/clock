@@ -14,29 +14,25 @@ export class CardPlaceService {
     console.log("Card Place Service initialized")
   }
 
-  findPlace(cards: Card[], viewPort:Rectangle, w: number = 200, h: number = 100): Point {
-    const d = 10
-    for(var y = 50;; y += d) {
-      for(var x = 700; x < viewPort.w - w; x += d) {
+  findPlace(cards: Card[], viewPort:Rectangle, w: number = 230, h: number = 100): Point {
+    const d = 30
+    for(let y = 50;; y += d) {
+      for(let x = 700; x < viewPort.w - w; x += d) {
         const r: Rectangle = {x:x, y:y, w:w, h:h}
-        var overlapsAll = false
-        for(var i = 0; i < cards.length && !overlapsAll; i ++) {
-         overlapsAll = overlapsAll || 
-          !this.overlaps(cards[i].cardComponent.getBoundingRect(), r, d)
+        let overlapsAll = false
+        for(let i = 0; i < cards.length && !overlapsAll; i ++) {
+         overlapsAll = overlapsAll ||
+          this.overlaps(cards[i].cardComponent.getBoundingRect(), r, d)
         }
         if (!overlapsAll) return {x:x+viewPort.x, y:y+viewPort.y}
       }
     }
-    this.error()
   }
   overlaps(ri: DOMRect, r: Rectangle, d: number): boolean {
-    if (ri.left + ri.width < r.x - d) return true
-    if (ri.top + ri.height < r.y - d) return true
-    if (r.x + r.w < ri.left - d) return true
-    if (r.y + r.h < ri.top - d) return true
-    return false
-  }
-  error() {
-    throw new Error('Situation will never happen');
+    if (ri.left + ri.width < r.x - d) return false
+    if (ri.top + ri.height < r.y - d) return false
+    if (r.x + r.w < ri.left - d) return false
+    if (r.y + r.h < ri.top - d) return false
+    return true
   }
 }

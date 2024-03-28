@@ -76,6 +76,8 @@ export class CardEvent {
    */
   static UPDATE_CARD_EVENT = "UPDATE_CARD_EVENT"
 
+  static EDIT_CARD_EVENT = "EDIT_CARD_EVENT"
+
   static CARD_HEADER      = "CARD_HEADER"
   static CARD_DESCRIPTION = "CARD_DESCRIPTION"
   static CARD_X           = "CARD_X"
