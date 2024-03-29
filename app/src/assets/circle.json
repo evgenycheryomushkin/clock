@@ -1,0 +1,36 @@
+{
+  "images":
+  [
+    {
+      "width": 2560,
+      "height": 1440,
+      "background": "/assets/images/circle/background.png",
+      "arrows": [
+        {
+          "type": "hour",
+          "x": 1280,
+          "y": 720,
+          "d": -415,
+          "image": "/assets/images/circle/hour.png",
+          "smooth": false
+        },
+        {
+          "type": "minute",
+          "x": 1280,
+          "y": 720,
+          "d": -495,
+          "image": "/assets/images/circle/minute.png",
+          "smooth": false
+        },
+        {
+          "type": "second",
+          "x": 1280,
+          "y": 720,
+          "d": -584,
+          "image": "/assets/images/circle/second.png",
+          "smooth": true
+        }
+      ]
+    }
+  ]
+}

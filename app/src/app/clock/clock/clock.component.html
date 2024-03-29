@@ -1,7 +1,8 @@
 <div>
   <app-arrow *ngFor="let arrow of arrows"
              [x]="arrow.x" [y]="arrow.y" [d]="arrow.d"
-             [arrowType]="arrow.type" [imageName]="arrow.image"/>
+             [arrowType]="arrow.type" [imageName]="arrow.image"
+             [smooth]="arrow.smooth"/>
 
     <canvas #backgroundCanvas></canvas>
 </div>

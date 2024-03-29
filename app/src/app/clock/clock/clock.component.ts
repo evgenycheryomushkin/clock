@@ -22,6 +22,7 @@ export class ClockComponent implements AfterViewInit {
   @ViewChild('backgroundCanvas', {static: false})
   protected backgroundCanvas: ElementRef
 
+  private clockSets: TSMap<string, ClockData> = new TSMap<string, ClockData>()
   currentClock: ClockData
   /**
    * canvas rendering context
@@ -41,6 +42,14 @@ export class ClockComponent implements AfterViewInit {
       .pipe(map(o => o as ClockData))
       .subscribe(
         clock => {
+          this.clockSets.set("nature", clock)
+        }
+      )
+    this.http.get("/assets/circle.json")
+      .pipe(map(o => o as ClockData))
+      .subscribe(
+        clock => {
+          this.clockSets.set("circle", clock)
           this.currentClock = clock
           this.loadBackgroundAdaptive(window.innerWidth, window.innerHeight)
         }
