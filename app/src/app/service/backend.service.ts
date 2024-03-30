@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { Injectable } from '@angular/core';
 import { EventHubService } from './event-hub.service';
 import { CardEvent } from '../data/card-event';
@@ -80,11 +81,11 @@ export class BackendService {
     const decryptedEvent = cardEvent.clone()
     if (decryptedEvent.data.has(CardEvent.CARD_HEADER)) {
       const header = decryptedEvent.data.get(CardEvent.CARD_HEADER)
-      decryptedEvent.data.set(CardEvent.CARD_HEADER, atob(header))
+      decryptedEvent.data.set(CardEvent.CARD_HEADER, Buffer.from(header, 'base64').toString('UTF-8'))
     }
     if (decryptedEvent.data.has(CardEvent.CARD_DESCRIPTION)) {
       const description = decryptedEvent.data.get(CardEvent.CARD_DESCRIPTION)
-      decryptedEvent.data.set(CardEvent.CARD_DESCRIPTION, atob(description))
+      decryptedEvent.data.set(CardEvent.CARD_DESCRIPTION, Buffer.from(description, 'base64').toString('UTF-8'))
     }
     return decryptedEvent
   }
@@ -93,11 +94,11 @@ export class BackendService {
     const encryptedEvent = event.clone()
     if (encryptedEvent.data.has(CardEvent.CARD_HEADER)) {
       const header = encryptedEvent.data.get(CardEvent.CARD_HEADER)
-      encryptedEvent.data.set(CardEvent.CARD_HEADER, btoa(header))
+      encryptedEvent.data.set(CardEvent.CARD_HEADER, Buffer.from(header, 'UTF-8').toString('base64'))
     }
     if (encryptedEvent.data.has(CardEvent.CARD_DESCRIPTION)) {
       const description = encryptedEvent.data.get(CardEvent.CARD_DESCRIPTION)
-      encryptedEvent.data.set(CardEvent.CARD_DESCRIPTION, btoa(description))
+      encryptedEvent.data.set(CardEvent.CARD_DESCRIPTION, Buffer.from(description, 'UTF-8').toString('base64'))
     }
     return encryptedEvent
   }
