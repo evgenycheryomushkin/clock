@@ -219,4 +219,17 @@ export class CardEvent {
           }
         }
   }
+
+  clone(): CardEvent {
+    const cloned = new CardEvent(this.type)
+    cloned.sessionKey = this.sessionKey
+    cloned.createDate = this.createDate
+    cloned.data = new TSMap<string, string>()
+    this.data.forEach((v,k) => {
+      if (k != null) {
+        cloned.data.set(k, v)
+      }
+    })
+    return cloned
+  }
 }

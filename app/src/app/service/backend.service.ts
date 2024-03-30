@@ -46,7 +46,8 @@ export class BackendService {
           cardEvent.type == CardEvent.BACKEND_NEW_ID_EVENT ||
           cardEvent.type == CardEvent.EMIT_CARD //TODO rename to backend emit card
         ) {
-          backend.eventHubService.emit(cardEvent)
+          const decryptedEvent = this.decrypt(cardEvent)
+          backend.eventHubService.emit(decryptedEvent)
         }
       })
 
@@ -59,18 +60,45 @@ export class BackendService {
           CardEvent.DONE_CARD_EVENT
         ],
         (event: CardEvent) => {
+          const encryptedEvent = this.encrypt(event)
           if (backend.routingService.getKey() != "")
-            event.sessionKey = backend.routingService.getKey()
+            encryptedEvent.sessionKey = backend.routingService.getKey()
           const headers: StompHeaders = {
             'reply-to': '/temp-queue/frontend'
           }
           this.stompService.publish(
             {
               destination: '/queue/backend',
-              body: JSON.stringify(event),
+              body: JSON.stringify(encryptedEvent),
               headers
             });
         }
       )
+  }
+
+  private decrypt(cardEvent: CardEvent): CardEvent {
+    const decryptedEvent = cardEvent.clone()
+    if (decryptedEvent.data.has(CardEvent.CARD_HEADER)) {
+      const header = decryptedEvent.data.get(CardEvent.CARD_HEADER)
+      decryptedEvent.data.set(CardEvent.CARD_HEADER, atob(header))
+    }
+    if (decryptedEvent.data.has(CardEvent.CARD_DESCRIPTION)) {
+      const description = decryptedEvent.data.get(CardEvent.CARD_DESCRIPTION)
+      decryptedEvent.data.set(CardEvent.CARD_DESCRIPTION, atob(description))
+    }
+    return decryptedEvent
+  }
+
+  private encrypt(event: CardEvent): CardEvent {
+    const encryptedEvent = event.clone()
+    if (encryptedEvent.data.has(CardEvent.CARD_HEADER)) {
+      const header = encryptedEvent.data.get(CardEvent.CARD_HEADER)
+      encryptedEvent.data.set(CardEvent.CARD_HEADER, btoa(header))
+    }
+    if (encryptedEvent.data.has(CardEvent.CARD_DESCRIPTION)) {
+      const description = encryptedEvent.data.get(CardEvent.CARD_DESCRIPTION)
+      encryptedEvent.data.set(CardEvent.CARD_DESCRIPTION, btoa(description))
+    }
+    return encryptedEvent
   }
 }
