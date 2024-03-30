@@ -2,7 +2,7 @@
   <app-arrow *ngFor="let arrow of arrows"
              [x]="arrow.x" [y]="arrow.y" [d]="arrow.d"
              [arrowType]="arrow.type" [imageName]="arrow.image"
-             [smooth]="arrow.smooth"/>
+             [smooth]="arrow.smooth" [linear]="arrow.linear"/>
 
     <canvas #backgroundCanvas></canvas>
 </div>

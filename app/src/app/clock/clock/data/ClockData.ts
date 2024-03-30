@@ -5,6 +5,7 @@ export class Arrow {
   d: number
   image: string
   smooth: boolean
+  linear: boolean
 }
 
 class OneData {

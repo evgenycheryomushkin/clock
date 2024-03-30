@@ -1,13 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { loadImage } from '../clock/clock.component';
 
-/**
- * Component responsible for drawing arrow. Clock has 2-3 arrows.
- * Each arrow has center position. It is middle bottom point of image.
- * Arrow is directed upwards. There is also offset parameter d
- * that can be positive or negative. D is vertical offset from center to
- * middle-bottom position.
- */
 @Component({
   selector: 'app-arrow',
   templateUrl: './arrow.component.html',
@@ -22,6 +15,7 @@ export class ArrowComponent implements AfterViewInit {
   @Input() imageName:string;
   @Input() arrowType: string;
   @Input() smooth: boolean;
+  @Input() linear: boolean;
   @Input() debug?: number;
   private context: CanvasRenderingContext2D;
   private arrowImage: HTMLImageElement;
@@ -82,27 +76,21 @@ export class ArrowComponent implements AfterViewInit {
 
   async timer(arrowComponent:ArrowComponent) {
     setInterval(() => {
-      const nowAngle = this.calcAngle(new Date(), arrowComponent.smooth)
+      const nowAngle = this.calcAngle(new Date())
       if (arrowComponent.angle == null || arrowComponent.angle != nowAngle)
         arrowComponent.drawArrow(arrowComponent, nowAngle)
       arrowComponent.angle = nowAngle
     }, 50)
   }
 
-  calcAngle(date: Date, smooth: boolean = false) {
+  calcAngle(date: Date) {
     if (this.arrowType == "hour") {
-      return this.calculateHourAngle(date, smooth);
+      return this.calculateHourAngle(date);
     } else if (this.arrowType == "minute") {
-      return this.calculateMinuteAngle(date, smooth);
+      return this.calculateMinuteAngle(date);
     } else {
-      return this.calculateSecondAngle(date, smooth);
+      return this.calculateSecondAngle(date);
     }
-  }
-
-  private calculateSecondAngle(date: Date, smooth: boolean = false) {
-    let adder = 0
-    if (smooth) adder = this.interpolateSecond(date, 6)
-    return date.getSeconds() * 6 % 360 + adder
   }
 
   private interpolateSecond(date: Date, range: number) {
@@ -114,17 +102,24 @@ export class ArrowComponent implements AfterViewInit {
     return 1.0 / (1.0 + Math.exp(-k*x))
   }
 
-  private calculateMinuteAngle(date: Date, smooth: boolean = false) {
+
+  private calculateSecondAngle(date: Date) {
+    let adder = 0
+    if (!this.linear) adder = this.interpolateSecond(date, 6)
+    return date.getSeconds() * 6 % 360 + adder
+  }
+
+  private calculateMinuteAngle(date: Date) {
     let adder = 0
     const seconds = date.getSeconds()
-    if (!smooth && seconds == 59) {
+    if (!this.linear && seconds == 59) {
       adder = this.interpolateSecond(date, 6)
     }
     return date.getMinutes() * 6 % 360 + adder
   }
 
-  private calculateHourAngle(date: Date, smooth: boolean = true) {
-    if (!smooth) {
+  private calculateHourAngle(date: Date) {
+    if (!this.linear) {
       let adder = 0
       if (date.getMinutes() == 59 && date.getSeconds() == 59)
         adder = this.interpolateSecond(date, 30)

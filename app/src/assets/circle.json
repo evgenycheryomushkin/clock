@@ -12,7 +12,8 @@
           "y": 720,
           "d": -415,
           "image": "/assets/images/circle/hour.png",
-          "smooth": false
+          "smooth": true,
+          "linear": false
         },
         {
           "type": "minute",
@@ -20,7 +21,8 @@
           "y": 720,
           "d": -495,
           "image": "/assets/images/circle/minute.png",
-          "smooth": false
+          "smooth": true,
+          "linear": false
         },
         {
           "type": "second",
@@ -28,7 +30,8 @@
           "y": 720,
           "d": -584,
           "image": "/assets/images/circle/second.png",
-          "smooth": true
+          "smooth": true,
+          "linear": false
         }
       ]
     }
