@@ -1,7 +1,8 @@
 package com.cheremushkin;
 
 import com.cheremushkin.data.Card;
-import com.cheremushkin.transport.ClockEvent;
+import com.cheremushkin.function.MapToSpecificEventFunction;
+import com.cheremushkin.event.ClockEvent;
 import com.cheremushkin.transport.ClockEnvelope;
 import com.cheremushkin.data.KeyInfo;
 import com.cheremushkin.data.Session;
@@ -48,6 +49,10 @@ public class ClockBackend {
                 .uid("VALIDATE_SESSION_UID")
 
                 .keyBy(envelope -> envelope.getClockEvent().getSessionKey())
+
+                .map(new MapToSpecificEventFunction())
+                .uid("MAP_EVENT_UID")
+
                 .flatMap(new MainFunction())
                 .uid("CARD_UID")
 

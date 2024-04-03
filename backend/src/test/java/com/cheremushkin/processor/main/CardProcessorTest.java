@@ -1,6 +1,6 @@
 package com.cheremushkin.processor.main;
 
-import com.cheremushkin.transport.ClockEvent;
+import com.cheremushkin.event.ClockEvent;
 import lombok.NonNull;
 import org.junit.Test;
 

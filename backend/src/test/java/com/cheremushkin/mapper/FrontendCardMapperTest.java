@@ -1,7 +1,7 @@
 package com.cheremushkin.mapper;
 
 import com.cheremushkin.data.Card;
-import com.cheremushkin.transport.ClockEvent;
+import com.cheremushkin.event.ClockEvent;
 import org.junit.Test;
 
 import static com.cheremushkin.mapper.FrontendCardMapper.CARD_DESCRIPTION;

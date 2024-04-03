@@ -1,7 +1,8 @@
 package com.cheremushkin.processor.validate;
 
-import com.cheremushkin.transport.ClockEvent;
+import com.cheremushkin.event.ClockEvent;
 import com.cheremushkin.data.KeyInfo;
+import com.cheremushkin.event.UIStartEvent;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.state.MapState;
@@ -14,7 +15,6 @@ import static com.cheremushkin.processor.main.UIStartEventProcessor.UI_START_WIT
 
 @Slf4j
 public class ValidateEventProcessor {
-    public static final String UI_START_EVENT = "UI_START_EVENT";
 
     final MapState<String, KeyInfo> state;
 
@@ -24,7 +24,7 @@ public class ValidateEventProcessor {
 
 
     public @NonNull ClockEvent process(ClockEvent event) throws Exception {
-        if (UI_START_EVENT.equals(event.getType()))
+        if (UIStartEvent.UI_START_EVENT.equals(event.getType()))
             return processUIStartEvent(event);
         else return validateSessionFromEvent(event);
     }

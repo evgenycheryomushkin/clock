@@ -1,6 +1,6 @@
 package com.cheremushkin.transport;
 
-import com.cheremushkin.transport.ClockEvent;
+import com.cheremushkin.event.ClockEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;

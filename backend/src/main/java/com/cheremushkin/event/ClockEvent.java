@@ -1,4 +1,4 @@
-package com.cheremushkin.transport;
+package com.cheremushkin.event;
 
 import com.cheremushkin.serializer.ClockEventSerializer;
 import com.esotericsoftware.kryo.DefaultSerializer;
@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,9 +14,8 @@ import java.util.stream.Collectors;
 import static com.cheremushkin.mapper.FrontendCardMapper.ERROR_EVENT_TYPE;
 
 @Getter
-@Setter
 @DefaultSerializer(ClockEventSerializer.class)
-final public class ClockEvent {
+public class ClockEvent {
     final String type;
     Long createDate;
     final String sessionKey;
@@ -40,14 +38,6 @@ final public class ClockEvent {
         this.createDate = System.currentTimeMillis();
         this.sessionKey = sessionKey;
         this.data = new HashMap<>();
-    }
-
-    public static ClockEvent buildErrorEvent(String sessionKey) {
-        return new ClockEvent(ERROR_EVENT_TYPE, sessionKey);
-    }
-
-    public static ClockEvent build(String type, String sessionKey) {
-        return new ClockEvent(type, sessionKey);
     }
 
     public ClockEvent add(String key, String value) {

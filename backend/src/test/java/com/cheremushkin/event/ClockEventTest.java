@@ -1,5 +1,6 @@
-package com.cheremushkin.transport;
+package com.cheremushkin.event;
 
+import com.cheremushkin.event.ClockEvent;
 import org.junit.Test;
 
 import static com.cheremushkin.mapper.FrontendCardMapper.ERROR_DESCRIPTION;

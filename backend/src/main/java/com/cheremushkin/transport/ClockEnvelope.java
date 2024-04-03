@@ -1,5 +1,6 @@
 package com.cheremushkin.transport;
 
+import com.cheremushkin.event.ClockEvent;
 import com.cheremushkin.serializer.ClockEnvelopeSerializer;
 import com.esotericsoftware.kryo.DefaultSerializer;
 import lombok.AllArgsConstructor;

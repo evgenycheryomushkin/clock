@@ -1,7 +1,7 @@
 package com.cheremushkin.function;
 
 import com.cheremushkin.transport.ClockEnvelope;
-import com.cheremushkin.transport.ClockEvent;
+import com.cheremushkin.event.ClockEvent;
 import com.cheremushkin.data.KeyInfo;
 import com.cheremushkin.processor.validate.ValidateEventProcessor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class ValidateKeyFunction extends RichMapFunction<ClockEnvelope, ClockEnv
 
     private MapState<String, KeyInfo>  initState() {
         final MapStateDescriptor<String, KeyInfo> keyMapDescriptor =
-                new MapStateDescriptor<String, KeyInfo>(
+                new MapStateDescriptor<>(
                         "keyMap", TypeInformation.of(String.class),
                         TypeInformation.of(KeyInfo.class));
         return getRuntimeContext().getMapState(keyMapDescriptor);

@@ -1,7 +1,7 @@
 package com.cheremushkin.processor.main;
 
 import com.cheremushkin.data.Card;
-import com.cheremushkin.transport.ClockEvent;
+import com.cheremushkin.event.ClockEvent;
 import com.cheremushkin.state.UserState;
 import com.cheremushkin.mapper.FrontendCardMapper;
 import com.cheremushkin.processor.EventProcessor;
