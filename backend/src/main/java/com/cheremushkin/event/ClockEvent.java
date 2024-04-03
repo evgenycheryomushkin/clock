@@ -31,6 +31,7 @@ public class ClockEvent {
         this.type = type;
         if (dateValid(createDate)) throw new ClockEventException("Invalid time in milliseconds: "+createDate);
         this.createDate = createDate;
+        //TODO validate session key
         this.sessionKey = sessionKey;
         this.data = data;
     }

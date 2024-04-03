@@ -1,7 +1,10 @@
 package com.cheremushkin.event;
 
 import com.cheremushkin.event.ClockEvent;
+import com.cheremushkin.exception.ClockEventException;
 import org.junit.Test;
+
+import java.util.Map;
 
 import static com.cheremushkin.mapper.FrontendCardMapper.ERROR_DESCRIPTION;
 import static com.cheremushkin.mapper.FrontendCardMapper.ERROR_EVENT_TYPE;
@@ -9,9 +12,16 @@ import static org.junit.Assert.*;
 
 public class ClockEventTest {
 
+    static final String TEST_EVENT_TYPE = "TEST_EVENT_TYPE";
+
+    @Test(expected = ClockEventException.class)
+    public void test_should_throw_exception_on_wrong_create_date() throws ClockEventException {
+        new ClockEvent(TEST_EVENT_TYPE, 123L, "a1234567", Map.of());
+    }
+
     @Test
-    public void test_should_throw_exception_on_wrong_create_date() {
-        //TODO
+    public void test_should_create_clock_event_with_good_create_date() throws ClockEventException {
+        new ClockEvent(TEST_EVENT_TYPE, System.currentTimeMillis(), "a1234567", Map.of());
     }
 
     @Test
