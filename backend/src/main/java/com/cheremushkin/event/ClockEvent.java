@@ -1,5 +1,6 @@
 package com.cheremushkin.event;
 
+import com.cheremushkin.exception.ClockEventException;
 import com.cheremushkin.serializer.ClockEventSerializer;
 import com.esotericsoftware.kryo.DefaultSerializer;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -7,11 +8,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NonNull;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static com.cheremushkin.mapper.FrontendCardMapper.ERROR_EVENT_TYPE;
 
 @Getter
 @DefaultSerializer(ClockEventSerializer.class)
@@ -26,11 +27,17 @@ public class ClockEvent {
             @JsonProperty("type")       @NonNull String type,
             @JsonProperty("createDate") @NonNull Long createDate,
             @JsonProperty("sessionKey") @NonNull String sessionKey,
-            @JsonProperty("data")       @NonNull Map<String, String> data) {
+            @JsonProperty("data")       @NonNull Map<String, String> data) throws ClockEventException {
         this.type = type;
+        if (dateValid(createDate)) throw new ClockEventException("Invalid time in milliseconds: "+createDate);
         this.createDate = createDate;
         this.sessionKey = sessionKey;
         this.data = data;
+    }
+
+    private boolean dateValid(Long createDate) {
+        long time2024_01_01millis = 1704067200000L;
+        return createDate > time2024_01_01millis;
     }
 
     private ClockEvent(@NonNull String type, String sessionKey) {

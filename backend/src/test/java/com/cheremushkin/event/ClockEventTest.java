@@ -10,6 +10,11 @@ import static org.junit.Assert.*;
 public class ClockEventTest {
 
     @Test
+    public void test_should_throw_exception_on_wrong_create_date() {
+        //TODO
+    }
+
+    @Test
     public void buildErrorEvent() {
         ClockEvent event = ClockEvent.buildErrorEvent("a1234567");
         assertEquals(ERROR_EVENT_TYPE, event.type);

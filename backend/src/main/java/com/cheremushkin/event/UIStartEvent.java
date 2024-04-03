@@ -12,4 +12,8 @@ public class UIStartEvent extends ClockEvent {
     ) {
         super(UI_START_EVENT, createDate, sessionKey, Map.of());
     }
+
+    public UIStartEvent(ClockEvent clockEvent) {
+        this(clockEvent.createDate, clockEvent.sessionKey);
+    }
 }
